@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Publicar Producto</title>
+</head>
+<body>
+
+    <h1>Publicar Producto</h1>
+
+    <input type="text" id="titulo" placeholder="Título del producto">
+    <br><br>
+
+    <input type="number" id="precio" placeholder="Precio">
+    <br><br>
+
+    <button onclick="publicar()">Publicar</button>
+
+    <script>
+
+        async function publicar() {
+
+            const titulo = document.getElementById('titulo').value;
+            const precio = document.getElementById('precio').value;
+
+            const respuesta = await fetch('/productos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    titulo,
+                    precio
+                })
+            });
+
+            const datos = await respuesta.json();
+
+            alert(datos.mensaje || datos.error);
+
+        }
+
+    </script>
+
+</body>
+</html>

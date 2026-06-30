@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Productos</title>
+</head>
+<body>
+
+    <h1>Productos Publicados</h1>
+
+    <button onclick="cargarProductos()">
+        Actualizar
+    </button>
+
+    <hr>
+
+    <div id="productos"></div>
+
+    <script>
+
+        async function comprar(idProducto) {
+
+            const respuesta = await fetch('/comprar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    producto_id: idProducto
+                })
+            });
+
+            const datos = await respuesta.json();
+
+            alert(datos.mensaje || datos.error);
+
+        }
+
+        async function cargarProductos() {
+
+            const respuesta = await fetch('/productos');
+
+            const productos = await respuesta.json();
+
+            let html = '';
+
+            productos.forEach(producto => {
+
+                html += `
+                    <div style="border:1px solid black; padding:10px; margin:10px;">
+                        <h3>${producto.titulo}</h3>
+                        <p>Precio: $${producto.precio}</p>
+
+                        <button onclick="comprar(${producto.id})">
+                            Comprar
+                        </button>
+
+                    </div>
+                `;
+
+            });
+
+            document.getElementById('productos').innerHTML = html;
+
+        }
+
+        cargarProductos();
+
+    </script>
+
+</body>
+</html>

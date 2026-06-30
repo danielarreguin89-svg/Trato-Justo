@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+
+    <h1>Iniciar Sesión</h1>
+
+    <input type="email" id="email" placeholder="Correo">
+    <br><br>
+
+    <input type="password" id="password" placeholder="Contraseña">
+    <br><br>
+
+    <button onclick="login()">Entrar</button>
+
+    <script>
+
+        async function login() {
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const respuesta = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                })
+            });
+
+            const datos = await respuesta.json();
+
+            if (respuesta.ok) {
+
+                localStorage.setItem(
+                    'token',
+                    datos.token
+                );
+
+                alert('Login correcto');
+
+            } else {
+
+                alert(datos.error);
+
+            }
+
+        }
+
+    </script>
+
+</body>
+</html>

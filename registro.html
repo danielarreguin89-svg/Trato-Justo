@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registro</title>
+</head>
+<body>
+
+    <h1>Crear Cuenta</h1>
+
+    <input type="text" id="nombre" placeholder="Nombre">
+    <br><br>
+
+    <input type="email" id="email" placeholder="Correo">
+    <br><br>
+
+    <input type="password" id="password" placeholder="Contraseña">
+    <br><br>
+
+    <button onclick="registrar()">Registrarme</button>
+
+    <script>
+        async function registrar() {
+
+            const nombre = document.getElementById('nombre').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const respuesta = await fetch('/registro', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    nombre,
+                    email,
+                    password
+                })
+            });
+
+            const datos = await respuesta.json();
+
+            alert(datos.mensaje || datos.error);
+        }
+    </script>
+
+</body>
+</html>
