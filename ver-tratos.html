@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tratos</title>
+</head>
+<body>
+
+    <h1>Tratos Creados</h1>
+
+    <button onclick="cargarTratos()">
+        Actualizar
+    </button>
+
+    <hr>
+
+    <div id="tratos"></div>
+
+    <script>
+
+        async function verQR(codigo) {
+
+            const respuesta = await fetch(`/qr/${codigo}`);
+
+            const datos = await respuesta.json();
+
+            const ventana = window.open('', '_blank');
+
+            ventana.document.write(`
+                <h1>${codigo}</h1>
+                <img src="${datos.qr}">
+            `);
+
+        }
+
+        async function cargarTratos() {
+
+            const respuesta = await fetch('/tratos');
+
+            const tratos = await respuesta.json();
+
+            let html = '';
+
+            tratos.forEach(trato => {
+
+                html += `
+                    <div style="border:1px solid black;padding:10px;margin:10px;">
+
+                        <h3>${trato.producto}</h3>
+
+                        <p>Código: ${trato.codigo}</p>
+
+                        <p>monto_protegido: $${trato.monto_protegido}</p>
+
+                        <p>Estado: ${trato.estado}</p>
+
+                        <button onclick="verQR('${trato.codigo}')">
+                            Ver QR
+                        </button>
+
+                    </div>
+                `;
+
+            });
+
+            document.getElementById('tratos').innerHTML = html;
+
+        }
+
+        cargarTratos();
+
+    </script>
+
+</body>
+</html>

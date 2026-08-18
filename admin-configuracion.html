@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Configuración | Trato Justo</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+background:#f4f6f9;
+}
+
+header{
+height:70px;
+background:#1976d2;
+color:white;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 30px;
+}
+
+.container{
+display:flex;
+min-height:calc(100vh - 70px);
+}
+
+aside{
+width:230px;
+background:#263238;
+}
+
+aside h2{
+color:white;
+text-align:center;
+padding:25px 0;
+border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+aside a{
+display:block;
+color:white;
+text-decoration:none;
+padding:18px 25px;
+}
+
+aside a:hover{
+background:#1976d2;
+}
+
+main{
+flex:1;
+padding:35px;
+}
+
+.card{
+
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 2px 10px rgba(0,0,0,.12);
+margin-bottom:25px;
+
+}
+
+.card h2{
+
+margin-bottom:25px;
+color:#1976d2;
+
+}
+
+.fila{
+
+display:flex;
+margin-bottom:18px;
+padding-bottom:10px;
+border-bottom:1px solid #eee;
+
+}
+
+.label{
+
+width:220px;
+font-weight:bold;
+color:#555;
+
+}
+
+.valor{
+
+flex:1;
+
+}
+
+input{
+
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:6px;
+
+}
+select{
+
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:6px;
+
+}
+
+label{
+
+display:block;
+margin-bottom:6px;
+font-weight:bold;
+color:#555;
+
+}
+
+button{
+
+padding:12px 20px;
+background:#1976d2;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+
+}
+
+.estadoOk{
+
+color:#2e7d32;
+font-weight:bold;
+
+}
+
+.estadoError{
+
+color:#d32f2f;
+font-weight:bold;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>TRATO JUSTO</h1>
+
+<div id="adminNombre"></div>
+
+</header>
+
+<div class="container">
+
+<aside>
+
+<h2>Panel</h2>
+
+<a href="admin-dashboard.html">📊 Dashboard</a>
+<a href="admin-usuarios.html">👥 Usuarios</a>
+<a href="admin-lista-tratos.html">📦 Tratos</a>
+<a href="admin-finanzas.html">💰 Finanzas</a>
+<a href="admin-configuracion.html">⚙ Configuración</a>
+<a href="#" onclick="cerrarSesion()">🚪 Cerrar sesión</a>
+
+</aside>
+
+<main>
+
+<div class="card">
+
+<h2>Administrador</h2>
+
+<div class="fila">
+
+<div class="label">Nombre</div>
+
+<div
+class="valor"
+id="nombreAdmin">
+
+Cargando...
+
+</div>
+
+</div>
+
+<div class="fila">
+
+<div class="label">Correo</div>
+
+<div
+class="valor"
+id="correoAdmin">
+
+Cargando...
+
+</div>
+
+</div>
+
+<div class="fila">
+
+<div class="label">Rol</div>
+
+<div
+class="valor"
+id="rolAdmin">
+
+Cargando...
+
+</div>
+
+</div>
+<button
+id="btnEditar"
+onclick="editarAdministrador()">
+
+Editar datos
+
+</button>
+
+<div
+id="panelEditar"
+style="display:none; margin-top:25px;">
+
+<label>Nombre</label>
+
+<input
+id="nuevoNombre"
+placeholder="Nombre">
+
+<label>Correo</label>
+
+<input
+id="nuevoCorreo"
+placeholder="Correo">
+
+<label>Rol</label>
+
+<select
+id="nuevoRol">
+
+<option value="superadmin">
+Superadministrador
+</option>
+
+<option value="admin">
+Administrador
+</option>
+
+</select>
+
+<div style="margin-top:20px; display:flex; gap:10px;">
+
+<button
+onclick="guardarAdministrador()">
+
+Guardar
+
+</button>
+
+<button
+style="background:#757575;"
+onclick="cancelarEdicion()">
+
+Cancelar
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Servicios</h2>
+
+<div class="fila">
+
+<div class="label">Stripe</div>
+
+<div
+class="valor estadoOk"
+id="estadoStripe">
+
+Cargando...
+
+</div>
+
+</div>
+
+<div class="fila">
+
+<div class="label">Resend</div>
+
+<div
+class="valor estadoOk"
+id="estadoResend">
+
+Cargando...
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Cambiar contraseña</h2>
+
+<input
+type="password"
+id="passwordActual"
+placeholder="Contraseña actual">
+
+<input
+type="password"
+id="passwordNueva"
+placeholder="Nueva contraseña">
+<input
+type="password"
+id="confirmarPassword"
+placeholder="Confirmar nueva contraseña">
+
+<button
+onclick="cambiarPassword()">
+
+Guardar cambios
+
+</button>
+
+</div>
+
+</main>
+
+</div>
+<script>
+
+const token = localStorage.getItem("tokenAdmin");
+
+if(!token){
+
+    window.location.href="admin-login.html";
+
+}
+
+const admin = JSON.parse(atob(token.split(".")[1]));
+
+document.getElementById("adminNombre").innerText = admin.email;
+
+cargarConfiguracion();
+
+async function cargarConfiguracion(){
+
+    try{
+
+        const respuesta = await fetch("/admin/configuracion",{
+
+            headers:{
+                Authorization:"Bearer "+token
+            }
+
+        });
+
+        if(respuesta.status===401){
+
+            localStorage.removeItem("tokenAdmin");
+
+            window.location.href="admin-login.html";
+
+            return;
+
+        }
+
+        if(!respuesta.ok){
+
+            alert("No fue posible cargar la configuración.");
+
+            return;
+
+        }
+
+        const datos = await respuesta.json();
+
+        document.getElementById("nombreAdmin").innerText =
+        datos.admin.nombre;
+
+        document.getElementById("correoAdmin").innerText =
+        datos.admin.email;
+
+        document.getElementById("rolAdmin").innerText =
+        datos.admin.rol;
+
+        document.getElementById("estadoStripe").innerText =
+        datos.stripe;
+
+        document.getElementById("estadoResend").innerText =
+        datos.resend;
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert("Error al cargar configuración.");
+
+    }
+
+}
+function editarAdministrador(){
+
+    document.getElementById("panelEditar").style.display="block";
+
+    document.getElementById("btnEditar").style.display="none";
+
+    document.getElementById("nuevoNombre").value =
+        document.getElementById("nombreAdmin").innerText;
+
+    document.getElementById("nuevoCorreo").value =
+        document.getElementById("correoAdmin").innerText;
+
+    const rolActual =
+        document.getElementById("rolAdmin").innerText.toLowerCase();
+
+    document.getElementById("nuevoRol").value =
+        rolActual.includes("super")
+        ? "superadmin"
+        : "admin";
+
+}
+
+async function guardarAdministrador(){
+
+    const nombre = document.getElementById("nuevoNombre").value.trim();
+
+    const correo = document.getElementById("nuevoCorreo").value.trim();
+
+    const rol = document.getElementById("nuevoRol").value.trim();
+
+    if(nombre==="" || correo==="" || rol===""){
+
+        alert("Completa todos los campos.");
+
+        return;
+
+    }
+
+    const respuesta = await fetch("/admin/actualizar",{
+
+        method:"PATCH",
+
+        headers:{
+
+            "Content-Type":"application/json",
+
+            Authorization:"Bearer "+token
+
+        },
+
+        body:JSON.stringify({
+
+            nombre,
+
+            email:correo,
+
+            rol
+
+        })
+
+    });
+
+    const datos = await respuesta.json();
+
+    alert(datos.mensaje || datos.error);
+
+    if(respuesta.ok){
+
+    cargarConfiguracion();
+
+    document.getElementById("panelEditar").style.display="none";
+
+    document.getElementById("btnEditar").style.display="inline-block";
+
+}
+
+}
+function cancelarEdicion(){
+
+    document.getElementById("panelEditar").style.display="none";
+
+    document.getElementById("btnEditar").style.display="inline-block";
+
+    document.getElementById("nuevoNombre").value="";
+
+    document.getElementById("nuevoCorreo").value="";
+
+    document.getElementById("nuevoRol").selectedIndex=0;
+
+}
+async function cambiarPassword(){
+
+    const actual = document.getElementById("passwordActual").value;
+
+    const nueva = document.getElementById("passwordNueva").value;
+
+    const confirmar = document.getElementById("confirmarPassword").value;
+
+    if(actual==="" || nueva==="" || confirmar===""){
+
+    alert("Completa todos los campos.");
+
+    return;
+
+}
+if(nueva !== confirmar){
+
+    alert("Las nuevas contraseñas no coinciden.");
+
+    return;
+
+}
+
+    const respuesta = await fetch("/admin/cambiar-password",{
+
+        method:"PATCH",
+
+        headers:{
+
+            "Content-Type":"application/json",
+
+            Authorization:"Bearer "+token
+
+        },
+
+        body:JSON.stringify({
+
+            passwordActual:actual,
+
+            passwordNueva:nueva
+
+        })
+
+    });
+
+    const datos = await respuesta.json();
+
+    alert(datos.mensaje || datos.error);
+
+    if(respuesta.ok){
+
+    document.getElementById("passwordActual").value = "";
+
+    document.getElementById("passwordNueva").value = "";
+
+    document.getElementById("confirmarPassword").value = "";
+
+}
+
+}
+
+function cerrarSesion(){
+
+    localStorage.removeItem("tokenAdmin");
+
+    window.location.href="admin-login.html";
+
+}
+
+</script>
+
+</body>
+</html>

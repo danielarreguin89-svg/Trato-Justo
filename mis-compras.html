@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Mis Compras - Trato Justo</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#F5F7FA;
+    min-height:100vh;
+}
+
+.header{
+    background:linear-gradient(135deg,#009EE3,#003087);
+    color:white;
+    text-align:center;
+    padding:35px 20px;
+}
+
+.logo{
+    font-size:30px;
+    font-weight:bold;
+}
+
+.subtitulo{
+    margin-top:10px;
+    opacity:.9;
+}
+
+.container{
+    max-width:800px;
+    margin:30px auto;
+    padding:20px;
+}
+
+.btn{
+    width:100%;
+    border:none;
+    border-radius:12px;
+    padding:15px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+}
+
+.btn-secondary{
+    background:#003087;
+    color:white;
+    margin-bottom:20px;
+}
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.card h3{
+    color:#003087;
+    margin-bottom:15px;
+}
+
+.info{
+    margin-bottom:8px;
+    color:#444;
+}
+
+.codigo{
+    display:inline-block;
+    background:#EAF7FF;
+    color:#003087;
+    padding:6px 12px;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.estado{
+    display:inline-block;
+    padding:6px 12px;
+    border-radius:8px;
+    font-weight:bold;
+    margin-top:5px;
+}
+
+.estado-creado{
+    background:#FFF3CD;
+    color:#856404;
+}
+
+.estado-reservado{
+    background:#D4EDDA;
+    color:#155724;
+}
+
+.estado-completado{
+    background:#CCE5FF;
+    color:#004085;
+}
+
+.link-btn{
+    display:block;
+    text-align:center;
+    margin-top:15px;
+    background:#009EE3;
+    color:white;
+    text-decoration:none;
+    padding:12px;
+    border-radius:12px;
+    font-weight:bold;
+}
+
+.link-btn:hover{
+    opacity:.9;
+}
+
+.vacio{
+    background:white;
+    padding:30px;
+    border-radius:18px;
+    text-align:center;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+    <div class="logo">
+        🛡️ Trato Justo
+    </div>
+
+    <div class="subtitulo">
+        Administra todos tus tratos como comprador
+    </div>
+
+</div>
+
+<div class="container">
+
+    <button
+        class="btn btn-secondary"
+        onclick="location.href='dashboard.html'">
+        ← Volver al Dashboard
+    </button>
+
+    <div id="compras">
+        Cargando compras...
+    </div>
+
+</div>
+
+<script>
+
+const token = localStorage.getItem('token');
+
+if (!token) {
+
+    window.location.href = '/login.html';
+
+}
+
+cargarCompras();
+
+async function cargarCompras() {
+
+    try {
+
+        const respuesta = await fetch(
+            '/mis-compras',
+            {
+                headers: {
+    Authorization: "Bearer " + token
+}
+            }
+        );
+
+        const compras = await respuesta.json();
+
+        const contenedor =
+            document.getElementById('compras');
+
+        if (!respuesta.ok) {
+
+            contenedor.innerHTML =
+                JSON.stringify(compras);
+
+            return;
+
+        }
+
+        if (compras.length === 0) {
+
+            contenedor.innerHTML = `
+                <div class="vacio">
+                    <h3>No tienes compras registradas</h3>
+                    <br>
+                    <p>
+                        Los tratos que reserves aparecerán aquí.
+                    </p>
+                </div>
+            `;
+
+            return;
+
+        }
+
+        let html = '';
+
+        compras.forEach(trato => {
+
+            let claseEstado = 'estado-creado';
+
+            if (trato.estado === 'reservado') {
+
+                claseEstado = 'estado-reservado';
+
+            }
+
+            if (trato.estado === 'completado') {
+
+                claseEstado = 'estado-completado';
+
+            }
+
+            html += `
+
+                <div class="card">
+
+                    <h3>${trato.producto}</h3>
+
+                    <div class="info">
+                        <b>Código:</b>
+                        <span class="codigo">
+                            ${trato.codigo}
+                        </span>
+                    </div>
+
+                    <div class="info">
+                        <b>Monto protegido:</b>
+                        $${Number(
+                            trato.monto_protegido
+                        ).toLocaleString('es-MX')} MXN
+                    </div>
+
+                    <div class="info">
+                        <b>Estado:</b>
+                    </div>
+
+                    <div class="estado ${claseEstado}">
+                        ${trato.estado}
+                    </div>
+
+                    <a
+                        class="link-btn"
+                        href="/trato/${trato.codigo}"
+                        target="_blank">
+                        Ver trato
+                    </a>
+
+                </div>
+
+            `;
+
+        });
+
+        contenedor.innerHTML = html;
+
+    } catch (error) {
+
+        document.getElementById('compras').innerHTML =
+            error.toString();
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

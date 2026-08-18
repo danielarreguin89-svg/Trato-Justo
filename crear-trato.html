@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Crear Trato - Trato Justo</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#F5F7FA;
+    min-height:100vh;
+}
+
+.header{
+    background:linear-gradient(135deg,#009EE3,#003087);
+    color:white;
+    text-align:center;
+    padding:35px 20px;
+}
+
+.logo{
+    font-size:30px;
+    font-weight:bold;
+}
+
+.subtitulo{
+    margin-top:10px;
+    opacity:.9;
+}
+
+.container{
+    max-width:600px;
+    margin:30px auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:18px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.info{
+    background:#EAF7FF;
+    border-left:5px solid #009EE3;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+    color:#333;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    margin-top:15px;
+    font-weight:bold;
+}
+
+input,
+textarea{
+    width:100%;
+    padding:14px;
+    border:1px solid #ddd;
+    border-radius:12px;
+    font-size:16px;
+}
+
+input:focus,
+textarea:focus{
+    outline:none;
+    border-color:#009EE3;
+}
+
+.btn{
+    width:100%;
+    border:none;
+    border-radius:12px;
+    padding:15px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+}
+
+.btn-primary{
+    background:#009EE3;
+    color:white;
+}
+.btn-whatsapp{
+    background:#25D366;
+    color:white;
+    margin-bottom:10px;
+}
+.btn-secondary{
+    background:#003087;
+    color:white;
+    margin-bottom:15px;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.75);
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+.modal-content{
+    background:white;
+    width:90%;
+    max-width:500px;
+    border-radius:20px;
+    padding:35px;
+    text-align:center;
+}
+
+.success-circle{
+    width:120px;
+    height:120px;
+    margin:0 auto 20px;
+    border-radius:50%;
+    background:#00A650;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:60px;
+    font-weight:bold;
+    box-shadow:0 10px 30px rgba(0,166,80,.35);
+    animation:aparecer .4s ease;
+}
+
+@keyframes aparecer{
+
+    from{
+        transform:scale(.7);
+        opacity:0;
+    }
+
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+
+}
+
+.success-text{
+    color:#666;
+    margin:15px 0 20px;
+    line-height:1.6;
+}
+
+.codigo{
+    background:#F5F7FA;
+    padding:15px;
+    border-radius:12px;
+    margin:20px 0;
+    font-size:22px;
+    font-weight:bold;
+    color:#003087;
+}
+
+.link-box{
+    background:#F5F7FA;
+    padding:12px;
+    border-radius:10px;
+    word-break:break-all;
+    margin-bottom:15px;
+}
+
+.footer-btn{
+    margin-top:10px;
+}
+
+.monto-preview{
+    margin-top:10px;
+    color:#003087;
+    font-size:18px;
+    font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+    <div class="logo">
+        🛡️ Trato Justo
+    </div>
+
+    <div class="subtitulo">
+        Crea un trato protegido para tu comprador
+    </div>
+
+</div>
+
+<div class="container">
+
+    <button
+        class="btn btn-secondary"
+        onclick="location.href='dashboard.html'">
+        ← Volver al Dashboard
+    </button>
+
+    <div class="card">
+
+        <div class="info">
+            El monto mínimo protegido es de <b>$300 MXN</b>.
+            La comisión actual es del <b>10%</b> y se descuenta al vendedor cuando el pago es liberado.
+        </div>
+
+        <label>Producto</label>
+
+        <input
+            type="text"
+            id="producto"
+            placeholder="Ej. Artículo en venta">
+
+        <label>Descripción</label>
+
+        <textarea
+            id="descripcion"
+            rows="5"
+            placeholder="Describe el producto que venderás"></textarea>
+
+        <label>Monto protegido (MXN)</label>
+
+        <input
+            type="number"
+            id="monto"
+            placeholder="Ej. 5000"
+            oninput="actualizarMonto()">
+
+        <div
+            id="vistaMonto"
+            class="monto-preview">
+        </div>
+
+        <br><br>
+
+        <button
+            class="btn btn-primary"
+            onclick="crearTrato()">
+            Crear Trato
+        </button>
+
+    </div>
+
+</div>
+
+<div class="modal" id="modalExito">
+
+    <div class="modal-content">
+
+        <div class="success-circle">
+            ✓
+        </div>
+
+        <h2>¡Trato listo!</h2>
+
+        <p class="success-text">
+            Tu trato protegido fue creado correctamente.
+            Comparte este enlace con tu comprador para que pueda reservar el pago protegido.
+        </p>
+
+        <div
+            class="codigo"
+            id="codigoGenerado">
+        </div>
+
+        <div
+            class="link-box"
+            id="linkGenerado">
+        </div>
+
+        <button
+    class="btn btn-whatsapp"
+    onclick="compartirWhatsApp()">
+    📲 Compartir por WhatsApp
+</button>
+
+<button
+    class="btn btn-primary"
+    onclick="copiarLink()">
+    🔗 Copiar enlace
+</button>
+
+        <button
+            class="btn btn-secondary footer-btn"
+            onclick="location.href='dashboard.html'">
+            Ir al Dashboard
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+const token = localStorage.getItem('token');
+
+if (!token) {
+
+    window.location.href = '/login.html';
+
+}
+
+let linkActual = '';
+
+async function crearTrato() {
+
+    const producto =
+        document.getElementById('producto').value;
+
+    const descripcion =
+        document.getElementById('descripcion').value;
+
+    const monto_protegido =
+        document.getElementById('monto').value;
+
+    const respuesta = await fetch(
+        '/crear-trato',
+        {
+            method:'POST',
+           headers:{
+    'Content-Type':'application/json',
+    'Authorization':'Bearer ' + token
+},
+            body:JSON.stringify({
+                producto,
+                descripcion,
+                monto_protegido
+            })
+        }
+    );
+
+    const datos = await respuesta.json();
+
+    if(respuesta.ok){
+
+        linkActual =
+            `${window.location.origin}/trato/${datos.codigo}`;
+
+        document.getElementById(
+            'codigoGenerado'
+        ).innerText = datos.codigo;
+
+        document.getElementById(
+            'linkGenerado'
+        ).innerText = linkActual;
+
+        document.getElementById(
+            'modalExito'
+        ).style.display = 'flex';
+
+    }else{
+
+        alert(datos.error);
+
+    }
+
+}
+
+function copiarLink(){
+
+    navigator.clipboard.writeText(linkActual);
+
+    alert('Enlace copiado');
+
+}
+function compartirWhatsApp(){
+
+    const mensaje =
+        `Hola, te comparto mi trato protegido de Trato Justo:%0A%0A${linkActual}`;
+
+    window.open(
+        `https://wa.me/?text=${mensaje}`,
+        '_blank'
+    );
+
+}
+function actualizarMonto() {
+
+    const monto =
+        document.getElementById('monto').value;
+
+    const vista =
+        document.getElementById('vistaMonto');
+
+    if (!monto) {
+
+        vista.innerHTML = '';
+
+        return;
+
+    }
+
+    vista.innerHTML =
+        '$' +
+        Number(monto).toLocaleString('es-MX') +
+        ' MXN';
+
+}
+
+</script>
+
+</body>
+</html>

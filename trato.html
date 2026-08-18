@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Trato Justo</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#F5F7FA;
+    min-height:100vh;
+}
+
+.header{
+    background:linear-gradient(135deg,#009EE3,#003087);
+    color:white;
+    text-align:center;
+    padding:40px 20px;
+}
+
+.logo{
+    font-size:32px;
+    font-weight:bold;
+}
+
+.subtitulo{
+    margin-top:10px;
+    opacity:.9;
+}
+
+.container{
+    max-width:900px;
+    margin:30px auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+    margin-bottom:20px;
+}
+
+.producto{
+    color:#003087;
+    margin-bottom:15px;
+}
+
+.monto{
+    font-size:34px;
+    font-weight:bold;
+    color:#00A650;
+    margin-top:10px;
+}
+
+.info{
+    margin-bottom:12px;
+    color:#444;
+}
+
+.codigo{
+    display:inline-block;
+    background:#EAF7FF;
+    color:#003087;
+    padding:8px 14px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+.estado{
+    display:inline-block;
+    padding:8px 14px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+.estado-creado{
+    background:#FFF3CD;
+    color:#856404;
+}
+
+.estado-reservado{
+    background:#D4EDDA;
+    color:#155724;
+}
+
+.estado-completado{
+    background:#CCE5FF;
+    color:#004085;
+}
+
+.btn{
+    width:100%;
+    border:none;
+    border-radius:12px;
+    padding:15px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+    margin-top:10px;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+}
+
+.btn-primary{
+    background:#009EE3;
+    color:white;
+}
+
+.btn-success{
+    background:#00A650;
+    color:white;
+}
+
+.seguridad{
+    background:#FFF8E1;
+    border-left:5px solid #FFC107;
+    padding:15px;
+    border-radius:10px;
+    margin-top:15px;
+}
+
+.codigo-box{
+    background:#F5F7FA;
+    border:2px dashed #009EE3;
+    border-radius:15px;
+    padding:20px;
+    text-align:center;
+    margin:20px 0;
+}
+
+.codigo-box h2{
+    color:#003087;
+    font-size:36px;
+}
+
+.input{
+    width:100%;
+    padding:15px;
+    border:1px solid #CCC;
+    border-radius:10px;
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+.loading{
+    text-align:center;
+    padding:50px;
+}
+.estrella{
+    font-size:42px;
+    cursor:pointer;
+    margin:0 4px;
+    transition:.2s;
+}
+
+.estrella:hover{
+    transform:scale(1.2);
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+    <div class="logo">
+        🛡️ Trato Justo
+    </div>
+
+    <div class="subtitulo">
+        Compra y vende con pagos protegidos
+    </div>
+
+</div>
+
+<div class="container">
+
+    <div id="contenido" class="loading">
+        Cargando trato...
+    </div>
+
+</div>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+
+const codigo =
+    window.location.pathname.split('/').pop();
+
+const token =
+    localStorage.getItem('token');
+    const stripe = Stripe("pk_test_51Tvt9e17UsHd7j3WlfulSADQ9Fu5NqvY2Drs64zeuTijOVS29VuPwqjkwzZOyH3kVKt3lWoVeE1NFiEOw1m6RD9800J0K1PAH8");
+let estrellasSeleccionadas = 0;
+
+function seleccionarEstrella(cantidad) {
+
+    estrellasSeleccionadas = cantidad;
+
+    const estrellas =
+        document.querySelectorAll('.estrella');
+
+    estrellas.forEach((estrella, index) => {
+
+        estrella.textContent =
+            index < cantidad ? '⭐' : '☆';
+
+    });
+
+}
+
+function enviarCalificacion() {
+
+    if (estrellasSeleccionadas === 0) {
+
+        alert(
+            'Selecciona una calificación'
+        );
+
+        return;
+
+    }
+
+    calificar(estrellasSeleccionadas);
+
+}
+async function reservarTrato() {
+
+    try {
+
+        const respuesta = await fetch(
+            "/stripe/create-checkout-session",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                     "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    codigo
+                })
+            }
+        );
+
+        const datos = await respuesta.json();
+
+        if (!respuesta.ok) {
+            throw new Error(datos.error);
+        }
+
+        const resultado = await stripe.redirectToCheckout({
+
+            sessionId: datos.sessionId
+
+        });
+
+        if (resultado.error) {
+
+            alert(resultado.error.message);
+
+        }
+
+    } catch (error) {
+
+        console.log(error);
+
+        alert(error.message);
+
+    }
+
+}
+async function calificar(estrellas) {
+
+    const respuesta =
+        await fetch(
+            `/calificar/${codigo}`,
+            {
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body:JSON.stringify({
+                    estrellas
+                })
+            }
+        );
+
+    const datos =
+        await respuesta.json();
+
+    alert(
+        datos.mensaje ||
+        datos.error
+    );
+
+    location.reload();
+
+}
+async function cargarTrato() {
+
+    const respuesta =
+        await fetch(
+            `/api/trato/${codigo}`,
+            {
+                headers:{
+                    'Authorization': 'Bearer ' + token
+                }
+            }
+        );
+
+    const trato =
+        await respuesta.json();
+
+   let claseEstado = 'estado-creado';
+
+if (trato.estado === 'reservado') {
+    claseEstado = 'estado-reservado';
+}
+
+if (trato.estado === 'completado') {
+    claseEstado = 'estado-completado';
+}
+document.getElementById(
+    'contenido'
+).innerHTML = `
+
+    <div class="card">
+
+        <h2 class="producto">
+            ${trato.producto}
+        </h2>
+
+        <div class="monto">
+            $${Number(
+                trato.monto_protegido
+            ).toLocaleString('es-MX')}
+        </div>
+
+        <br>
+
+        <div class="info">
+            <b>Vendedor:</b>
+            ${trato.vendedor_nombre || 'No disponible'}
+        </div>
+
+        <div class="info">
+            ⭐ ${trato.vendedor_rating || 0}
+            (${trato.vendedor_total_calificaciones || 0} calificaciones)
+        </div>
+
+      ${trato.esVendedor && trato.comprador_nombre ? `
+
+<div class="info">
+    <b>Comprador:</b>
+    ${trato.comprador_nombre}
+</div>
+
+<div class="info">
+    ⭐ ${trato.comprador_rating || 0}
+    (${trato.comprador_total_calificaciones || 0} calificaciones)
+</div>
+
+` : ''}
+
+        <div class="info">
+            <b>Descripción:</b>
+            ${trato.descripcion}
+        </div>
+
+        <div class="info">
+    <b>Estado:</b>
+    <span class="estado ${claseEstado}">
+        ${trato.estado}
+    </span>
+</div>
+
+        <div class="info">
+            <b>Código:</b>
+            <span class="codigo">
+                ${trato.codigo}
+            </span>
+        </div>
+
+        <hr style="margin:20px 0">
+
+        ${trato.esVendedor ? `
+
+        <div class="info">
+            <b>Comisión Trato Justo:</b>
+            $${Number(
+                trato.comision || 0
+            ).toLocaleString('es-MX')}
+        </div>
+
+        <div class="info">
+            <b>Monto neto vendedor:</b>
+            $${Number(
+                trato.monto_vendedor || 0
+            ).toLocaleString('es-MX')}
+        </div>
+
+        ` : ''}
+
+        ${trato.estado === 'creado' ? `
+
+<div class="card">
+
+    <h2>📦 Trato disponible</h2>
+
+    <br>
+
+    <p>
+        Este trato aún no ha sido reservado.
+    </p>
+
+    <br>
+
+    ${trato.esVendedor ? `
+
+<button
+    class="btn btn-primary"
+    onclick="window.location.href='/dashboard.html'">
+
+     Volver al inicio
+
+</button>
+
+` : `
+
+<button
+    class="btn btn-primary"
+    onclick="reservarTrato()">
+
+    Reservar trato
+
+</button>
+
+`}
+
+</div>
+
+` : ''}
+${trato.estado === 'reservado' ? `
+
+<div class="card">
+
+    <h2>🤝 Trato reservado</h2>
+
+    <br>
+
+    ${trato.esVendedor ? `
+
+        <p>
+            Espera a que el comprador reciba el producto y te proporcione el código de liberación.
+        </p>
+
+        <input
+            id="codigoLiberacion"
+            class="input"
+            type="text"
+            placeholder="Ingresa el código de liberación">
+
+        <button
+            class="btn btn-success"
+            onclick="liberarPago()">
+
+            Liberar pago
+
+        </button>
+
+    ` : `
+
+        <div class="seguridad">
+
+            <b>⚠️ IMPORTANTE</b>
+
+            <br><br>
+
+            No compartas este código hasta que tengas el producto en tus manos y estés conforme con la compra.
+
+        </div>
+
+        <div class="codigo-box">
+
+            <p>Tu código de liberación es:</p>
+
+            <h2>${trato.codigo_liberacion}</h2>
+
+        </div>
+
+    `}
+
+</div>
+
+` : ''}
+${trato.estado === 'completado' ? `
+
+<div class="card">
+
+    <h2>🎉 Trato completado</h2>
+
+    <br>
+
+    <p>
+        El pago fue liberado exitosamente al vendedor.
+    </p>
+
+    <br>
+
+    ${trato.yaCalifico ? `
+
+        <h3>✅ Ya calificaste este trato</h3>
+
+        <br>
+
+        <button
+            class="btn"
+            onclick="window.location.href='/dashboard.html'">
+
+            🏠 Volver al inicio
+
+        </button>
+
+    ` : `
+
+        <h3>⭐ Califica tu experiencia</h3>
+
+        <br>
+
+        <div style="text-align:center;">
+
+            <span class="estrella" onclick="seleccionarEstrella(1)">☆</span>
+            <span class="estrella" onclick="seleccionarEstrella(2)">☆</span>
+            <span class="estrella" onclick="seleccionarEstrella(3)">☆</span>
+            <span class="estrella" onclick="seleccionarEstrella(4)">☆</span>
+            <span class="estrella" onclick="seleccionarEstrella(5)">☆</span>
+
+        </div>
+
+        <br>
+
+        <button
+            class="btn btn-success"
+            onclick="enviarCalificacion()">
+
+            Enviar calificación
+
+        </button>
+
+    `}
+
+</div>
+
+` : ''}
+    </div>
+
+`;
+
+}
+async function liberarPago() {
+
+    const codigo_liberacion =
+        document.getElementById("codigoLiberacion").value.trim();
+
+    if (!codigo_liberacion) {
+
+        alert("Ingresa el código de liberación");
+
+        return;
+
+    }
+
+    try {
+
+        const respuesta = await fetch(
+
+            `/confirmar-entrega/${codigo}`,
+
+            {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json",
+
+                     "Authorization": "Bearer " + token
+
+                },
+
+                body: JSON.stringify({
+
+                    codigo_liberacion
+
+                })
+
+            }
+
+        );
+
+        const datos = await respuesta.json();
+
+        alert(datos.mensaje || datos.error);
+
+        if (respuesta.ok) {
+
+            cargarTrato();
+
+        }
+
+    } catch (error) {
+
+        console.log(error);
+
+        alert("Error al liberar el pago");
+
+    }
+
+}
+cargarTrato();
+
+</script>
+
+</body>
+</html>

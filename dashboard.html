@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Trato Justo</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#F5F7FA;
+    min-height:100vh;
+}
+
+.header{
+    background:linear-gradient(135deg,#009EE3,#003087);
+    color:white;
+    padding:40px 20px;
+    text-align:center;
+    position:relative;
+}
+
+.config-btn{
+    position:absolute;
+    top:20px;
+    right:20px;
+    font-size:28px;
+    cursor:pointer;
+}
+
+.bienvenida{
+    margin-top:15px;
+    font-size:18px;
+}
+
+.nombre-usuario{
+    font-size:24px;
+    font-weight:bold;
+    margin-top:5px;
+}
+
+.logo{
+    font-size:32px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+
+.subtitulo{
+    font-size:16px;
+    opacity:.9;
+}
+
+.container{
+    max-width:500px;
+    margin:30px auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    border-radius:16px;
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.card h2{
+    color:#003087;
+    margin-bottom:10px;
+}
+
+.card p{
+    color:#666;
+    margin-bottom:20px;
+}
+
+.btn{
+    width:100%;
+    border:none;
+    border-radius:12px;
+    padding:15px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+}
+
+.btn-primary{
+    background:#009EE3;
+    color:white;
+}
+
+.btn-secondary{
+    background:#003087;
+    color:white;
+}
+
+.btn-success{
+    background:#00A650;
+    color:white;
+}
+
+.btn-danger{
+    background:#d9534f;
+    color:white;
+}
+
+.footer{
+    text-align:center;
+    color:#888;
+    margin-top:20px;
+    font-size:14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+ <div style="
+position:absolute;
+top:20px;
+right:30px;
+display:flex;
+align-items:center;
+gap:22px;
+">
+
+<div
+id="btnNotificaciones"
+style="position:relative;cursor:pointer;"
+onclick="verNotificaciones()">
+
+<span
+class="material-icons"
+style="font-size:32px;color:white;">
+
+notifications
+
+</span>
+<span
+id="contadorNotificaciones"
+style="
+position:absolute;
+top:-6px;
+right:-6px;
+background:red;
+color:white;
+border-radius:50%;
+min-width:20px;
+height:20px;
+display:none;
+justify-content:center;
+align-items:center;
+font-size:12px;
+font-weight:bold;
+">
+
+0
+
+</span>
+
+</div>
+
+<div
+class="config-btn"
+style="position:static;"
+onclick="location.href='configuracion.html'">
+
+<span
+class="material-icons"
+style="font-size:32px;color:white;">
+
+settings
+
+</span>
+
+</div>
+
+</div>
+
+    <div class="logo">
+        🛡️ Trato Justo
+    </div>
+
+    <div class="subtitulo">
+        Protege tu dinero en compras y ventas entre particulares
+    </div>
+
+    <div class="bienvenida">
+        Bienvenido de nuevo 👋
+    </div>
+
+    <div
+    id="nombreUsuario"
+    class="nombre-usuario">
+    Cargando...
+</div>
+
+</div>
+<div style="max-width:1100px;margin:25px auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;padding:0 20px;">
+
+    <div class="card" style="text-align:center;">
+        <h2 id="tCreados">0</h2>
+        <p>📦 Tratos creados</p>
+    </div>
+
+    <div class="card" style="text-align:center;">
+        <h2 id="tReservados">0</h2>
+        <p>🤝 Tratos reservados</p>
+    </div>
+
+    <div class="card" style="text-align:center;">
+        <h2 id="tCompletados">0</h2>
+        <p>✅ Tratos completados</p>
+    </div>
+
+    <div class="card" style="text-align:center;">
+        <h2 id="tProtegido">$0.00</h2>
+        <p>💵 Dinero protegido</p>
+    </div>
+
+    <div class="card" style="text-align:center;">
+        <h2 id="tRecibido">$0.00</h2>
+        <p>💰 Dinero recibido</p>
+    </div>
+
+</div>
+<div class="container">
+
+    <div class="card">
+
+        <h2>Crear trato</h2>
+
+        <p>
+            Genera un nuevo trato protegido para tu comprador.
+        </p>
+
+        <button
+            class="btn btn-primary"
+            onclick="location.href='crear-trato.html'">
+            Crear trato
+        </button>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Mis ventas</h2>
+
+        <p>
+            Consulta todos los tratos donde eres vendedor.
+        </p>
+
+        <button
+            class="btn btn-secondary"
+            onclick="location.href='mis-ventas.html'">
+            Ver mis ventas
+        </button>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Mis compras</h2>
+
+        <p>
+            Consulta los tratos que has reservado como comprador.
+        </p>
+
+        <button
+            class="btn btn-success"
+            onclick="location.href='mis-compras.html'">
+            Ver mis compras
+        </button>
+
+    </div>
+
+    <div class="footer">
+        Trato Justo © 2026
+    </div>
+
+</div>
+<div id="panelNotificaciones"
+style="
+display:none;
+position:fixed;
+top:80px;
+right:20px;
+width:340px;
+max-height:450px;
+overflow-y:auto;
+background:white;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,.25);
+z-index:999;
+">
+
+<div style="
+padding:15px;
+font-size:20px;
+font-weight:bold;
+border-bottom:1px solid #eee;">
+
+Notificaciones
+
+</div>
+
+<div id="listaNotificaciones"></div>
+
+</div>
+
+<script>
+
+const token = localStorage.getItem('token');
+
+if (!token) {
+
+    window.location.href = '/login.html';
+
+}
+
+function cerrarSesion() {
+
+    localStorage.removeItem('token');
+
+    window.location.href = '/login.html';
+
+}
+async function cargarUsuario() {
+
+    const respuesta = await fetch('/perfil', {
+       headers: {
+    Authorization: "Bearer " + token
+}
+    });
+
+    if (!respuesta.ok) {
+
+        localStorage.removeItem('token');
+
+        window.location.href = '/login.html';
+
+        return;
+
+    }
+
+    const usuario = await respuesta.json();
+
+    document.getElementById('nombreUsuario').innerText = usuario.nombre;
+
+    document.getElementById("tCreados").innerText =
+usuario.estadisticas.creados;
+
+document.getElementById("tReservados").innerText =
+usuario.estadisticas.reservados;
+
+document.getElementById("tCompletados").innerText =
+usuario.estadisticas.completados;
+
+document.getElementById("tProtegido").innerText =
+"$" + Number(usuario.estadisticas.dineroProtegido).toFixed(2);
+
+document.getElementById("tRecibido").innerText =
+"$" + Number(usuario.estadisticas.dineroRecibido).toFixed(2);
+
+}
+async function cargarNotificaciones(){
+
+    const respuesta = await fetch("/notificaciones",{
+
+        headers:{
+            Authorization:"Bearer " + token
+        }
+
+    });
+
+    if(!respuesta.ok){
+
+        return;
+
+    }
+
+    const notificaciones = await respuesta.json();
+
+    const contador =
+        document.getElementById("contadorNotificaciones");
+
+    
+
+        const noLeidas = notificaciones.filter(n => n.leida == 0);
+
+if(noLeidas.length > 0){
+
+    contador.style.display = "block";
+
+    contador.innerText = noLeidas.length;
+
+}else{
+
+    contador.style.display = "none";
+
+}
+
+    window.listaNotificaciones = notificaciones;
+
+}
+
+cargarUsuario();
+
+cargarNotificaciones();
+function verNotificaciones(){
+
+    const panel =
+        document.getElementById("panelNotificaciones");
+
+    if(panel.style.display==="block"){
+
+        panel.style.display="none";
+
+        return;
+
+    }
+
+    panel.style.display="block";
+    fetch("/notificaciones/leidas",{
+
+    method:"PATCH",
+
+    headers:{
+        Authorization:"Bearer " + token
+    }
+
+});
+
+document.getElementById("contadorNotificaciones").style.display="none";
+window.listaNotificaciones.forEach(n => {
+
+    n.leida = 1;
+
+});
+let html = "";
+
+window.listaNotificaciones.forEach(n => {
+    console.log(n.fecha);
+   html += `
+
+<div style="
+padding:15px;
+border-bottom:1px solid #eee;
+background:${n.leida==0 ? '#E3F2FD' : 'white'};
+">
+
+<div style="
+font-weight:bold;
+color:#1976d2;
+margin-bottom:6px;">
+
+${n.titulo}
+
+</div>
+
+<div style="
+color:#444;
+margin-bottom:10px;">
+
+${n.mensaje}
+
+</div>
+
+<div style="
+font-size:12px;
+color:#888;">
+
+${n.fecha}
+
+</div>
+
+</div>
+
+`;
+
+    });
+
+    document.getElementById("listaNotificaciones").innerHTML=html;
+
+}
+</script>
+
+</body>
+</html>

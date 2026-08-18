@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Configuración</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#F5F7FA;
+}
+
+.header{
+    background:linear-gradient(135deg,#009EE3,#003087);
+    color:white;
+    padding:25px;
+    text-align:center;
+}
+
+.container{
+    max-width:500px;
+    margin:30px auto;
+    padding:20px;
+}
+
+.opcion{
+    background:white;
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:15px;
+    cursor:pointer;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+    font-size:18px;
+    font-weight:bold;
+}
+
+.opcion:hover{
+    transform:translateY(-2px);
+}
+.estado-conectada{
+    color:#22C55E;
+    font-weight:bold;
+}
+
+.estado-no-conectada{
+    color:#EF4444;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>⚙️ Configuración</h1>
+</div>
+
+<div class="container">
+
+    <div
+        class="opcion"
+        onclick="location.href='perfil.html'">
+        👤 Datos Personales
+    </div>
+
+<div
+    class="opcion"
+    id="btnStripe">
+
+    💳 Cuenta para recibir pagos
+
+    <br><br>
+
+    Estado:
+<br>
+
+<span
+    id="estadoStripe"
+    class="estado-no-conectada">
+
+    ● No configurada
+
+</span>
+
+</div>
+<div
+            class="opcion"
+            onclick="location.href='dashboard.html'">
+
+            Volver al Inicio
+
+</div>
+    <div
+        class="opcion"
+        onclick="cerrarSesion()">
+        🚪 Cerrar sesión
+    </div>
+
+</div>
+
+<script>
+
+function cerrarSesion(){
+
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+
+}
+
+const token = localStorage.getItem("token");
+
+const btnStripe = document.getElementById("btnStripe");
+
+const estadoStripe = document.getElementById("estadoStripe");
+async function cargarEstadoStripe(){
+
+    try{
+
+        const respuesta = await fetch("/stripe/status",{
+
+            headers:{
+                Authorization: "Bearer " + token
+            }
+
+        });
+
+        const datos = await respuesta.json();
+
+        if(datos.configurada){
+
+            estadoStripe.textContent="● Lista para recibir pagos";
+            estadoStripe.className="estado-conectada";
+
+            btnStripe.style.pointerEvents="none";
+            btnStripe.style.opacity="0.7";
+            btnStripe.style.cursor="default";
+
+        }else if(datos.tieneCuenta){
+
+            estadoStripe.textContent="● Configuración pendiente";
+            estadoStripe.className="estado-no-conectada";
+
+        }else{
+
+            estadoStripe.textContent="● No configurada";
+            estadoStripe.className="estado-no-conectada";
+
+        }
+
+    }catch(error){
+
+        console.log(error);
+
+    }
+
+}
+
+btnStripe.addEventListener("click", async () => {
+    if(estadoStripe.textContent.includes("Lista para recibir pagos")){
+
+    alert("Tu cuenta ya está configurada correctamente.");
+
+    return;
+
+}
+
+    btnStripe.style.pointerEvents = "none";
+
+    estadoStripe.textContent = "● Abriendo Stripe...";
+
+    try{
+
+        const respuesta = await fetch("/stripe/onboarding",{
+
+            method:"POST",
+
+            headers:{
+                Authorization: "Bearer " + token
+            }
+
+        });
+
+        const datos = await respuesta.json();
+
+        if(!respuesta.ok){
+
+            throw new Error(datos.error);
+
+        }
+
+        window.location.href = datos.url;
+
+    }catch(error){
+
+        console.log(error);
+
+        estadoStripe.textContent = "● Error";
+
+        estadoStripe.className = "estado-no-conectada";
+
+        alert(error.message);
+
+        btnStripe.style.pointerEvents = "auto";
+
+    }
+
+});
+cargarEstadoStripe();
+</script>
+
+</body>
+</html>

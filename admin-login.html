@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Trato Justo</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        body{
+
+            background:#f4f6f9;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+
+        }
+
+        .login{
+
+            width:400px;
+            background:white;
+            padding:40px;
+            border-radius:12px;
+            box-shadow:0px 0px 15px rgba(0,0,0,.15);
+
+        }
+
+        h1{
+
+            text-align:center;
+            color:#1e88e5;
+            margin-bottom:10px;
+
+        }
+
+        h3{
+
+            text-align:center;
+            color:#666;
+            margin-bottom:30px;
+            font-weight:normal;
+
+        }
+
+        input{
+
+            width:100%;
+            padding:12px;
+            margin-bottom:15px;
+            border:1px solid #ccc;
+            border-radius:8px;
+            font-size:16px;
+
+        }
+
+        button{
+
+            width:100%;
+            padding:12px;
+            background:#1e88e5;
+            color:white;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:16px;
+
+        }
+
+        button:hover{
+
+            background:#1565c0;
+
+        }
+
+        #mensaje{
+
+            margin-top:20px;
+            text-align:center;
+            color:red;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="login">
+
+<h1>TRATO JUSTO</h1>
+
+<h3>Panel de Administración</h3>
+
+<input
+type="email"
+id="correo"
+placeholder="Correo del administrador">
+
+<input
+type="password"
+id="password"
+placeholder="Contraseña">
+
+<button onclick="login()">
+
+Iniciar sesión
+
+</button>
+
+<p id="mensaje"></p>
+
+</div>
+
+<script>
+
+async function login(){
+
+    const email=document.getElementById("correo").value;
+
+    const password=document.getElementById("password").value;
+
+    const respuesta=await fetch("/admin/login",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            email,
+            password
+
+        })
+
+    });
+
+    const datos=await respuesta.json();
+
+    if(respuesta.ok){
+
+        localStorage.setItem("tokenAdmin",datos.token);
+
+        window.location.href="admin-dashboard.html";
+
+    }
+
+    else{
+
+       document.getElementById("mensaje").innerText = datos.error;
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,58 +1,218 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Iniciar Sesión - Trato Justo</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#F5F7FA;
+}
+
+.login-container{
+    width:100%;
+    max-width:400px;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    border-radius:20px;
+    padding:35px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.logo{
+    text-align:center;
+    font-size:32px;
+    font-weight:bold;
+    color:#003087;
+    margin-bottom:10px;
+}
+
+.subtitulo{
+    text-align:center;
+    color:#666;
+    margin-bottom:30px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:bold;
+    color:#333;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    border:1px solid #dcdcdc;
+    border-radius:12px;
+    font-size:16px;
+    margin-bottom:20px;
+}
+
+input:focus{
+    outline:none;
+    border-color:#009EE3;
+}
+
+.btn{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:#009EE3;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+}
+
+.registro{
+    text-align:center;
+    margin-top:20px;
+}
+
+.registro a{
+    color:#009EE3;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.seguridad{
+    text-align:center;
+    margin-top:25px;
+    color:#666;
+    font-size:14px;
+}
+
+</style>
 </head>
+
 <body>
 
-    <h1>Iniciar Sesión</h1>
+<div class="login-container">
 
-    <input type="email" id="email" placeholder="Correo">
-    <br><br>
+    <div class="card">
 
-    <input type="password" id="password" placeholder="Contraseña">
-    <br><br>
+        <div class="logo">
+            🛡️ Trato Justo
+        </div>
 
-    <button onclick="login()">Entrar</button>
+        <div class="subtitulo">
+            Inicia sesión para acceder a tus tratos protegidos
+        </div>
 
-    <script>
+        <label>Correo electrónico</label>
 
-        async function login() {
+        <input
+            type="email"
+            id="email"
+            placeholder="correo@ejemplo.com">
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        <label>Contraseña</label>
 
-            const respuesta = await fetch('/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email,
-                    password
-                })
-            });
+        <input
+            type="password"
+            id="password"
+            placeholder="Ingresa tu contraseña">
 
-            const datos = await respuesta.json();
+        <button
+            class="btn"
+            onclick="login()">
+            Iniciar sesión
+        </button>
 
-            if (respuesta.ok) {
+        <div style="text-align:center; margin-top:15px;">
 
-                localStorage.setItem(
-                    'token',
-                    datos.token
-                );
+<a href="recuperar-password.html">
 
-                alert('Login correcto');
+¿Olvidaste tu contraseña?
 
-            } else {
+</a>
 
-                alert(datos.error);
+</div>
 
-            }
+        <div class="registro">
+            ¿No tienes cuenta?
+            <a href="registro.html">
+                Regístrate aquí
+            </a>
+        </div>
 
-        }
+        <div class="seguridad">
+            🔒 Tu información está protegida
+        </div>
 
-    </script>
+    </div>
+
+</div>
+
+<script>
+
+async function login() {
+
+    console.log("Entró a login()");
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    const respuesta = await fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email,
+            password
+        })
+    });
+
+    const datos = await respuesta.json();
+
+    console.log(respuesta.status);
+console.log(datos);
+
+    if (respuesta.ok) {
+
+        localStorage.setItem(
+            'token',
+            datos.token
+        );
+
+        alert('Bienvenido a Trato Justo');
+
+        window.location.href = '/dashboard.html';
+
+    } else {
+
+        alert(datos.error);
+
+    }
+
+}
+
+</script>
 
 </body>
 </html>

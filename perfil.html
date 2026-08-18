@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Datos Personales</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#F5F7FA;
+}
+
+.header{
+    background:linear-gradient(135deg,#009EE3,#003087);
+    color:white;
+    padding:30px;
+    text-align:center;
+}
+
+.container{
+    max-width:520px;
+    margin:30px auto;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    border-radius:16px;
+    padding:25px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.campo{
+    margin-bottom:20px;
+}
+
+.label{
+    font-weight:bold;
+    color:#003087;
+    margin-bottom:6px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border:1px solid #CCC;
+    border-radius:10px;
+    font-size:15px;
+    transition:.2s;
+}
+
+input:focus{
+    outline:none;
+    border-color:#009EE3;
+}
+
+input:disabled{
+    background:#F1F1F1;
+    color:#666;
+    cursor:not-allowed;
+}
+
+.botones{
+
+    display:flex;
+    gap:10px;
+    margin-top:25px;
+
+}
+
+.btn{
+
+    flex:1;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:bold;
+    transition:.2s;
+
+}
+
+.btnPrincipal{
+
+    background:#009EE3;
+    color:white;
+
+}
+
+.btnPrincipal:hover{
+
+    background:#0085c0;
+
+}
+
+.btnSecundario{
+
+    background:#E5E5E5;
+    color:#333;
+
+}
+
+.btnSecundario:hover{
+
+    background:#D7D7D7;
+
+}
+
+.btn:disabled{
+
+    background:#CFCFCF;
+    color:#777;
+    cursor:not-allowed;
+
+}
+
+#btnCancelar{
+
+    display:none;
+
+}
+
+#mensaje{
+
+    display:none;
+    margin-top:20px;
+    padding:12px;
+    border-radius:10px;
+    background:#E8F8EC;
+    color:#157347;
+    text-align:center;
+    font-weight:bold;
+
+}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Datos Personales</h1>
+</div>
+
+<div class="container">
+
+    <div class="card">
+
+        <div class="campo">
+            <div class="label">Nombre</div>
+            <input
+                type="text"
+                id="nombre"
+                disabled>
+        </div>
+
+        <div class="campo">
+            <div class="label">Correo</div>
+            <input
+                type="email"
+                id="email"
+                disabled>
+        </div>
+
+        <div class="campo">
+            <div class="label">Teléfono</div>
+            <input
+                type="text"
+                id="telefono"
+                disabled>
+        </div>
+
+        <div class="campo">
+            <div class="label">Fecha de nacimiento</div>
+            <input
+                type="date"
+                id="fechaNacimiento"
+                disabled>
+        </div>
+
+        <div id="mensaje"></div>
+
+        <div class="botones">
+
+            <button
+                class="btn btnPrincipal"
+                id="btnEditar">
+
+                Editar datos
+
+            </button>
+            
+            <button
+                class="btn btnSecundario"
+                id="btnCancelar">
+
+                Cancelar
+
+            </button>
+
+        </div>
+
+        <button
+            class="btn btnPrincipal"
+            id="btnGuardar"
+            disabled>
+
+            Guardar cambios
+
+        </button>
+
+        <button
+            class="btn btnSecundario"
+            onclick="location.href='dashboard.html'">
+
+            Volver al Inicio
+
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+    const token = localStorage.getItem('token');
+
+if (!token) {
+
+    window.location.href = "/login.html";
+
+}
+
+let datosOriginales = {};
+
+const nombre = document.getElementById("nombre");
+const email = document.getElementById("email");
+const telefono = document.getElementById("telefono");
+const fechaNacimiento = document.getElementById("fechaNacimiento");
+
+const btnEditar = document.getElementById("btnEditar");
+const btnCancelar = document.getElementById("btnCancelar");
+const btnGuardar = document.getElementById("btnGuardar");
+
+const mensaje = document.getElementById("mensaje");
+
+async function cargarPerfil(){
+
+    const respuesta = await fetch("/perfil",{
+
+        headers:{
+            Authorization: "Bearer " + token
+        }
+
+    });
+
+    const datos = await respuesta.json();
+
+    if(!respuesta.ok){
+
+        alert(datos.error);
+        return;
+
+    }
+
+    nombre.value = datos.nombre || "";
+    email.value = datos.email || "";
+    telefono.value = datos.telefono || "";
+    fechaNacimiento.value = datos.fecha_nacimiento || "";
+
+    datosOriginales = {
+
+        nombre:nombre.value,
+        telefono:telefono.value,
+        fechaNacimiento:fechaNacimiento.value
+
+    };
+
+}
+
+cargarPerfil();
+
+function activarEdicion(){
+
+    nombre.disabled = false;
+    telefono.disabled = false;
+    fechaNacimiento.disabled = false;
+
+    btnEditar.style.display = "none";
+    btnCancelar.style.display = "block";
+
+}
+
+function cancelarEdicion(){
+
+    nombre.value = datosOriginales.nombre;
+    telefono.value = datosOriginales.telefono;
+    fechaNacimiento.value = datosOriginales.fechaNacimiento;
+
+    nombre.disabled = true;
+    telefono.disabled = true;
+    fechaNacimiento.disabled = true;
+
+    btnGuardar.disabled = true;
+
+    btnEditar.style.display = "block";
+    btnCancelar.style.display = "none";
+
+    mensaje.style.display = "none";
+
+}
+
+function revisarCambios(){
+
+    const cambio =
+
+        nombre.value !== datosOriginales.nombre ||
+
+        telefono.value !== datosOriginales.telefono ||
+
+        fechaNacimiento.value !== datosOriginales.fechaNacimiento;
+
+    btnGuardar.disabled = !cambio;
+
+}
+
+btnEditar.addEventListener("click", activarEdicion);
+
+btnCancelar.addEventListener("click", cancelarEdicion);
+
+nombre.addEventListener("input", revisarCambios);
+
+telefono.addEventListener("input", revisarCambios);
+
+fechaNacimiento.addEventListener("input", revisarCambios);
+
+btnGuardar.addEventListener("click", async ()=>{
+
+    const respuesta = await fetch("/perfil",{
+
+        method:"PUT",
+
+        headers:{
+            "Content-Type":"application/json",
+            Authorization: "Bearer " + token
+        },
+
+        body:JSON.stringify({
+
+            nombre:nombre.value,
+            telefono:telefono.value,
+            fecha_nacimiento:fechaNacimiento.value
+
+        })
+
+    });
+
+    const datos = await respuesta.json();
+
+    if(!respuesta.ok){
+
+        alert(datos.error);
+        return;
+
+    }
+
+    if(!respuesta.ok){
+
+        alert(datos.error);
+        return;
+
+    }
+
+    datosOriginales = {
+
+        nombre:nombre.value,
+        telefono:telefono.value,
+        fechaNacimiento:fechaNacimiento.value
+
+    };
+
+    nombre.disabled = true;
+    telefono.disabled = true;
+    fechaNacimiento.disabled = true;
+
+    btnGuardar.disabled = true;
+
+    btnCancelar.style.display = "none";
+    btnEditar.style.display = "block";
+
+    mensaje.innerText = datos.mensaje;
+    mensaje.style.display = "block";
+
+    setTimeout(()=>{
+
+        mensaje.style.display="none";
+
+    },3000);
+
+});
+
+</script>
+
+</body>
+</html>

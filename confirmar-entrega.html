@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirmar Entrega</title>
+</head>
+<body>
+
+<h1>Confirmar Entrega</h1>
+
+<input type="text" id="codigo" placeholder="Código TJ-XXXXXX">
+
+<button onclick="confirmar()">
+    Confirmar
+</button>
+
+<script>
+
+async function confirmar() {
+
+    const codigo = document.getElementById('codigo').value;
+
+    const respuesta = await fetch('/confirmar-entrega', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            codigo
+        })
+    });
+
+    const datos = await respuesta.json();
+
+    alert(datos.mensaje || datos.error);
+
+}
+
+</script>
+
+</body>
+</html>

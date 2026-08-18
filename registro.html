@@ -1,47 +1,305 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Registro</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Registro - Trato Justo</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#F5F7FA;
+}
+
+.registro-container{
+    width:100%;
+    max-width:420px;
+    padding:20px;
+}
+
+.card{
+    background:white;
+    border-radius:20px;
+    padding:35px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.logo{
+    text-align:center;
+    font-size:32px;
+    font-weight:bold;
+    color:#003087;
+    margin-bottom:10px;
+}
+
+.subtitulo{
+    text-align:center;
+    color:#666;
+    margin-bottom:30px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:bold;
+    color:#333;
+}
+
+input{
+    width:100%;
+    padding:14px;
+    border:1px solid #dcdcdc;
+    border-radius:12px;
+    font-size:16px;
+    margin-bottom:20px;
+}
+
+input:focus{
+    outline:none;
+    border-color:#009EE3;
+}
+
+.btn{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.btn:hover{
+    transform:translateY(-2px);
+}
+
+.btn-primary{
+    background:#009EE3;
+    color:white;
+}
+
+.btn-secondary{
+    background:#003087;
+    color:white;
+    margin-top:12px;
+}
+
+.login{
+    text-align:center;
+    margin-top:20px;
+}
+
+.login a{
+    color:#009EE3;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.seguridad{
+    text-align:center;
+    margin-top:25px;
+    color:#666;
+    font-size:14px;
+}
+
+.telefono-container{
+    display:flex;
+    margin-bottom:20px;
+}
+
+.prefijo{
+    padding:14px;
+    background:#f1f1f1;
+    border:1px solid #dcdcdc;
+    border-right:none;
+    border-radius:12px 0 0 12px;
+    min-width:70px;
+    text-align:center;
+    font-size:16px;
+}
+
+.telefono-input{
+    margin-bottom:0;
+    border-radius:0 12px 12px 0;
+}
+
+</style>
 </head>
+
 <body>
 
-    <h1>Crear Cuenta</h1>
+<div class="registro-container">
 
-    <input type="text" id="nombre" placeholder="Nombre">
-    <br><br>
+    <div class="card">
 
-    <input type="email" id="email" placeholder="Correo">
-    <br><br>
+        <div class="logo">
+            🛡️ Trato Justo
+        </div>
 
-    <input type="password" id="password" placeholder="Contraseña">
-    <br><br>
+        <div class="subtitulo">
+            Crea tu cuenta y comienza a realizar tratos protegidos
+        </div>
 
-    <button onclick="registrar()">Registrarme</button>
+        <label>Nombre completo</label>
 
-    <script>
-        async function registrar() {
+        <input
+            type="text"
+            id="nombre"
+            placeholder="Ingresa tu nombre">
 
-            const nombre = document.getElementById('nombre').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        <label>Correo electrónico</label>
 
-            const respuesta = await fetch('/registro', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    nombre,
-                    email,
-                    password
-                })
-            });
+        <input
+            type="email"
+            id="email"
+            placeholder="correo@ejemplo.com">
 
-            const datos = await respuesta.json();
+        <label>Teléfono</label>
 
-            alert(datos.mensaje || datos.error);
-        }
-    </script>
+        <div class="telefono-container">
+
+            <div class="prefijo">
+                +52
+            </div>
+
+            <input
+                type="tel"
+                id="telefono"
+                class="telefono-input"
+                placeholder="4621234567"
+                maxlength="10">
+
+        </div>
+<label>Fecha de nacimiento</label>
+
+<input
+    type="date"
+    id="fechaNacimiento">
+        <label>Contraseña</label>
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Crea una contraseña">
+
+        <label>Confirmar contraseña</label>
+
+        <input
+            type="password"
+            id="confirmPassword"
+            placeholder="Confirma tu contraseña">
+
+        <button
+            class="btn btn-primary"
+            onclick="registrar()">
+            Crear cuenta
+        </button>
+
+        <button
+            class="btn btn-secondary"
+            onclick="location.href='login.html'">
+            Ya tengo cuenta
+        </button>
+
+        <div class="seguridad">
+            🔒 Tus datos están protegidos
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+async function registrar() {
+
+    const nombre = document.getElementById('nombre').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const telefono = document.getElementById('telefono').value.trim();
+    const fechaNacimiento = document.getElementById('fechaNacimiento').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (!nombre || !email || !telefono || !fechaNacimiento || !password || !confirmPassword) {
+        alert('Completa todos los campos');
+        return;
+    }
+
+    if (telefono.length !== 10) {
+        alert('El teléfono debe tener 10 dígitos');
+        return;
+    }
+
+    const hoy = new Date();
+    const nacimiento = new Date(fechaNacimiento);
+
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+
+    if (
+        mes < 0 ||
+        (mes === 0 && hoy.getDate() < nacimiento.getDate())
+    ) {
+        edad--;
+    }
+
+    if (edad < 18) {
+        alert('Debes ser mayor de edad para utilizar Trato Justo');
+        return;
+    }
+
+    if (password !== confirmPassword) {
+        alert('Las contraseñas no coinciden');
+        return;
+    }
+
+    const respuesta = await fetch('/registro', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            nombre,
+            email,
+            telefono: '+52' + telefono,
+            fecha_nacimiento: fechaNacimiento,
+            password
+        })
+    });
+
+    const datos = await respuesta.json();
+
+    if (respuesta.ok) {
+
+    localStorage.setItem('email_verificacion', email);
+
+    alert('Te enviamos un código de verificación a tu correo');
+
+    window.location.href = '/verificar-codigo.html';
+
+} else {
+
+        alert(datos.error);
+
+    }
+
+}
+
+</script>
 
 </body>
 </html>

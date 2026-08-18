@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pago exitoso</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+
+background:linear-gradient(135deg,#eef6ff,#d9ffe9);
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+height:100vh;
+
+overflow:hidden;
+
+padding:20px;
+
+}
+
+.card{
+
+background:rgba(255,255,255,.92);
+
+backdrop-filter:blur(18px);
+
+padding:55px;
+
+border-radius:30px;
+
+box-shadow:
+0 25px 70px rgba(0,0,0,.15);
+
+border:1px solid rgba(255,255,255,.7);
+
+width:430px;
+
+max-width:95%;
+
+text-align:center;
+
+animation:subir .8s ease;
+
+}
+
+.circulo{
+
+width:120px;
+height:120px;
+
+margin:auto;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+border-radius:50%;
+
+background:linear-gradient(135deg,#21d07a,#12b85d);
+
+box-shadow:
+0 0 0 12px rgba(33,208,122,.15),
+0 15px 40px rgba(18,184,93,.35);
+
+animation:pop .7s ease;
+
+}
+.circulo svg{
+
+width:64px;
+height:64px;
+
+}
+
+.circulo path{
+
+fill:none;
+
+stroke:white;
+
+stroke-width:3.2;
+
+stroke-linecap:round;
+
+stroke-linejoin:round;
+
+stroke-dasharray:40;
+
+stroke-dashoffset:40;
+
+animation:dibujar .9s ease forwards;
+
+animation-delay:.55s;
+
+}
+
+h1{
+
+margin-top:25px;
+
+font-size:34px;
+
+color:#222;
+
+opacity:0;
+
+animation:aparecer .6s forwards;
+animation-delay:.55s;
+
+}
+
+p{
+
+margin-top:18px;
+
+color:#666;
+
+font-size:17px;
+
+line-height:28px;
+
+opacity:0;
+
+animation:aparecer .6s forwards;
+animation-delay:.95s;
+
+}
+
+.info{
+
+margin-top:18px;
+
+background:#ecfff5;
+
+border-radius:12px;
+
+padding:15px;
+
+color:#179c56;
+
+font-size:15px;
+
+opacity:0;
+
+animation:aparecer .6s forwards;
+animation-delay:1.2s;
+
+}
+
+.botones{
+
+margin-top:35px;
+
+display:flex;
+
+flex-direction:column;
+
+gap:15px;
+
+opacity:0;
+
+animation:aparecer .6s forwards;
+animation-delay:1.5s;
+
+}
+
+button{
+
+height:52px;
+
+border:none;
+
+border-radius:14px;
+
+cursor:pointer;
+
+font-size:16px;
+
+font-weight:bold;
+
+transition:.25s;
+
+}
+
+.compras{
+
+background:linear-gradient(135deg,#20d978,#14b85b);
+
+color:white;
+
+position:relative;
+
+overflow:hidden;
+
+box-shadow:0 15px 35px rgba(20,184,91,.30);
+
+}
+.compras::before{
+
+content:"";
+
+position:absolute;
+
+top:0;
+
+left:-120%;
+
+width:70%;
+
+height:100%;
+
+background:rgba(255,255,255,.35);
+
+transform:skewX(-25deg);
+
+transition:.8s;
+
+}
+.compras:hover{
+
+transform:translateY(-4px);
+
+box-shadow:0 20px 40px rgba(20,184,91,.45);
+
+}
+
+.compras:hover::before{
+
+left:150%;
+
+}
+
+.inicio{
+
+background:white;
+
+border:2px solid #d8d8d8;
+
+}
+
+.inicio:hover{
+
+background:#f5f5f5;
+
+}
+
+@keyframes pop{
+
+0%{
+
+transform:scale(.2);
+
+}
+
+70%{
+
+transform:scale(1.15);
+
+}
+
+100%{
+
+transform:scale(1);
+
+}
+
+}
+
+@keyframes aparecer{
+
+to{
+
+opacity:1;
+
+}
+
+}
+
+@keyframes subir{
+
+from{
+
+opacity:0;
+
+transform:translateY(40px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+@keyframes dibujar{
+
+to{
+
+stroke-dashoffset:0;
+
+}
+
+}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="circulo">
+
+<svg
+width="64"
+height="64"
+viewBox="0 0 24 24"
+fill="none">
+
+<path
+d="M20 6L9 17L4 12"/>
+
+</svg>
+
+</div>
+
+<h1>
+
+¡Pago exitoso!
+
+</h1>
+
+<p>
+
+Tu dinero quedó protegido por <b>Trato Justo.</b>
+
+Ahora coordina la entrega con el vendedor y, cuando recibas el producto, podrás liberar el dinero de forma segura.
+
+</p>
+
+<div class="info">
+
+🔒 Tu dinero permanecerá seguro hasta que confirmes la entrega.
+
+</div>
+
+<div class="botones">
+
+<button
+class="compras"
+onclick="location.href='mis-compras.html'">
+
+Ir a Mis Compras
+
+</button>
+
+<button
+class="inicio"
+onclick="location.href='dashboard.html'">
+
+Volver al Inicio
+
+</button>
+
+</div>
+
+</div>
+<script>
+
+function lanzarConfeti(){
+
+    confetti({
+
+        particleCount:180,
+
+        spread:90,
+
+        origin:{ y:0.6 }
+
+    });
+
+    setTimeout(()=>{
+
+        const duracion=2500;
+
+        const fin=Date.now()+duracion;
+
+        (function frame(){
+
+            confetti({
+
+                particleCount:3,
+
+                angle:60,
+
+                spread:60,
+
+                origin:{x:0},
+
+                startVelocity:30
+
+            });
+
+            confetti({
+
+                particleCount:3,
+
+                angle:120,
+
+                spread:60,
+
+                origin:{x:1},
+
+                startVelocity:30
+
+            });
+
+            if(Date.now()<fin){
+
+                requestAnimationFrame(frame);
+
+            }
+
+        })();
+
+    },250);
+
+}
+
+window.onload = () =>{
+
+    if(navigator.vibrate){
+
+        navigator.vibrate([120,50,120]);
+
+    }
+
+    setTimeout(lanzarConfeti,1400);
+
+};
+
+</script>
+</body>
+</html>

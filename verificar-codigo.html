@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verificar Código</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#f5f5f5;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.card{
+    background:white;
+    padding:30px;
+    border-radius:10px;
+    width:350px;
+    box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    margin-bottom:15px;
+    box-sizing:border-box;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    cursor:pointer;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="card">
+
+    <h2>Verificar correo</h2>
+
+    <p>Ingresa el código que recibiste por correo.</p>
+
+    <input
+        type="text"
+        id="codigo"
+        placeholder="Código de 6 dígitos">
+
+    <button onclick="verificarCodigo()">
+        Verificar
+    </button>
+
+</div>
+
+<script>
+
+async function verificarCodigo() {
+
+    const codigo = document.getElementById('codigo').value.trim();
+
+    const email = localStorage.getItem('email_verificacion');
+
+    if (!codigo) {
+
+        alert('Ingresa el código');
+
+        return;
+
+    }
+
+    const respuesta = await fetch('/verificar-codigo', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            email,
+            codigo
+        })
+    });
+
+    const datos = await respuesta.json();
+
+    if (respuesta.ok) {
+
+        alert('Cuenta verificada correctamente');
+
+        localStorage.removeItem('email_verificacion');
+
+        window.location.href = '/login.html';
+
+    } else {
+
+        alert(datos.error);
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

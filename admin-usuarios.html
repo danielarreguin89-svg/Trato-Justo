@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usuarios | Trato Justo</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+}
+
+header{
+    height:70px;
+    background:#1976d2;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 30px;
+}
+
+header h1{
+    font-size:24px;
+}
+
+.container{
+    display:flex;
+    min-height:calc(100vh - 70px);
+}
+
+aside{
+    width:230px;
+    background:#263238;
+}
+
+aside h2{
+    color:white;
+    text-align:center;
+    padding:25px 0;
+    border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+aside a{
+    display:block;
+    color:white;
+    text-decoration:none;
+    padding:18px 25px;
+}
+
+aside a:hover{
+    background:#1976d2;
+}
+
+main{
+    flex:1;
+    padding:35px;
+}
+
+.busqueda{
+    display:flex;
+    gap:10px;
+    margin-bottom:25px;
+}
+
+.busqueda input{
+    flex:1;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:6px;
+}
+
+.busqueda button{
+    padding:12px 20px;
+    border:none;
+    background:#1976d2;
+    color:white;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
+
+th{
+    background:#1976d2;
+    color:white;
+    padding:14px;
+}
+
+td{
+    padding:14px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
+}
+
+.estadoActivo{
+    color:green;
+    font-weight:bold;
+}
+
+.estadoSuspendido{
+    color:red;
+    font-weight:bold;
+}
+
+button{
+    padding:7px 12px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.suspender{
+    background:#d32f2f;
+    color:white;
+}
+
+.reactivar{
+    background:#2e7d32;
+    color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>TRATO JUSTO</h1>
+
+<div id="adminNombre"></div>
+
+</header>
+
+<div class="container">
+
+<aside>
+
+<h2>Panel</h2>
+
+<a href="admin-dashboard.html">📊 Dashboard</a>
+<a href="admin-usuarios.html">👥 Usuarios</a>
+<a href="admin-lista-tratos.html">📦 Tratos</a>
+<a href="#">💰 Finanzas</a>
+<a href="#">⚙ Configuración</a>
+<a href="#" onclick="cerrarSesion()">🚪 Cerrar sesión</a>
+
+</aside>
+
+<main>
+
+<h2>Usuarios registrados</h2>
+
+<div class="busqueda">
+
+<input
+id="buscar"
+type="text"
+placeholder="Buscar por nombre, correo o teléfono">
+
+<button onclick="cargarUsuarios()">
+Buscar
+</button>
+
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>ID</th>
+<th>Nombre</th>
+<th>Email</th>
+<th>Teléfono</th>
+<th>Estado</th>
+<th>Acciones</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tablaUsuarios">
+
+</tbody>
+
+</table>
+
+</main>
+
+</div>
+<script>
+
+const token = localStorage.getItem("tokenAdmin");
+
+if(!token){
+    window.location.href="admin-login.html";
+}
+
+const datos = JSON.parse(atob(token.split(".")[1]));
+document.getElementById("adminNombre").innerText = datos.email;
+
+cargarUsuarios();
+
+async function cargarUsuarios(){
+
+    const texto = document.getElementById("buscar").value;
+
+    try{
+
+        const respuesta = await fetch("/admin/usuarios?buscar=" + encodeURIComponent(texto),{
+
+            headers:{
+                Authorization:"Bearer " + token
+            }
+
+        });
+
+        if(!respuesta.ok){
+
+            alert("Error al cargar usuarios.");
+            return;
+
+        }
+
+        const datos = await respuesta.json();
+
+        const tabla = document.getElementById("tablaUsuarios");
+
+        tabla.innerHTML = "";
+
+        datos.usuarios.forEach(usuario=>{
+
+            tabla.innerHTML += `
+            <tr>
+                <td>${usuario.id}</td>
+                <td>${usuario.nombre}</td>
+                <td>${usuario.email}</td>
+                <td>${usuario.telefono ?? ""}</td>
+
+                <td class="${usuario.estado=="activo"?"estadoActivo":"estadoSuspendido"}">
+                    ${usuario.estado=="activo"?"🟢 Activo":"🔴 Suspendido"}
+                </td>
+
+                <td>
+                    
+
+                    <button
+                        class="${usuario.estado=="activo"?"suspender":"reactivar"}"
+                        onclick="cambiarEstado(${usuario.id},'${usuario.estado}')">
+
+                        ${usuario.estado=="activo"?"Suspender":"Reactivar"}
+
+                    </button>
+
+                </td>
+
+            </tr>
+            `;
+
+        });
+
+    }catch(error){
+
+        console.error(error);
+        alert("Error de conexión.");
+
+    }
+
+}
+
+function verUsuario(id){
+
+    window.location.href = "admin-usuario.html?id=" + id;
+
+}
+
+async function cambiarEstado(id,estadoActual){
+
+    const nuevoEstado =
+        estadoActual=="activo"
+        ? "suspendido"
+        : "activo";
+
+    const respuesta = await fetch("/admin/usuario/"+id+"/estado",{
+
+        method:"PATCH",
+
+        headers:{
+            "Content-Type":"application/json",
+            Authorization:"Bearer " + token
+        },
+
+        body:JSON.stringify({
+            estado:nuevoEstado
+        })
+
+    });
+
+    const datos = await respuesta.json();
+
+    alert(datos.mensaje || datos.error);
+
+    cargarUsuarios();
+
+}
+
+function cerrarSesion(){
+
+    localStorage.removeItem("tokenAdmin");
+
+    window.location.href="admin-login.html";
+
+}
+
+</script>
+
+</body>
+</html>
