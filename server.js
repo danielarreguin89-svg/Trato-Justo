@@ -1720,7 +1720,7 @@ app.post("/recuperar-password", (req, res) => {
                                 </p>
 
                                 <p>
-                                    <a href="http://localhost:3000/restablecer-password.html?token=${token}">
+                                    <a href="https://trato-justo.onrender.com/restablecer-password.html?token=${token}">
                                         Restablecer contraseña
                                     </a>
                                 </p>
