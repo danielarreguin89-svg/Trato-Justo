@@ -1818,6 +1818,8 @@ app.post("/restablecer-password", (req, res) => {
 
                 const passwordHash =
                     await bcrypt.hash(password,10);
+                    console.log("NUEVO PASSWORD:", password);
+console.log("NUEVO HASH:", passwordHash);
 
                 db.run(
 
