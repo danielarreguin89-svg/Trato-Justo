@@ -1599,11 +1599,7 @@ app.post('/login', (req, res) => {
         password,
         usuario.password
       );
-      console.log("LOGIN EMAIL:", email);
-console.log("PASSWORD INGRESADA:", password);
-console.log("HASH GUARDADO:", usuario.password);
-console.log("COINCIDE:", coincide);
-
+      
       if (!coincide) {
         return res.status(400).json({
           error: 'Contraseña incorrecta'
@@ -1818,9 +1814,7 @@ app.post("/restablecer-password", (req, res) => {
 
                 const passwordHash =
                     await bcrypt.hash(password,10);
-                    console.log("NUEVO PASSWORD:", password);
-console.log("NUEVO HASH:", passwordHash);
-
+                   
                 db.run(
 
                     `UPDATE usuarios
@@ -1833,8 +1827,7 @@ console.log("NUEVO HASH:", passwordHash);
                     ],
 
                     function(err){
-console.log("EMAIL ACTUALIZADO:", registro.email);
-console.log("FILAS ACTUALIZADAS:", this.changes);
+                        
                         if(err){
 
                             console.error(err);
