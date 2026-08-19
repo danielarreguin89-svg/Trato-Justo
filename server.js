@@ -1599,6 +1599,10 @@ app.post('/login', (req, res) => {
         password,
         usuario.password
       );
+      console.log("LOGIN EMAIL:", email);
+console.log("PASSWORD INGRESADA:", password);
+console.log("HASH GUARDADO:", usuario.password);
+console.log("COINCIDE:", coincide);
 
       if (!coincide) {
         return res.status(400).json({
