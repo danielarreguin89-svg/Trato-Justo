@@ -2300,9 +2300,9 @@ app.post('/stripe/onboarding', verificarToken, async (req, res) => {
 
                     account: stripeAccountId,
 
-                    refresh_url: 'http://localhost:3000/configuracion.html',
+                    refresh_url: 'https://trato-justo.onrender.com/configuracion.html',
 
-                    return_url: 'http://localhost:3000/configuracion.html',
+return_url: 'https://trato-justo.onrender.com/configuracion.html',
 
                     type: 'account_onboarding'
 
@@ -2416,7 +2416,8 @@ app.post('/stripe/create-checkout-session', verificarToken, async (req, res) => 
                         error: "Este trato ya no está disponible"
                     });
                 }
-
+console.log("SUCCESS URL:",
+"https://trato-justo.onrender.com/pago-exitoso.html?session_id={CHECKOUT_SESSION_ID}");
    const session = await stripe.checkout.sessions.create({
 
                     mode: "payment",
@@ -2450,11 +2451,8 @@ app.post('/stripe/create-checkout-session', verificarToken, async (req, res) => 
 
                     ],
 
-                    success_url:
-                        "http://localhost:3000/pago-exitoso.html?session_id={CHECKOUT_SESSION_ID}",
-
-                    cancel_url:
-                        "http://localhost:3000/trato/" + trato.codigo,
+                    success_url: "https://trato-justo.onrender.com/pago-exitoso.html?session_id={CHECKOUT_SESSION_ID}",
+cancel_url: "https://trato-justo.onrender.com/pago-cancelado.html",
 payment_intent_data: {
     transfer_group: trato.codigo
     },
