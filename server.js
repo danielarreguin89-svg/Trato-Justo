@@ -1833,7 +1833,8 @@ console.log("NUEVO HASH:", passwordHash);
                     ],
 
                     function(err){
-
+console.log("EMAIL ACTUALIZADO:", registro.email);
+console.log("FILAS ACTUALIZADAS:", this.changes);
                         if(err){
 
                             console.error(err);
