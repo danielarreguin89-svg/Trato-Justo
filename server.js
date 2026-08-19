@@ -1700,7 +1700,7 @@ app.post("/recuperar-password", (req, res) => {
 
                     try {
 
-                        await resend.emails.send({
+                        const resultado = await resend.emails.send({
 
                             from: "onboarding@resend.dev",
 
@@ -1735,7 +1735,7 @@ app.post("/recuperar-password", (req, res) => {
                             `
 
                         });
-
+console.log("RECUPERAR PASSWORD:", resultado);
                         return res.json({
 
                             mensaje: "Te enviamos un enlace para recuperar tu contraseña."
