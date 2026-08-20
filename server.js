@@ -2416,6 +2416,10 @@ app.post('/stripe/create-checkout-session', verificarToken, async (req, res) => 
                         error: "Este trato ya no está disponible"
                     });
                 }
+                await reservarTratoSistema(
+    codigo,
+    req.usuario.id
+);
 console.log("SUCCESS URL:",
 "https://trato-justo.onrender.com/pago-exitoso.html?session_id={CHECKOUT_SESSION_ID}");
    const session = await stripe.checkout.sessions.create({
