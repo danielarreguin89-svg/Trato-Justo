@@ -141,6 +141,17 @@ app.post(
 if (evento.type === 'checkout.session.completed') {
 
     const session = evento.data.object;
+    console.log("PAYMENT INTENT:", session.payment_intent);
+console.log("SESSION ID:", session.id);
+    console.log(
+    "PAYMENT INTENT:",
+    session.payment_intent
+);
+
+console.log(
+    "SESSION ID:",
+    session.id
+);
 
     console.log('🎉 Pago completado');
 
@@ -152,7 +163,7 @@ if (evento.type === 'checkout.session.completed') {
         );
 
         await new Promise((resolve, reject) => {
-
+console.log("PAYMENT INTENT:", session.payment_intent);
              db.run(
                 `
                 UPDATE tratos
@@ -2135,12 +2146,6 @@ app.post('/confirmar-entrega/:codigo', verificarToken, (req, res) => {
             if (!trato.stripe_account_id) {
                 return res.status(400).json({
                     error: "El vendedor no ha configurado Stripe Connect."
-                });
-            }
-
-            if (!trato.stripe_payment_intent) {
-                return res.status(400).json({
-                    error: "No existe un PaymentIntent asociado."
                 });
             }
 
