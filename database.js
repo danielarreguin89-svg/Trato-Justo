@@ -1,177 +1,974 @@
+require('dotenv').config();
+
+const { Pool, types } = require('pg');
+
+types.setTypeParser(20, value => Number(value));
 const sqlite3 = require('sqlite3').verbose();
 
-const db = new sqlite3.Database('./database.db');
+/*
+ * TRATO JUSTO
+ *
+ * La base principal ahora será Supabase PostgreSQL.
+ *
+ * server.js seguirá funcionando con:
+ *   db.get()
+ *   db.all()
+ *   db.run()
+ *
+ * La base SQLite actual se utiliza una sola vez
+ * para migrar los datos existentes a Supabase.
+ */
 
-db.serialize(() => {
+if (!process.env.SUPABASE_DB_URL) {
+    console.error('❌ Falta SUPABASE_DB_URL en el archivo .env');
+}
 
-  // USUARIOS
-  db.run(`
-    CREATE TABLE IF NOT EXISTS usuarios (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nombre TEXT NOT NULL,
-      email TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL
-    )
-  `);
-
-  db.run(`
-    CREATE TABLE IF NOT EXISTS codigos_verificacion (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      email TEXT NOT NULL,
-      codigo TEXT NOT NULL,
-      creado_en DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-
-  db.run(`
-    ALTER TABLE usuarios
-    ADD COLUMN telefono TEXT
-  `, () => {});
-
-  db.run(`
-    ALTER TABLE usuarios
-    ADD COLUMN fecha_nacimiento TEXT
-  `, () => {});
-
-  // ====== STRIPE ======
-
-  db.run(`
-    ALTER TABLE usuarios
-    ADD COLUMN stripe_account_id TEXT
-  `, () => {});
-
-  db.run(`
-    ALTER TABLE usuarios
-    ADD COLUMN stripe_onboarding_complete INTEGER DEFAULT 0
-  `, () => {});
-  db.run(`
-  ALTER TABLE usuarios
-  ADD COLUMN estado TEXT DEFAULT 'activo'
-`, () => {});
-
-
-  // ====================
-
-  // USUARIOS PENDIENTES
-  db.run(`
-    CREATE TABLE IF NOT EXISTS usuarios_pendientes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nombre TEXT NOT NULL,
-      email TEXT NOT NULL,
-      telefono TEXT NOT NULL,
-      fecha_nacimiento TEXT NOT NULL,
-      password TEXT NOT NULL
-    )
-  `);
-
-  // TRATOS
-  db.run(`
-    CREATE TABLE IF NOT EXISTS tratos (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      codigo TEXT UNIQUE NOT NULL,
-      producto TEXT NOT NULL,
-      descripcion TEXT,
-      monto_protegido REAL NOT NULL,
-      vendedor_id INTEGER,
-      comprador_id INTEGER,
-      estado TEXT DEFAULT 'creado',
-      fecha DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-db.run(`
-ALTER TABLE tratos
-ADD COLUMN comision REAL DEFAULT 0
-`,()=>{});
-
-db.run(`
-ALTER TABLE tratos
-ADD COLUMN monto_vendedor REAL DEFAULT 0
-`,()=>{});
-
-db.run(`
-ALTER TABLE tratos
-ADD COLUMN codigo_liberacion TEXT
-`,()=>{});
- db.run(`
-ALTER TABLE tratos
-ADD COLUMN stripe_payment_intent TEXT
-`,()=>{});
-
-db.run(`
-ALTER TABLE tratos
-ADD COLUMN stripe_transfer_id TEXT
-`,()=>{});
-  // CALIFICACIONES
-  db.run(`
-    CREATE TABLE IF NOT EXISTS calificaciones (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      trato_id INTEGER NOT NULL,
-      calificador_id INTEGER NOT NULL,
-      calificado_id INTEGER NOT NULL,
-      estrellas INTEGER NOT NULL,
-      fecha DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-  // NOTIFICACIONES
-db.run(`
-CREATE TABLE IF NOT EXISTS notificaciones (
-
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-    usuario_id INTEGER NOT NULL,
-
-    titulo TEXT NOT NULL,
-
-    mensaje TEXT NOT NULL,
-
-    leida INTEGER DEFAULT 0,
-
-    fecha DATETIME DEFAULT CURRENT_TIMESTAMP
-
-)
-`);
-// ADMINISTRADORES
-db.run(`
-CREATE TABLE IF NOT EXISTS administradores (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    rol TEXT DEFAULT 'admin',
-    activo INTEGER DEFAULT 1,
-    fecha DATETIME DEFAULT CURRENT_TIMESTAMP
-)
-`);
-db.run(`
-CREATE TABLE IF NOT EXISTS administradores (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    rol TEXT DEFAULT 'admin',
-    activo INTEGER DEFAULT 1,
-    fecha DATETIME DEFAULT CURRENT_TIMESTAMP
-)
-`, (err) => {
-    if (err) {
-        console.log("❌ Error creando administradores:", err.message);
-    } else {
-        console.log("✅ Tabla administradores verificada");
+const pool = new Pool({
+    connectionString: process.env.SUPABASE_DB_URL,
+    ssl: {
+        rejectUnauthorized: false
     }
 });
-db.run(`
-CREATE TABLE IF NOT EXISTS recuperacion_password(
 
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    email TEXT NOT NULL,
+// ======================================================
+// SQLITE ACTUAL
+// ======================================================
 
-    token TEXT NOT NULL,
+const sqlite = new sqlite3.Database('./database.db');
 
-    fecha_expiracion DATETIME NOT NULL
 
-)
-`);
-});
+// ======================================================
+// CONTROL DE PREPARACIÓN
+// ======================================================
+
+let preparacionPromise = null;
+
+
+// ======================================================
+// ADAPTAR SQL SQLITE → POSTGRESQL
+// ======================================================
+
+function adaptarSQL(sql) {
+
+    if (typeof sql !== 'string') {
+        throw new Error('La consulta SQL no es válida.');
+    }
+
+    let numeroParametro = 0;
+
+    let convertido = sql.replace(/\?/g, () => {
+
+        numeroParametro++;
+
+        return `$${numeroParametro}`;
+
+    });
+
+    convertido = convertido.replace(
+        /\bIFNULL\s*\(/gi,
+        'COALESCE('
+    );
+
+    return convertido;
+}
+
+
+// ======================================================
+// NORMALIZAR IDS
+// ======================================================
+
+function normalizarFila(fila) {
+
+    if (!fila || typeof fila !== 'object') {
+        return fila;
+    }
+
+    const resultado = {
+        ...fila
+    };
+
+    for (const clave of Object.keys(resultado)) {
+
+        if (
+            clave === 'id' ||
+            clave.endsWith('_id')
+        ) {
+
+            if (
+                resultado[clave] !== null &&
+                resultado[clave] !== undefined &&
+                resultado[clave] !== ''
+            ) {
+
+                resultado[clave] =
+                    Number(resultado[clave]);
+
+            }
+
+        }
+
+    }
+
+    return resultado;
+}
+
+
+// ======================================================
+// LEER TABLA SQLITE
+// ======================================================
+
+function sqliteAll(tabla) {
+
+    return new Promise((resolve, reject) => {
+
+        sqlite.all(
+            `SELECT * FROM ${tabla}`,
+            [],
+            (err, rows) => {
+
+                if (err) {
+                    reject(err);
+                    return;
+                }
+
+                resolve(rows || []);
+
+            }
+        );
+
+    });
+
+}
+
+
+// ======================================================
+// CREAR ESTRUCTURA EN SUPABASE
+// ======================================================
+
+async function crearEstructura() {
+
+    await pool.query(`
+
+        CREATE TABLE IF NOT EXISTS usuarios (
+
+            id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+
+            nombre TEXT NOT NULL,
+
+            email TEXT UNIQUE NOT NULL,
+
+            password TEXT NOT NULL,
+
+            telefono TEXT,
+
+            fecha_nacimiento TEXT,
+
+            stripe_account_id TEXT,
+
+            stripe_onboarding_complete INTEGER DEFAULT 0,
+
+            estado TEXT DEFAULT 'activo'
+
+        );
+
+
+        CREATE TABLE IF NOT EXISTS codigos_verificacion (
+
+            id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+
+            email TEXT NOT NULL,
+
+            codigo TEXT NOT NULL,
+
+            creado_en TEXT DEFAULT CURRENT_TIMESTAMP
+
+        );
+
+
+        CREATE TABLE IF NOT EXISTS usuarios_pendientes (
+
+            id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+
+            nombre TEXT NOT NULL,
+
+            email TEXT NOT NULL,
+
+            telefono TEXT NOT NULL,
+
+            fecha_nacimiento TEXT NOT NULL,
+
+            password TEXT NOT NULL
+
+        );
+
+
+        CREATE TABLE IF NOT EXISTS tratos (
+
+            id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+
+            codigo TEXT UNIQUE NOT NULL,
+
+            producto TEXT NOT NULL,
+
+            descripcion TEXT,
+
+            monto_protegido DOUBLE PRECISION NOT NULL,
+
+            vendedor_id BIGINT,
+
+            comprador_id BIGINT,
+
+            estado TEXT DEFAULT 'creado',
+
+            fecha TEXT DEFAULT CURRENT_TIMESTAMP,
+
+            comision DOUBLE PRECISION DEFAULT 0,
+
+            monto_vendedor DOUBLE PRECISION DEFAULT 0,
+
+            codigo_liberacion TEXT,
+
+            stripe_payment_intent TEXT,
+
+            stripe_transfer_id TEXT
+
+        );
+
+
+        CREATE TABLE IF NOT EXISTS calificaciones (
+
+            id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+
+            trato_id BIGINT NOT NULL,
+
+            calificador_id BIGINT NOT NULL,
+
+            calificado_id BIGINT NOT NULL,
+
+            estrellas INTEGER NOT NULL,
+
+            fecha TEXT DEFAULT CURRENT_TIMESTAMP
+
+        );
+
+
+        CREATE TABLE IF NOT EXISTS notificaciones (
+
+            id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+
+            usuario_id BIGINT NOT NULL,
+
+            titulo TEXT NOT NULL,
+
+            mensaje TEXT NOT NULL,
+
+            leida INTEGER DEFAULT 0,
+
+            fecha TEXT DEFAULT CURRENT_TIMESTAMP
+
+        );
+
+
+        CREATE TABLE IF NOT EXISTS administradores (
+
+            id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+
+            nombre TEXT NOT NULL,
+
+            email TEXT UNIQUE NOT NULL,
+
+            password TEXT NOT NULL,
+
+            rol TEXT DEFAULT 'admin',
+
+            activo INTEGER DEFAULT 1,
+
+            fecha TEXT DEFAULT CURRENT_TIMESTAMP
+
+        );
+
+
+        CREATE TABLE IF NOT EXISTS recuperacion_password (
+
+            id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+
+            email TEXT NOT NULL,
+
+            token TEXT NOT NULL,
+
+            fecha_expiracion TEXT NOT NULL
+
+        );
+
+
+        CREATE TABLE IF NOT EXISTS _tj_migracion (
+
+            id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+
+            clave TEXT UNIQUE NOT NULL,
+
+            fecha TEXT DEFAULT CURRENT_TIMESTAMP
+
+        );
+
+
+        CREATE INDEX IF NOT EXISTS idx_usuarios_email
+        ON usuarios(email);
+
+
+        CREATE INDEX IF NOT EXISTS idx_tratos_codigo
+        ON tratos(codigo);
+
+
+        CREATE INDEX IF NOT EXISTS idx_tratos_vendedor
+        ON tratos(vendedor_id);
+
+
+        CREATE INDEX IF NOT EXISTS idx_tratos_comprador
+        ON tratos(comprador_id);
+
+
+        CREATE INDEX IF NOT EXISTS idx_notificaciones_usuario
+        ON notificaciones(usuario_id);
+
+
+        CREATE INDEX IF NOT EXISTS idx_calificaciones_trato
+        ON calificaciones(trato_id);
+
+    `);
+
+}
+
+
+// ======================================================
+// AJUSTAR SECUENCIA DE IDS
+// ======================================================
+
+async function ajustarSecuencia(tabla) {
+
+    const resultado = await pool.query(
+        `
+        SELECT
+            MAX(id) AS max_id,
+            COUNT(*) AS total
+        FROM ${tabla}
+        `
+    );
+
+    const maxId = resultado.rows[0].max_id;
+
+    const total =
+        Number(resultado.rows[0].total);
+
+    const valor =
+        maxId === null
+            ? 1
+            : Number(maxId);
+
+    const isCalled =
+        total > 0;
+
+    await pool.query(
+        `
+        SELECT setval(
+            pg_get_serial_sequence($1, 'id'),
+            $2,
+            $3
+        )
+        `,
+        [
+            tabla,
+            valor,
+            isCalled
+        ]
+    );
+
+}
+
+
+// ======================================================
+// MIGRAR SQLITE → SUPABASE
+// ======================================================
+
+async function migrarSQLite() {
+
+    const revision =
+        await pool.query(
+            `
+            SELECT id
+            FROM _tj_migracion
+            WHERE clave = 'sqlite_v1_completa'
+            LIMIT 1
+            `
+        );
+
+    // Ya se migró anteriormente
+
+    if (revision.rows.length) {
+
+        console.log(
+            '✅ Migración SQLite → Supabase ya realizada.'
+        );
+
+        return;
+
+    }
+
+
+    console.log(
+        '🔄 Migrando datos existentes de SQLite a Supabase...'
+    );
+
+
+    const tablas = [
+
+        {
+            nombre: 'usuarios',
+
+            columnas: [
+                'id',
+                'nombre',
+                'email',
+                'password',
+                'telefono',
+                'fecha_nacimiento',
+                'stripe_account_id',
+                'stripe_onboarding_complete',
+                'estado'
+            ]
+        },
+
+
+        {
+            nombre: 'codigos_verificacion',
+
+            columnas: [
+                'id',
+                'email',
+                'codigo',
+                'creado_en'
+            ]
+        },
+
+
+        {
+            nombre: 'usuarios_pendientes',
+
+            columnas: [
+                'id',
+                'nombre',
+                'email',
+                'telefono',
+                'fecha_nacimiento',
+                'password'
+            ]
+        },
+
+
+        {
+            nombre: 'tratos',
+
+            columnas: [
+                'id',
+                'codigo',
+                'producto',
+                'descripcion',
+                'monto_protegido',
+                'vendedor_id',
+                'comprador_id',
+                'estado',
+                'fecha',
+                'comision',
+                'monto_vendedor',
+                'codigo_liberacion',
+                'stripe_payment_intent',
+                'stripe_transfer_id'
+            ]
+        },
+
+
+        {
+            nombre: 'calificaciones',
+
+            columnas: [
+                'id',
+                'trato_id',
+                'calificador_id',
+                'calificado_id',
+                'estrellas',
+                'fecha'
+            ]
+        },
+
+
+        {
+            nombre: 'notificaciones',
+
+            columnas: [
+                'id',
+                'usuario_id',
+                'titulo',
+                'mensaje',
+                'leida',
+                'fecha'
+            ]
+        },
+
+
+        {
+            nombre: 'administradores',
+
+            columnas: [
+                'id',
+                'nombre',
+                'email',
+                'password',
+                'rol',
+                'activo',
+                'fecha'
+            ]
+        },
+
+
+        {
+            nombre: 'recuperacion_password',
+
+            columnas: [
+                'id',
+                'email',
+                'token',
+                'fecha_expiracion'
+            ]
+        }
+
+    ];
+
+
+    const cliente =
+        await pool.connect();
+
+
+    try {
+
+        await cliente.query('BEGIN');
+
+
+        for (const tabla of tablas) {
+
+            const filas =
+                await sqliteAll(
+                    tabla.nombre
+                );
+
+
+            console.log(
+                `   ${tabla.nombre}: ${filas.length} registros`
+            );
+
+
+            if (!filas.length) {
+                continue;
+            }
+
+
+            const columnas =
+                tabla.columnas;
+
+
+            const columnasSQL =
+                columnas.join(', ');
+
+
+            const columnasUpdate =
+                columnas
+
+                    .filter(
+                        columna =>
+                            columna !== 'id'
+                    )
+
+                    .map(
+                        columna =>
+                            `${columna} = EXCLUDED.${columna}`
+                    )
+
+                    .join(', ');
+
+
+            for (const fila of filas) {
+
+                const valores =
+                    columnas.map(
+                        columna =>
+                            fila[columna] ?? null
+                    );
+
+
+                const placeholders =
+                    valores
+                        .map(
+                            (_, i) =>
+                                `$${i + 1}`
+                        )
+                        .join(', ');
+
+
+                await cliente.query(
+
+                    `
+                    INSERT INTO ${tabla.nombre}
+                    (${columnasSQL})
+
+                    VALUES
+                    (${placeholders})
+
+                    ON CONFLICT (id)
+                    DO UPDATE SET
+                    ${columnasUpdate}
+                    `,
+
+                    valores
+
+                );
+
+            }
+
+        }
+
+
+        // Ajustar los IDs para que los nuevos registros
+        // continúen desde el último ID existente.
+
+        for (const tabla of tablas) {
+
+            await cliente.query(
+
+                `
+                SELECT setval(
+                    pg_get_serial_sequence($1, 'id'),
+
+                    COALESCE(
+                        (
+                            SELECT MAX(id)
+                            FROM ${tabla.nombre}
+                        ),
+                        1
+                    ),
+
+                    (
+                        SELECT COUNT(*) > 0
+                        FROM ${tabla.nombre}
+                    )
+                )
+                `,
+
+                [tabla.nombre]
+
+            );
+
+        }
+
+
+        // Marcar la migración como completada.
+
+        await cliente.query(
+
+            `
+            INSERT INTO _tj_migracion
+            (clave)
+
+            VALUES
+            ('sqlite_v1_completa')
+            `
+
+        );
+
+
+        await cliente.query('COMMIT');
+
+
+        console.log(
+            '✅ Migración completada correctamente.'
+        );
+
+    }
+
+    catch (error) {
+
+        await cliente.query('ROLLBACK');
+
+        throw error;
+
+    }
+
+    finally {
+
+        cliente.release();
+
+    }
+
+}
+
+
+// ======================================================
+// PREPARAR BASE
+// ======================================================
+
+function prepararBase() {
+
+    if (preparacionPromise) {
+
+        return preparacionPromise;
+
+    }
+
+
+    preparacionPromise =
+        (async () => {
+
+            await pool.query(
+                'SELECT NOW()'
+            );
+
+
+            await crearEstructura();
+
+
+            await migrarSQLite();
+
+
+            console.log(
+                '✅ Supabase está listo como base principal.'
+            );
+
+        })()
+
+        .catch(error => {
+
+            preparacionPromise = null;
+
+            throw error;
+
+        });
+
+
+    return preparacionPromise;
+
+}
+
+
+// ======================================================
+// db.get()
+// ======================================================
+
+const db = {
+
+    get(sql, params, callback) {
+
+        if (typeof params === 'function') {
+
+            callback = params;
+
+            params = [];
+
+        }
+
+
+        params = params || [];
+
+
+        prepararBase()
+
+            .then(() => {
+
+                return pool.query(
+                    adaptarSQL(sql),
+                    params
+                );
+
+            })
+
+            .then(resultado => {
+
+                if (callback) {
+
+                   callback(
+    null,
+    normalizarFila(resultado.rows[0])
+);
+
+                }
+
+            })
+
+            .catch(error => {
+
+                if (callback) {
+
+                    callback(error);
+
+                }
+
+                else {
+
+                    console.error(
+                        '❌ Error DB.get:',
+                        error.message
+                    );
+
+                }
+
+            });
+
+    },
+
+
+// ======================================================
+// db.all()
+// ======================================================
+
+    all(sql, params, callback) {
+
+        if (typeof params === 'function') {
+
+            callback = params;
+
+            params = [];
+
+        }
+
+
+        params = params || [];
+
+
+        prepararBase()
+
+            .then(() => {
+
+                return pool.query(
+                    adaptarSQL(sql),
+                    params
+                );
+
+            })
+
+            .then(resultado => {
+
+                if (callback) {
+
+                    callback(
+    null,
+    resultado.rows.map(normalizarFila)
+);
+
+                }
+
+            })
+
+            .catch(error => {
+
+                if (callback) {
+
+                    callback(error);
+
+                }
+
+                else {
+
+                    console.error(
+                        '❌ Error DB.all:',
+                        error.message
+                    );
+
+                }
+
+            });
+
+    },
+
+
+// ======================================================
+// db.run()
+// ======================================================
+
+    run(sql, params, callback) {
+
+        if (typeof params === 'function') {
+
+            callback = params;
+
+            params = [];
+
+        }
+
+
+        params = params || [];
+
+
+        prepararBase()
+
+            .then(() => {
+
+                return pool.query(
+                    adaptarSQL(sql),
+                    params
+                );
+
+            })
+
+            .then(resultado => {
+
+                if (callback) {
+
+                    const contexto = {
+
+                        changes:
+                            resultado.rowCount || 0,
+
+                        lastID:
+                            resultado.rows?.[0]?.id
+                                ?? undefined
+
+                    };
+
+
+                    callback.call(
+                        contexto,
+                        null
+                    );
+
+                }
+
+            })
+
+            .catch(error => {
+
+                if (callback) {
+
+                    callback.call(
+                        {
+                            changes: 0
+                        },
+                        error
+                    );
+
+                }
+
+                else {
+
+                    console.error(
+                        '❌ Error DB.run:',
+                        error.message
+                    );
+
+                }
+
+            });
+
+    }
+
+};
+
 
 module.exports = db;
