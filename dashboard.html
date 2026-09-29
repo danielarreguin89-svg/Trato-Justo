@@ -34,11 +34,12 @@ html{
 
 body{
     background:
-        radial-gradient(circle at top left, rgba(83,109,254,.10), transparent 30%),
-        radial-gradient(circle at top right, rgba(38,58,155,.08), transparent 28%),
-        var(--bg);
+        radial-gradient(circle at 15% 10%, rgba(124,140,255,.35), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(83,109,254,.25), transparent 30%),
+        linear-gradient(145deg,#101A4A 0%,#263A9B 45%,#536DFE 100%);
+
     min-height:100vh;
-    color:var(--text);
+    color:white;
 }
 
 /* =========================
@@ -244,16 +245,15 @@ body{
 
     border-radius:24px;
 
-    background:rgba(255,255,255,.86);
+    background:rgba(255,255,255,.12);
+border:1px solid rgba(255,255,255,.22);
 
-    border:1px solid rgba(255,255,255,.95);
+backdrop-filter:blur(22px);
+-webkit-backdrop-filter:blur(22px);
 
-    box-shadow:
-        0 14px 35px rgba(27,39,85,.10),
-        inset 0 1px 0 rgba(255,255,255,.8);
-
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
+box-shadow:
+    0 20px 45px rgba(0,0,0,.18),
+    inset 0 1px 1px rgba(255,255,255,.30);
 
     display:flex;
     flex-direction:column;
@@ -301,7 +301,7 @@ body{
     font-size:30px;
     font-weight:800;
 
-    color:var(--navy);
+color:white;
 
     letter-spacing:-.8px;
 
@@ -309,7 +309,7 @@ body{
 }
 
 .stat-label{
-    color:var(--muted);
+    color:rgba(255,255,255,.75);
 
     font-size:14px;
 
@@ -338,13 +338,12 @@ body{
 }
 
 .section-title h2{
-    font-size:22px;
-    color:var(--navy);
+    color:white;
 }
 
 .section-title p{
     margin-top:5px;
-    color:var(--muted);
+    color:rgba(255,255,255,.72);
     font-size:14px;
 }
 
@@ -357,9 +356,9 @@ body{
 
     overflow:hidden;
 
-    background:rgba(255,255,255,.72);
+    background:rgba(255,255,255,.12);
 
-    border:1px solid rgba(255,255,255,.95);
+    border:1px solid rgba(255,255,255,.22);
 
     border-radius:26px;
 
@@ -368,8 +367,8 @@ body{
     margin-bottom:15px;
 
     box-shadow:
-        0 12px 30px rgba(27,39,85,.08),
-        inset 0 1px 0 rgba(255,255,255,.85);
+    0 20px 45px rgba(0,0,0,.18),
+    inset 0 1px 1px rgba(255,255,255,.30);
 
     backdrop-filter:blur(18px);
     -webkit-backdrop-filter:blur(18px);
@@ -421,12 +420,12 @@ body{
 }
 
 .action-card h2{
-    color:var(--navy);
+    color:white;
     font-size:20px;
 }
 
 .action-card p{
-    color:var(--muted);
+    color:rgba(255,255,255,.75);
     font-size:14px;
     line-height:1.5;
 
@@ -465,42 +464,48 @@ body{
 
 .btn:hover{
     transform:translateY(-2px);
+    background:rgba(255,255,255,.20);
+
+    box-shadow:
+        0 14px 30px rgba(0,0,0,.20),
+        inset 0 1px 1px rgba(255,255,255,.40);
+}
+
+.btn:active{
+    transform:scale(.97);
 }
 
 .btn-primary{
     color:white;
 
-    background:
-        linear-gradient(
-            135deg,
-            #536DFE,
-            #3949AB
-        );
+    background:rgba(255,255,255,.14);
+
+    border:1px solid rgba(255,255,255,.30);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
 
     box-shadow:
-        0 8px 18px rgba(83,109,254,.24);
+        0 10px 25px rgba(0,0,0,.18),
+        inset 0 1px 1px rgba(255,255,255,.35);
+
+    text-shadow:0 1px 2px rgba(0,0,0,.15);
 }
 
-.btn-secondary{
-    color:var(--navy);
-
-    background:rgba(83,109,254,.10);
-
-    border:1px solid rgba(83,109,254,.12);
-}
-
+.btn-secondary,
 .btn-success{
     color:white;
 
-    background:
-        linear-gradient(
-            135deg,
-            #4CAF8A,
-            #2F8F6B
-        );
+    background:rgba(255,255,255,.11);
+
+    border:1px solid rgba(255,255,255,.25);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
 
     box-shadow:
-        0 8px 18px rgba(47,143,107,.20);
+        0 10px 25px rgba(0,0,0,.16),
+        inset 0 1px 1px rgba(255,255,255,.30);
 }
 
 /* =========================
@@ -680,10 +685,6 @@ body{
         min-height:138px;
         padding:17px 12px;
         border-radius:21px;
-    }
-
-    .stat-number{
-        font-size:27px;
     }
 
     .stat-money{
