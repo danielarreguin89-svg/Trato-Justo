@@ -5,92 +5,462 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Trato Justo</title>
+
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 <style>
+
+:root{
+    --blueberry:#536DFE;
+    --blueberry-dark:#263A9B;
+    --navy:#101936;
+    --bg:#F4F6FB;
+    --text:#172033;
+    --muted:#6D7587;
+    --white:rgba(255,255,255,.78);
+    --border:rgba(255,255,255,.65);
+}
 
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
 }
 
 body{
-    background:#F5F7FA;
+    background:
+        radial-gradient(circle at top left, rgba(83,109,254,.10), transparent 30%),
+        radial-gradient(circle at top right, rgba(38,58,155,.08), transparent 28%),
+        var(--bg);
     min-height:100vh;
+    color:var(--text);
 }
 
+/* =========================
+   HEADER
+========================= */
+
 .header{
-    background:linear-gradient(135deg,#009EE3,#003087);
+    background:
+        linear-gradient(
+            135deg,
+            #15204B 0%,
+            #263A9B 45%,
+            #536DFE 100%
+        );
+
     color:white;
-    padding:40px 20px;
+    padding:28px 20px 38px;
     text-align:center;
+    position:relative;
+
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius:30px;
+
+    box-shadow:
+        0 15px 35px rgba(22,34,82,.22);
+}
+
+.header-tools{
+    position:absolute;
+    top:18px;
+    right:20px;
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+/* botones superiores */
+
+.top-btn{
+    width:46px;
+    height:46px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:16px;
+
+    background:rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.22);
+
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.top-btn:hover{
+    background:rgba(255,255,255,.22);
+    transform:translateY(-2px);
+}
+
+.top-btn .material-icons{
+    font-size:25px;
+    color:white;
+}
+
+/* contador */
+
+.notification-wrapper{
     position:relative;
 }
 
-.config-btn{
+.notification-badge{
     position:absolute;
-    top:20px;
-    right:20px;
-    font-size:28px;
-    cursor:pointer;
+
+    top:-4px;
+    right:-4px;
+
+    min-width:19px;
+    height:19px;
+
+    padding:0 5px;
+
+    display:none;
+    align-items:center;
+    justify-content:center;
+
+    background:#FF4D67;
+    color:white;
+
+    border-radius:999px;
+
+    font-size:11px;
+    font-weight:bold;
+
+    border:2px solid #263A9B;
+}
+
+/* logo */
+
+.logo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+
+    font-size:30px;
+    font-weight:700;
+
+    margin-top:12px;
+    margin-bottom:10px;
+
+    letter-spacing:-.5px;
+}
+
+.logo-mark{
+    width:42px;
+    height:42px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.24);
+
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
+}
+
+.logo-mark .material-icons{
+    font-size:25px;
+}
+
+/* textos */
+
+.subtitulo{
+    font-size:15px;
+    opacity:.88;
+    max-width:600px;
+    margin:auto;
+    line-height:1.5;
 }
 
 .bienvenida{
-    margin-top:15px;
-    font-size:18px;
+    margin-top:24px;
+    font-size:15px;
+    opacity:.8;
 }
 
 .nombre-usuario{
-    font-size:24px;
-    font-weight:bold;
+    font-size:27px;
+    font-weight:700;
     margin-top:5px;
 }
 
-.logo{
-    font-size:32px;
-    font-weight:bold;
+/* =========================
+   ESTADISTICAS
+========================= */
+
+.stats-wrapper{
+    width:100%;
+    max-width:1160px;
+
+    margin:-18px auto 0;
+
+    position:relative;
+    z-index:5;
+
+    padding:0 18px;
+}
+
+.stats{
+    display:flex;
+    gap:14px;
+
+    overflow-x:auto;
+    overflow-y:hidden;
+
+    padding:6px 3px 18px;
+
+    scrollbar-width:none;
+
+    scroll-snap-type:x proximity;
+}
+
+.stats::-webkit-scrollbar{
+    display:none;
+}
+
+.stat-card{
+    flex:0 0 205px;
+
+    min-height:145px;
+
+    padding:20px 16px;
+
+    border-radius:24px;
+
+    background:rgba(255,255,255,.86);
+
+    border:1px solid rgba(255,255,255,.95);
+
+    box-shadow:
+        0 14px 35px rgba(27,39,85,.10),
+        inset 0 1px 0 rgba(255,255,255,.8);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+
+    scroll-snap-align:start;
+
+    transition:
+        transform .25s,
+        box-shadow .25s;
+}
+
+.stat-card:hover{
+    transform:translateY(-4px);
+
+    box-shadow:
+        0 18px 38px rgba(27,39,85,.14),
+        inset 0 1px 0 rgba(255,255,255,.8);
+}
+
+.stat-icon{
+    width:42px;
+    height:42px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:rgba(83,109,254,.10);
+    color:var(--blueberry);
+
     margin-bottom:10px;
 }
 
-.subtitulo{
-    font-size:16px;
-    opacity:.9;
+.stat-icon .material-icons{
+    font-size:23px;
 }
+
+.stat-number{
+    font-size:30px;
+    font-weight:800;
+
+    color:var(--navy);
+
+    letter-spacing:-.8px;
+
+    margin-bottom:5px;
+}
+
+.stat-label{
+    color:var(--muted);
+
+    font-size:14px;
+
+    line-height:1.3;
+}
+
+.stat-money{
+    font-size:25px;
+}
+
+/* =========================
+   CONTENIDO
+========================= */
 
 .container{
-    max-width:500px;
-    margin:30px auto;
-    padding:20px;
+    width:100%;
+    max-width:820px;
+
+    margin:18px auto 0;
+
+    padding:0 18px 30px;
 }
 
-.card{
-    background:white;
-    border-radius:16px;
-    padding:25px;
-    margin-bottom:20px;
-    box-shadow:0 4px 15px rgba(0,0,0,.08);
+.section-title{
+    margin:10px 0 16px;
 }
 
-.card h2{
-    color:#003087;
-    margin-bottom:10px;
+.section-title h2{
+    font-size:22px;
+    color:var(--navy);
 }
 
-.card p{
-    color:#666;
-    margin-bottom:20px;
+.section-title p{
+    margin-top:5px;
+    color:var(--muted);
+    font-size:14px;
 }
+
+/* =========================
+   TARJETAS PRINCIPALES
+========================= */
+
+.action-card{
+    position:relative;
+
+    overflow:hidden;
+
+    background:rgba(255,255,255,.72);
+
+    border:1px solid rgba(255,255,255,.95);
+
+    border-radius:26px;
+
+    padding:22px;
+
+    margin-bottom:15px;
+
+    box-shadow:
+        0 12px 30px rgba(27,39,85,.08),
+        inset 0 1px 0 rgba(255,255,255,.85);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    transition:
+        transform .25s,
+        box-shadow .25s;
+}
+
+.action-card:hover{
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 17px 35px rgba(27,39,85,.12),
+        inset 0 1px 0 rgba(255,255,255,.85);
+}
+
+.action-top{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-bottom:15px;
+}
+
+.action-icon{
+    width:52px;
+    height:52px;
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:17px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(83,109,254,.18),
+            rgba(38,58,155,.10)
+        );
+
+    color:var(--blueberry);
+}
+
+.action-icon .material-icons{
+    font-size:28px;
+}
+
+.action-card h2{
+    color:var(--navy);
+    font-size:20px;
+}
+
+.action-card p{
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.5;
+
+    margin-bottom:18px;
+}
+
+/* =========================
+   BOTONES
+========================= */
 
 .btn{
     width:100%;
+
     border:none;
-    border-radius:12px;
-    padding:15px;
+
+    border-radius:17px;
+
+    padding:15px 18px;
+
     cursor:pointer;
-    font-size:16px;
-    font-weight:bold;
-    transition:.3s;
+
+    font-size:15px;
+    font-weight:700;
+
+    transition:.25s;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+}
+
+.btn .material-icons{
+    font-size:20px;
 }
 
 .btn:hover{
@@ -98,30 +468,241 @@ body{
 }
 
 .btn-primary{
-    background:#009EE3;
     color:white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #536DFE,
+            #3949AB
+        );
+
+    box-shadow:
+        0 8px 18px rgba(83,109,254,.24);
 }
 
 .btn-secondary{
-    background:#003087;
-    color:white;
+    color:var(--navy);
+
+    background:rgba(83,109,254,.10);
+
+    border:1px solid rgba(83,109,254,.12);
 }
 
 .btn-success{
-    background:#00A650;
     color:white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4CAF8A,
+            #2F8F6B
+        );
+
+    box-shadow:
+        0 8px 18px rgba(47,143,107,.20);
 }
 
-.btn-danger{
-    background:#d9534f;
-    color:white;
-}
+/* =========================
+   FOOTER
+========================= */
 
 .footer{
     text-align:center;
-    color:#888;
-    margin-top:20px;
+
+    color:#9299A8;
+
+    margin-top:25px;
+
+    font-size:13px;
+}
+
+/* =========================
+   NOTIFICACIONES
+========================= */
+
+#panelNotificaciones{
+
+    display:none;
+
+    position:fixed;
+
+    top:78px;
+    right:18px;
+
+    width:min(380px, calc(100vw - 36px));
+    max-height:520px;
+
+    overflow-y:auto;
+
+    background:rgba(255,255,255,.88);
+
+    border:1px solid rgba(255,255,255,.95);
+
+    border-radius:24px;
+
+    box-shadow:
+        0 20px 55px rgba(19,31,70,.20);
+
+    backdrop-filter:blur(22px);
+    -webkit-backdrop-filter:blur(22px);
+
+    z-index:9999;
+}
+
+.notificaciones-header{
+    padding:18px 18px 14px;
+
+    font-size:18px;
+    font-weight:700;
+
+    color:var(--navy);
+
+    border-bottom:1px solid rgba(18,29,66,.08);
+}
+
+.notification-item{
+    padding:16px 18px;
+
+    border-bottom:1px solid rgba(18,29,66,.07);
+
+    transition:.2s;
+}
+
+.notification-item:hover{
+    background:rgba(83,109,254,.05);
+}
+
+.notification-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    font-weight:700;
+
+    color:var(--blueberry);
+
+    margin-bottom:6px;
+}
+
+.notification-title .material-icons{
+    font-size:18px;
+}
+
+.notification-message{
+    color:#3F4654;
+
     font-size:14px;
+
+    line-height:1.45;
+
+    margin-bottom:8px;
+}
+
+.notification-date{
+    font-size:11px;
+    color:#969DAC;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (min-width:900px){
+
+    .stats{
+        overflow-x:visible;
+        display:grid;
+        grid-template-columns:repeat(5,1fr);
+    }
+
+    .stat-card{
+        min-width:0;
+        width:100%;
+    }
+
+}
+
+@media (max-width:600px){
+
+    .header{
+        padding:
+            22px
+            16px
+            32px;
+    }
+
+    .header-tools{
+        top:14px;
+        right:14px;
+        gap:8px;
+    }
+
+    .top-btn{
+        width:42px;
+        height:42px;
+        border-radius:14px;
+    }
+
+    .top-btn .material-icons{
+        font-size:22px;
+    }
+
+    .logo{
+        font-size:27px;
+        margin-top:42px;
+    }
+
+    .logo-mark{
+        width:39px;
+        height:39px;
+    }
+
+    .subtitulo{
+        font-size:13px;
+    }
+
+    .bienvenida{
+        margin-top:20px;
+    }
+
+    .nombre-usuario{
+        font-size:24px;
+    }
+
+    .stats-wrapper{
+        margin-top:-16px;
+        padding:0 14px;
+    }
+
+    .stat-card{
+        flex-basis:170px;
+        min-height:138px;
+        padding:17px 12px;
+        border-radius:21px;
+    }
+
+    .stat-number{
+        font-size:27px;
+    }
+
+    .stat-money{
+        font-size:22px;
+    }
+
+    .container{
+        padding:0 14px 25px;
+        margin-top:8px;
+    }
+
+    .section-title h2{
+        font-size:20px;
+    }
+
+    .action-card{
+        padding:19px;
+        border-radius:22px;
+    }
 }
 
 </style>
@@ -129,200 +710,381 @@ body{
 
 <body>
 
+<!-- =========================
+     HEADER
+========================= -->
+
 <div class="header">
 
- <div style="
-position:absolute;
-top:20px;
-right:30px;
-display:flex;
-align-items:center;
-gap:22px;
-">
+    <div class="header-tools">
 
-<div
-id="btnNotificaciones"
-style="position:relative;cursor:pointer;"
-onclick="verNotificaciones()">
+        <div
+            class="notification-wrapper"
+            onclick="verNotificaciones()"
+        >
 
-<span
-class="material-icons"
-style="font-size:32px;color:white;">
+            <div class="top-btn">
 
-notifications
+                <span class="material-icons">
+                    notifications_none
+                </span>
 
-</span>
-<span
-id="contadorNotificaciones"
-style="
-position:absolute;
-top:-6px;
-right:-6px;
-background:red;
-color:white;
-border-radius:50%;
-min-width:20px;
-height:20px;
-display:none;
-justify-content:center;
-align-items:center;
-font-size:12px;
-font-weight:bold;
-">
+            </div>
 
-0
+            <span
+                id="contadorNotificaciones"
+                class="notification-badge"
+            >
+                0
+            </span>
 
-</span>
+        </div>
 
-</div>
+        <div
+            class="top-btn"
+            onclick="location.href='configuracion.html'"
+        >
 
-<div
-class="config-btn"
-style="position:static;"
-onclick="location.href='configuracion.html'">
+            <span class="material-icons">
+                settings
+            </span>
 
-<span
-class="material-icons"
-style="font-size:32px;color:white;">
+        </div>
 
-settings
-
-</span>
-
-</div>
-
-</div>
+    </div>
 
     <div class="logo">
-        🛡️ Trato Justo
+
+        <div class="logo-mark">
+
+            <span class="material-icons">
+                verified_user
+            </span>
+
+        </div>
+
+        Trato Justo
+
     </div>
 
     <div class="subtitulo">
+
         Protege tu dinero en compras y ventas entre particulares
+
     </div>
 
     <div class="bienvenida">
-        Bienvenido de nuevo 👋
+
+        Bienvenido de nuevo
+
     </div>
 
     <div
-    id="nombreUsuario"
-    class="nombre-usuario">
-    Cargando...
-</div>
-
-</div>
-<div style="max-width:1100px;margin:25px auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;padding:0 20px;">
-
-    <div class="card" style="text-align:center;">
-        <h2 id="tCreados">0</h2>
-        <p>📦 Tratos creados</p>
-    </div>
-
-    <div class="card" style="text-align:center;">
-        <h2 id="tReservados">0</h2>
-        <p>🤝 Tratos reservados</p>
-    </div>
-
-    <div class="card" style="text-align:center;">
-        <h2 id="tCompletados">0</h2>
-        <p>✅ Tratos completados</p>
-    </div>
-
-    <div class="card" style="text-align:center;">
-        <h2 id="tProtegido">$0.00</h2>
-        <p>💵 Dinero protegido</p>
-    </div>
-
-    <div class="card" style="text-align:center;">
-        <h2 id="tRecibido">$0.00</h2>
-        <p>💰 Dinero recibido</p>
+        id="nombreUsuario"
+        class="nombre-usuario"
+    >
+        Cargando...
     </div>
 
 </div>
+
+
+<!-- =========================
+     ESTADISTICAS
+========================= -->
+
+<div class="stats-wrapper">
+
+    <div class="stats">
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+
+                <span class="material-icons">
+                    inventory_2
+                </span>
+
+            </div>
+
+            <div
+                id="tCreados"
+                class="stat-number"
+            >
+                0
+            </div>
+
+            <div class="stat-label">
+                Tratos creados
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+
+                <span class="material-icons">
+                    handshake
+                </span>
+
+            </div>
+
+            <div
+                id="tReservados"
+                class="stat-number"
+            >
+                0
+            </div>
+
+            <div class="stat-label">
+                Tratos reservados
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+
+                <span class="material-icons">
+                    check_circle
+                </span>
+
+            </div>
+
+            <div
+                id="tCompletados"
+                class="stat-number"
+            >
+                0
+            </div>
+
+            <div class="stat-label">
+                Tratos completados
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+
+                <span class="material-icons">
+                    account_balance_wallet
+                </span>
+
+            </div>
+
+            <div
+                id="tProtegido"
+                class="stat-number stat-money"
+            >
+                $0.00
+            </div>
+
+            <div class="stat-label">
+                Dinero protegido
+            </div>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <div class="stat-icon">
+
+                <span class="material-icons">
+                    payments
+                </span>
+
+            </div>
+
+            <div
+                id="tRecibido"
+                class="stat-number stat-money"
+            >
+                $0.00
+            </div>
+
+            <div class="stat-label">
+                Dinero recibido
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     ACCIONES
+========================= -->
+
 <div class="container">
 
-    <div class="card">
+    <div class="section-title">
 
-        <h2>Crear trato</h2>
+        <h2>
+            ¿Qué quieres hacer?
+        </h2>
 
         <p>
+            Administra tus compras y ventas desde aquí.
+        </p>
+
+    </div>
+
+
+    <div class="action-card">
+
+        <div class="action-top">
+
+            <div class="action-icon">
+
+                <span class="material-icons">
+                    add_business
+                </span>
+
+            </div>
+
+            <h2>
+                Crear trato
+            </h2>
+
+        </div>
+
+        <p>
+
             Genera un nuevo trato protegido para tu comprador.
+
         </p>
 
         <button
             class="btn btn-primary"
-            onclick="location.href='crear-trato.html'">
+            onclick="location.href='crear-trato.html'"
+        >
+
+            <span class="material-icons">
+                add
+            </span>
+
             Crear trato
+
         </button>
 
     </div>
 
-    <div class="card">
 
-        <h2>Mis ventas</h2>
+    <div class="action-card">
+
+        <div class="action-top">
+
+            <div class="action-icon">
+
+                <span class="material-icons">
+                    sell
+                </span>
+
+            </div>
+
+            <h2>
+                Mis ventas
+            </h2>
+
+        </div>
 
         <p>
+
             Consulta todos los tratos donde eres vendedor.
+
         </p>
 
         <button
             class="btn btn-secondary"
-            onclick="location.href='mis-ventas.html'">
+            onclick="location.href='mis-ventas.html'"
+        >
+
+            <span class="material-icons">
+                arrow_forward
+            </span>
+
             Ver mis ventas
+
         </button>
 
     </div>
 
-    <div class="card">
 
-        <h2>Mis compras</h2>
+    <div class="action-card">
+
+        <div class="action-top">
+
+            <div class="action-icon">
+
+                <span class="material-icons">
+                    shopping_bag
+                </span>
+
+            </div>
+
+            <h2>
+                Mis compras
+            </h2>
+
+        </div>
 
         <p>
+
             Consulta los tratos que has reservado como comprador.
+
         </p>
 
         <button
             class="btn btn-success"
-            onclick="location.href='mis-compras.html'">
+            onclick="location.href='mis-compras.html'"
+        >
+
+            <span class="material-icons">
+                arrow_forward
+            </span>
+
             Ver mis compras
+
         </button>
 
     </div>
 
+
     <div class="footer">
+
         Trato Justo © 2026
+
     </div>
 
 </div>
-<div id="panelNotificaciones"
-style="
-display:none;
-position:fixed;
-top:80px;
-right:20px;
-width:340px;
-max-height:450px;
-overflow-y:auto;
-background:white;
-border-radius:12px;
-box-shadow:0 10px 30px rgba(0,0,0,.25);
-z-index:999;
-">
 
-<div style="
-padding:15px;
-font-size:20px;
-font-weight:bold;
-border-bottom:1px solid #eee;">
 
-Notificaciones
+<!-- =========================
+     PANEL NOTIFICACIONES
+========================= -->
+
+<div id="panelNotificaciones">
+
+    <div class="notificaciones-header">
+
+        Notificaciones
+
+    </div>
+
+    <div id="listaNotificaciones"></div>
 
 </div>
 
-<div id="listaNotificaciones"></div>
-
-</div>
 
 <script>
 
@@ -334,171 +1096,375 @@ if (!token) {
 
 }
 
-function cerrarSesion() {
 
-    localStorage.removeItem('token');
+/* =========================
+   FORMATO DE DINERO
+========================= */
 
-    window.location.href = '/login.html';
+function formatearDinero(valor){
 
-}
-async function cargarUsuario() {
+    const numero = Number(valor);
 
-    const respuesta = await fetch('/perfil', {
-       headers: {
-    Authorization: "Bearer " + token
-}
-    });
+    if (!Number.isFinite(numero)) {
 
-    if (!respuesta.ok) {
-
-        localStorage.removeItem('token');
-
-        window.location.href = '/login.html';
-
-        return;
+        return "$0.00";
 
     }
 
-    const usuario = await respuesta.json();
-
-    document.getElementById('nombreUsuario').innerText = usuario.nombre;
-
-    document.getElementById("tCreados").innerText =
-usuario.estadisticas.creados;
-
-document.getElementById("tReservados").innerText =
-usuario.estadisticas.reservados;
-
-document.getElementById("tCompletados").innerText =
-usuario.estadisticas.completados;
-
-document.getElementById("tProtegido").innerText =
-"$" + Number(usuario.estadisticas.dineroProtegido).toFixed(2);
-
-document.getElementById("tRecibido").innerText =
-"$" + Number(usuario.estadisticas.dineroRecibido).toFixed(2);
+    return numero.toLocaleString(
+        "es-MX",
+        {
+            style:"currency",
+            currency:"MXN",
+            minimumFractionDigits:2,
+            maximumFractionDigits:2
+        }
+    );
 
 }
-async function cargarNotificaciones(){
 
-    const respuesta = await fetch("/notificaciones",{
 
-        headers:{
-            Authorization:"Bearer " + token
+/* =========================
+   CARGAR USUARIO
+========================= */
+
+async function cargarUsuario(){
+
+    try{
+
+        const respuesta = await fetch(
+            '/perfil',
+            {
+                headers:{
+                    Authorization:"Bearer " + token
+                }
+            }
+        );
+
+        if(!respuesta.ok){
+
+            localStorage.removeItem('token');
+
+            window.location.href = '/login.html';
+
+            return;
+
         }
 
-    });
+        const usuario = await respuesta.json();
 
-    if(!respuesta.ok){
+        document.getElementById(
+            'nombreUsuario'
+        ).innerText = usuario.nombre || 'Usuario';
+
+
+        const estadisticas =
+            usuario.estadisticas || {};
+
+
+        document.getElementById(
+            "tCreados"
+        ).innerText =
+            Number(estadisticas.creados) || 0;
+
+
+        document.getElementById(
+            "tReservados"
+        ).innerText =
+            Number(estadisticas.reservados) || 0;
+
+
+        document.getElementById(
+            "tCompletados"
+        ).innerText =
+            Number(estadisticas.completados) || 0;
+
+
+        document.getElementById(
+            "tProtegido"
+        ).innerText =
+            formatearDinero(
+                estadisticas.dineroProtegido
+            );
+
+
+        document.getElementById(
+            "tRecibido"
+        ).innerText =
+            formatearDinero(
+                estadisticas.dineroRecibido
+            );
+
+
+    }catch(error){
+
+        console.error(
+            "Error cargando usuario:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================
+   CARGAR NOTIFICACIONES
+========================= */
+
+async function cargarNotificaciones(){
+
+    try{
+
+        const respuesta =
+            await fetch(
+                "/notificaciones",
+                {
+                    headers:{
+                        Authorization:
+                            "Bearer " + token
+                    }
+                }
+            );
+
+        if(!respuesta.ok){
+
+            return;
+
+        }
+
+        const notificaciones =
+            await respuesta.json();
+
+
+        window.listaNotificaciones =
+            Array.isArray(notificaciones)
+                ? notificaciones
+                : [];
+
+
+        const contador =
+            document.getElementById(
+                "contadorNotificaciones"
+            );
+
+
+        const noLeidas =
+            window.listaNotificaciones.filter(
+                n => Number(n.leida) === 0
+            );
+
+
+        if(noLeidas.length > 0){
+
+            contador.style.display =
+                "flex";
+
+            contador.innerText =
+                noLeidas.length > 99
+                    ? "99+"
+                    : noLeidas.length;
+
+        }else{
+
+            contador.style.display =
+                "none";
+
+        }
+
+
+    }catch(error){
+
+        console.error(
+            "Error cargando notificaciones:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================
+   MOSTRAR NOTIFICACIONES
+========================= */
+
+function verNotificaciones(){
+
+    const panel =
+        document.getElementById(
+            "panelNotificaciones"
+        );
+
+
+    if(panel.style.display === "block"){
+
+        panel.style.display =
+            "none";
 
         return;
 
     }
 
-    const notificaciones = await respuesta.json();
 
-    const contador =
-        document.getElementById("contadorNotificaciones");
+    panel.style.display =
+        "block";
 
-    
 
-        const noLeidas = notificaciones.filter(n => n.leida == 0);
+    const lista =
+        window.listaNotificaciones || [];
 
-if(noLeidas.length > 0){
 
-    contador.style.display = "block";
+    if(lista.length === 0){
 
-    contador.innerText = noLeidas.length;
+        document.getElementById(
+            "listaNotificaciones"
+        ).innerHTML = `
 
-}else{
+            <div
+                style="
+                    padding:30px;
+                    text-align:center;
+                    color:#7B8291;
+                    font-size:14px;
+                "
+            >
 
-    contador.style.display = "none";
+                No tienes notificaciones nuevas.
+
+            </div>
+
+        `;
+
+    }else{
+
+        let html = "";
+
+
+        lista.forEach(n => {
+
+            html += `
+
+                <div class="notification-item">
+
+                    <div class="notification-title">
+
+                        <span class="material-icons">
+                            notifications
+                        </span>
+
+                        ${escaparHTML(n.titulo)}
+
+                    </div>
+
+                    <div class="notification-message">
+
+                        ${escaparHTML(n.mensaje)}
+
+                    </div>
+
+                    <div class="notification-date">
+
+                        ${escaparHTML(n.fecha)}
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+
+        document.getElementById(
+            "listaNotificaciones"
+        ).innerHTML = html;
+
+    }
+
+
+    fetch(
+        "/notificaciones/leidas",
+        {
+            method:"PATCH",
+            headers:{
+                Authorization:
+                    "Bearer " + token
+            }
+        }
+    );
+
+
+    document.getElementById(
+        "contadorNotificaciones"
+    ).style.display = "none";
+
+
+    window.listaNotificaciones.forEach(
+        n => n.leida = 1
+    );
 
 }
 
-    window.listaNotificaciones = notificaciones;
+
+/* =========================
+   PROTECCIÓN DE TEXTO
+========================= */
+
+function escaparHTML(texto){
+
+    return String(texto ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
 
 }
+
+
+/* =========================
+   INICIO
+========================= */
 
 cargarUsuario();
 
 cargarNotificaciones();
-function verNotificaciones(){
 
-    const panel =
-        document.getElementById("panelNotificaciones");
 
-    if(panel.style.display==="block"){
+/* =========================
+   CERRAR NOTIFICACIONES
+========================= */
 
-        panel.style.display="none";
+document.addEventListener(
+    "click",
+    function(event){
 
-        return;
+        const panel =
+            document.getElementById(
+                "panelNotificaciones"
+            );
+
+        const boton =
+            document.querySelector(
+                ".notification-wrapper"
+            );
+
+
+        if(
+            panel.style.display === "block" &&
+            !panel.contains(event.target) &&
+            !boton.contains(event.target)
+        ){
+
+            panel.style.display =
+                "none";
+
+        }
 
     }
+);
 
-    panel.style.display="block";
-    fetch("/notificaciones/leidas",{
-
-    method:"PATCH",
-
-    headers:{
-        Authorization:"Bearer " + token
-    }
-
-});
-
-document.getElementById("contadorNotificaciones").style.display="none";
-window.listaNotificaciones.forEach(n => {
-
-    n.leida = 1;
-
-});
-let html = "";
-
-window.listaNotificaciones.forEach(n => {
-    console.log(n.fecha);
-   html += `
-
-<div style="
-padding:15px;
-border-bottom:1px solid #eee;
-background:${n.leida==0 ? '#E3F2FD' : 'white'};
-">
-
-<div style="
-font-weight:bold;
-color:#1976d2;
-margin-bottom:6px;">
-
-${n.titulo}
-
-</div>
-
-<div style="
-color:#444;
-margin-bottom:10px;">
-
-${n.mensaje}
-
-</div>
-
-<div style="
-font-size:12px;
-color:#888;">
-
-${n.fecha}
-
-</div>
-
-</div>
-
-`;
-
-    });
-
-    document.getElementById("listaNotificaciones").innerHTML=html;
-
-}
 </script>
 
 </body>
