@@ -893,8 +893,9 @@ margin-right:auto;
 
 
     .stat-money{
-    font-size:13px;
-    letter-spacing:-0.4px;
+    font-size:16px;
+    letter-spacing:-0.6px;
+    white-space:nowrap;
 }
 .stat-icon{
     width:30px;
@@ -1409,7 +1410,24 @@ function formatearDinero(valor){
     );
 
 }
+function formatearDineroCorto(valor){
 
+    const numero = Number(valor);
+
+    if (!Number.isFinite(numero)) {
+        return "$0";
+    }
+
+    if (numero >= 1000000) {
+        return "$" + (numero / 1000000).toFixed(2) + " M";
+    }
+
+    if (numero >= 1000) {
+        return "$" + (numero / 1000).toFixed(1) + " mil";
+    }
+
+    return "$" + numero.toFixed(2);
+}
 
 /* =========================
    CARGAR USUARIO
@@ -1469,19 +1487,19 @@ window.estadisticasDashboard = estadisticas;
 
 
         document.getElementById(
-            "tProtegido"
-        ).innerText =
-            formatearDinero(
-                estadisticas.dineroprotegido
-            );
+    "tProtegido"
+).innerText =
+    formatearDineroCorto(
+        estadisticas.dineroprotegido
+    );
 
 
-        document.getElementById(
-            "tRecibido"
-        ).innerText =
-            formatearDinero(
-                estadisticas.dinerorecibido
-            );
+       document.getElementById(
+    "tRecibido"
+).innerText =
+    formatearDineroCorto(
+        estadisticas.dinerorecibido
+    );
 
 
     }catch(error){

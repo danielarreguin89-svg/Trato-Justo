@@ -269,6 +269,7 @@ body{
     display:flex;
     align-items:flex-start;
     gap:12px;
+    width:100%;
 
     background:
         linear-gradient(
@@ -316,11 +317,11 @@ body{
 
     border-radius:20px;
 
-    padding:22px;
+    padding:16px;
 
     text-align:center;
 
-    margin:20px 0;
+    margin:12px 0;
 
     box-shadow:
         0 12px 28px rgba(22,34,82,.08),
@@ -520,7 +521,8 @@ body{
     border:1px solid rgba(255,255,255,.55) !important;
 
     border-radius:20px !important;
-    margin-top:26px;
+    padding:18px;
+    margin-top:14px;
 
     box-shadow:
         inset 0 1px 1px rgba(255,255,255,.75),
@@ -662,6 +664,17 @@ body{
 .calificacion-completada .material-icons{
     font-size:22px;
     color:#22A06B;
+}
+@media (max-width:600px){
+
+    .card .card > br{
+        display:none;
+    }
+
+    .card .card{
+        padding:16px;
+    }
+
 }
 </style>
 </head>
@@ -851,7 +864,7 @@ document.getElementById(
             ).toLocaleString('es-MX')}
         </div>
 
-        <br>
+        <div style="height:8px;"></div>
 
         <div class="info">
             <b>Vendedor:</b>
