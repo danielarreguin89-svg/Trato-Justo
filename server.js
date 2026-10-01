@@ -110,7 +110,7 @@ const app = express();
 const PORT = 3000;
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-app.use(express.static('.'));
+app.use(express.static('.', { index: false }));
 app.post(
   '/webhook',
   express.raw({ type: 'application/json' }),
@@ -305,33 +305,56 @@ app.get('/perfil', verificarToken, (req, res) => {
                 `
                 SELECT
 
-                COUNT(CASE WHEN vendedor_id=? THEN 1 END) AS creados,
+COUNT(
+    CASE
+        WHEN vendedor_id=?
+        THEN 1
+    END
+) AS creados,
 
-                COUNT(CASE WHEN comprador_id=? THEN 1 END) AS reservados,
+COUNT(
+    CASE
+        WHEN vendedor_id=?
+        AND estado='reservado'
+        THEN 1
+    END
+) AS reservados,
 
-                COUNT(CASE
-                    WHEN estado='completado'
-                    AND (vendedor_id=? OR comprador_id=?)
-                    THEN 1
-                END) AS completados,
+COUNT(
+    CASE
+        WHEN vendedor_id=?
+        AND estado='completado'
+        THEN 1
+    END
+) AS completados,
 
-                IFNULL(SUM(CASE
-                    WHEN vendedor_id=?
-                    THEN monto_protegido
-                END),0) AS dineroProtegido,
+IFNULL(
+    SUM(
+        CASE
+            WHEN vendedor_id=?
+            AND estado='reservado'
+            THEN monto_protegido
+        END
+    ),
+    0
+) AS dineroProtegido,
 
-                IFNULL(SUM(CASE
-                    WHEN vendedor_id=?
-                    AND estado='completado'
-                    THEN monto_vendedor
-                END),0) AS dineroRecibido
+IFNULL(
+    SUM(
+        CASE
+            WHEN vendedor_id=?
+            AND estado='completado'
+            THEN monto_vendedor
+        END
+    ),
+    0
+) AS dineroRecibido
 
-                FROM tratos
+FROM tratos
                 `,
 
                 [
 
-                    req.usuario.id,
                     req.usuario.id,
                     req.usuario.id,
                     req.usuario.id,
@@ -533,7 +556,7 @@ function generarCodigoLiberacion() {
 
 // INICIO
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  res.redirect('/login.html');
 });
 // CORREO
 app.get('/probar-correo', async (req, res) => {
@@ -1142,7 +1165,9 @@ req.usuario.id
         });
 
     }
-console.log(estadisticas);
+
+    console.log("ESTADISTICAS DASHBOARD:", estadisticas);
+
     res.json({
 
         ...usuario,
@@ -2421,10 +2446,7 @@ app.post('/stripe/create-checkout-session', verificarToken, async (req, res) => 
                         error: "Este trato ya no está disponible"
                     });
                 }
-                await reservarTratoSistema(
-    codigo,
-    req.usuario.id
-);
+                
 console.log("SUCCESS URL:",
 "https://trato-justo.onrender.com/pago-exitoso.html?session_id={CHECKOUT_SESSION_ID}");
    const session = await stripe.checkout.sessions.create({

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -16,126 +17,349 @@
 }
 
 body{
-    background:#F5F7FA;
+    background:#D6D9D8;
     min-height:100vh;
+    color:#17212B;
 }
 
+/* =========================
+   HEADER
+========================= */
+
 .header{
-    background:linear-gradient(135deg,#009EE3,#003087);
+    background:
+        linear-gradient(
+            135deg,
+            #15204B 0%,
+            #263A9B 45%,
+            #536DFE 100%
+        );
+
     color:white;
+
+    padding:28px 20px 38px;
+
     text-align:center;
-    padding:35px 20px;
+
+    position:relative;
+
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius:30px;
+
+    box-shadow:
+        0 15px 35px rgba(22,34,82,.22);
 }
 
 .logo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:10px;
+
     font-size:30px;
-    font-weight:bold;
+    font-weight:700;
+
+    margin-top:12px;
+    margin-bottom:10px;
+
+    letter-spacing:-.5px;
+}
+.logo-mark{
+    width:42px;
+    height:42px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,.16);
+
+    border:1px solid rgba(255,255,255,.24);
+
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
+}
+
+.logo-mark .material-icons{
+    font-size:25px;
 }
 
 .subtitulo{
-    margin-top:10px;
-    opacity:.9;
+    font-size:15px;
+
+    opacity:.88;
+
+    max-width:600px;
+
+    margin:auto;
+
+    line-height:1.5;
 }
 
+/* =========================
+   CONTENEDOR
+========================= */
+
 .container{
-    max-width:800px;
-    margin:30px auto;
-    padding:20px;
+    width:100%;
+    max-width:900px;
+    margin:0 auto;
+    padding:30px 20px 40px;
 }
+
+/* =========================
+   BOTONES
+========================= */
 
 .btn{
     width:100%;
     border:none;
-    border-radius:12px;
-    padding:15px;
-    font-size:16px;
+    border-radius:16px;
+    padding:14px 18px;
+    font-size:15px;
     font-weight:bold;
     cursor:pointer;
-    transition:.3s;
+    transition:.25s ease;
 }
 
 .btn:hover{
     transform:translateY(-2px);
 }
 
-.btn-secondary{
-    background:#003087;
-    color:white;
-    margin-bottom:20px;
+.btn:active{
+    transform:scale(.98);
 }
 
+.btn-secondary{
+    background:rgba(255,255,255,.55);
+    color:#003087;
+    border:1px solid rgba(255,255,255,.7);
+    box-shadow:
+        0 10px 25px rgba(0,0,0,.08),
+        inset 0 1px 0 rgba(255,255,255,.8);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    margin-bottom:22px;
+}
+
+/* =========================
+   TARJETAS
+========================= */
+
 .card{
-    background:white;
-    border-radius:18px;
-    padding:20px;
-    margin-bottom:20px;
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:26px;
+    padding:22px;
+    margin-bottom:15px;
+
+    box-shadow:
+        0 20px 45px rgba(0,0,0,.18),
+        inset 0 1px 1px rgba(255,255,255,.30);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    transition:
+        transform .25s,
+        box-shadow .25s;
+}
+
+.card:hover{
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 17px 35px rgba(27,39,85,.12),
+        inset 0 1px 0 rgba(255,255,255,.85);
 }
 
 .card h3{
     color:#003087;
-    margin-bottom:15px;
+    font-size:21px;
+    margin-bottom:18px;
 }
 
+/* =========================
+   INFORMACIÓN
+========================= */
+
 .info{
-    margin-bottom:8px;
-    color:#444;
+    margin-bottom:10px;
+    color:#24313D;
+    font-size:15px;
 }
+
+.info b{
+    color:#17212B;
+}
+
+/* =========================
+   CÓDIGO
+========================= */
 
 .codigo{
     display:inline-block;
-    background:#EAF7FF;
+    background:rgba(0,48,135,.10);
     color:#003087;
-    padding:6px 12px;
-    border-radius:8px;
+    padding:7px 12px;
+    border-radius:10px;
     font-weight:bold;
+    margin-left:4px;
+    border:1px solid rgba(0,48,135,.10);
 }
+
+/* =========================
+   ESTADOS
+========================= */
 
 .estado{
     display:inline-block;
-    padding:6px 12px;
-    border-radius:8px;
+    padding:7px 13px;
+    border-radius:10px;
     font-weight:bold;
-    margin-top:5px;
+    margin-top:2px;
+    font-size:14px;
+    border:1px solid rgba(255,255,255,.6);
 }
 
 .estado-creado{
-    background:#FFF3CD;
-    color:#856404;
+    background:rgba(255,193,7,.18);
+    color:#765900;
 }
 
 .estado-reservado{
-    background:#D4EDDA;
-    color:#155724;
+    background:rgba(40,167,69,.16);
+    color:#17652B;
 }
 
 .estado-completado{
-    background:#CCE5FF;
-    color:#004085;
+    background:rgba(0,158,227,.15);
+    color:#005B84;
 }
+
+/* =========================
+   BOTÓN VER TRATO
+========================= */
 
 .link-btn{
     display:block;
+    width:100%;
+    max-width:520px;
+    margin:18px auto 0;
+
     text-align:center;
-    margin-top:15px;
-    background:#009EE3;
-    color:white;
     text-decoration:none;
-    padding:12px;
-    border-radius:12px;
-    font-weight:bold;
+
+    color:#172033;
+
+    background:rgba(255,255,255,.38);
+
+    border:1px solid rgba(255,255,255,.98);
+
+    border-radius:17px;
+
+    padding:15px 18px;
+
+    font-size:15px;
+    font-weight:700;
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    box-shadow:
+        0 8px 20px rgba(30,40,60,.10),
+        inset 0 1px 2px rgba(255,255,255,1),
+        inset 0 -1px 2px rgba(140,150,160,.14);
+
+    transition:.25s;
 }
 
 .link-btn:hover{
-    opacity:.9;
+    transform:translateY(-2px);
+
+    background:rgba(255,255,255,.52);
+
+    box-shadow:
+        0 12px 26px rgba(30,40,60,.13),
+        inset 0 1px 2px rgba(255,255,255,1);
 }
 
+/* =========================
+   VACÍO
+========================= */
+
 .vacio{
-    background:white;
-    padding:30px;
-    border-radius:18px;
+    background:rgba(255,255,255,.58);
+    border:1px solid rgba(255,255,255,.72);
+    padding:35px 25px;
+    border-radius:22px;
     text-align:center;
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+    box-shadow:
+        0 14px 30px rgba(0,0,0,.10),
+        inset 0 1px 0 rgba(255,255,255,.8);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+}
+
+.vacio h3{
+    color:#003087;
+    margin-bottom:10px;
+}
+
+.vacio p{
+    color:#394854;
+}
+
+/* =========================
+   MOVIL
+========================= */
+
+@media (max-width:600px){
+
+    .header{
+        padding:22px 16px 32px;
+    }
+
+    .logo{
+        font-size:25px;
+    }
+
+    .subtitulo{
+        font-size:13px;
+    }
+
+    .container{
+        padding:20px 12px 30px;
+    }
+
+    .card{
+        padding:18px;
+        border-radius:19px;
+    }
+
+    .card h3{
+        font-size:19px;
+    }
+
+    .info{
+        font-size:14px;
+    }
+
+    .codigo{
+        display:block;
+        width:max-content;
+        margin:5px 0 0;
+    }
+
+    .link-btn{
+        padding:12px;
+    }
+
 }
 
 </style>
@@ -146,7 +370,17 @@ body{
 <div class="header">
 
     <div class="logo">
-        🛡️ Trato Justo
+
+        <div class="logo-mark">
+
+            <span class="material-icons">
+                verified_user
+            </span>
+
+        </div>
+
+        Trato Justo
+
     </div>
 
     <div class="subtitulo">
@@ -158,10 +392,16 @@ body{
 <div class="container">
 
     <button
-        class="btn btn-secondary"
-        onclick="location.href='dashboard.html'">
-        ← Volver al Dashboard
-    </button>
+    class="btn btn-secondary"
+    onclick="location.href='dashboard.html'">
+
+    <span class="material-icons">
+        arrow_back
+    </span>
+
+    Volver al Inicio
+
+</button>
 
     <div id="compras">
         Cargando compras...

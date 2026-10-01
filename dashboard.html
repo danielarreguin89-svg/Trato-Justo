@@ -33,10 +33,7 @@ html{
 }
 
 body{
-    background:
-        radial-gradient(circle at 15% 10%, rgba(124,140,255,.35), transparent 28%),
-        radial-gradient(circle at 85% 20%, rgba(83,109,254,.25), transparent 30%),
-        linear-gradient(145deg,#101A4A 0%,#263A9B 45%,#536DFE 100%);
+    background: #D6D9D8;
 
     min-height:100vh;
     color:white;
@@ -208,9 +205,9 @@ body{
 
 .stats-wrapper{
     width:100%;
-    max-width:1160px;
+    max-width:900px;
 
-    margin:-18px auto 0;
+    margin:18px auto 0;
 
     position:relative;
     z-index:5;
@@ -219,25 +216,25 @@ body{
 }
 
 .stats{
-    display:flex;
+    display:grid;
+
+    grid-template-columns:repeat(5,minmax(0,1fr));
+
     gap:14px;
 
-    overflow-x:auto;
-    overflow-y:hidden;
+    width:100%;
+
+    overflow:visible;
 
     padding:6px 3px 18px;
-
-    scrollbar-width:none;
-
-    scroll-snap-type:x proximity;
-}
-
-.stats::-webkit-scrollbar{
-    display:none;
 }
 
 .stat-card{
-    flex:0 0 205px;
+    width:100%;
+
+    min-width:0;
+
+    height:145px;
 
     min-height:145px;
 
@@ -275,6 +272,35 @@ box-shadow:
     box-shadow:
         0 18px 38px rgba(27,39,85,.14),
         inset 0 1px 0 rgba(255,255,255,.8);
+}
+.stat-clickable{
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+}
+
+.stat-clickable::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(
+            120deg,
+            rgba(255,255,255,.16),
+            transparent 45%,
+            rgba(255,255,255,.06)
+        );
+    opacity:0;
+    transition:.25s;
+    pointer-events:none;
+}
+
+.stat-clickable:hover::after{
+    opacity:1;
+}
+
+.stat-clickable:active{
+    transform:scale(.97);
 }
 
 .stat-icon{
@@ -317,7 +343,9 @@ color:white;
 }
 
 .stat-money{
-    font-size:25px;
+    font-size:18px;
+    letter-spacing:-0.6px;
+    white-space:nowrap;
 }
 
 /* =========================
@@ -326,7 +354,7 @@ color:white;
 
 .container{
     width:100%;
-    max-width:820px;
+    max-width:900px;
 
     margin:18px auto 0;
 
@@ -438,6 +466,9 @@ color:white;
 
 .btn{
     width:100%;
+    max-width:520px;
+    margin-left:auto;
+margin-right:auto;
 
     border:none;
 
@@ -476,36 +507,79 @@ color:white;
 }
 
 .btn-primary{
-    color:white;
+    color:#172033;
 
-    background:rgba(255,255,255,.14);
+    background:rgba(255,255,255,.38);
 
-    border:1px solid rgba(255,255,255,.30);
+    border:1px solid rgba(255,255,255,.98);
 
     backdrop-filter:blur(18px);
     -webkit-backdrop-filter:blur(18px);
 
-    box-shadow:
-        0 10px 25px rgba(0,0,0,.18),
-        inset 0 1px 1px rgba(255,255,255,.35);
 
-    text-shadow:0 1px 2px rgba(0,0,0,.15);
+    box-shadow:
+    0 8px 20px rgba(30,40,60,.10),
+    inset 0 1px 2px rgba(255,255,255,1),
+    inset 0 -1px 2px rgba(140,150,160,.14);
+
+    position:relative;
+    overflow:hidden;
+
+    text-shadow:none;
+}
+
+.btn-primary::before{
+    content:"";
+
+    position:absolute;
+    inset:1px;
+
+    border-radius:15px;
+
+    border:1px solid rgba(255,255,255,.45);
+
+    pointer-events:none;
+}
+
+.btn-primary:hover{
+    background:rgba(255,255,255,.52);
+
+    box-shadow:
+        0 12px 26px rgba(30,40,60,.13),
+        inset 0 1px 1px rgba(255,255,255,1),
+        inset 0 -1px 1px rgba(170,180,190,.18);
 }
 
 .btn-secondary,
 .btn-success{
-    color:white;
+    color:#172033;
 
-    background:rgba(255,255,255,.11);
+    background:rgba(255,255,255,.38);
 
-    border:1px solid rgba(255,255,255,.25);
+    border:1px solid rgba(255,255,255,.98);
 
     backdrop-filter:blur(18px);
     -webkit-backdrop-filter:blur(18px);
 
     box-shadow:
-        0 10px 25px rgba(0,0,0,.16),
-        inset 0 1px 1px rgba(255,255,255,.30);
+        0 8px 20px rgba(30,40,60,.10),
+        inset 0 1px 2px rgba(255,255,255,1),
+        inset 0 -1px 2px rgba(140,150,160,.14);
+
+    position:relative;
+    overflow:hidden;
+
+    text-shadow:none;
+}
+
+.btn-secondary:hover,
+.btn-success:hover{
+    background:rgba(255,255,255,.52);
+
+    box-shadow:
+        0 12px 26px rgba(30,40,60,.13),
+        inset 0 1px 2px rgba(255,255,255,1),
+        inset 0 -1px 2px rgba(140,150,160,.14);
 }
 
 /* =========================
@@ -608,25 +682,139 @@ color:white;
     font-size:11px;
     color:#969DAC;
 }
+/* =========================
+   PANEL DETALLE DE DINERO
+========================= */
 
+.modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+
+    background:rgba(16,25,54,.28);
+
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    z-index:10000;
+}
+
+.modal-dinero{
+    position:relative;
+
+    width:min(420px,100%);
+
+    padding:28px 24px;
+
+    background:rgba(255,255,255,.88);
+
+    border:1px solid rgba(255,255,255,.95);
+
+    border-radius:26px;
+
+    box-shadow:
+        0 25px 60px rgba(16,25,54,.22),
+        inset 0 1px 1px rgba(255,255,255,.95);
+
+    backdrop-filter:blur(22px);
+    -webkit-backdrop-filter:blur(22px);
+
+    text-align:center;
+
+    color:#172033;
+}
+
+.modal-cerrar{
+    position:absolute;
+
+    top:12px;
+    right:14px;
+
+    width:36px;
+    height:36px;
+
+    border:none;
+    border-radius:12px;
+
+    background:rgba(83,109,254,.08);
+
+    color:#172033;
+
+    font-size:26px;
+    line-height:1;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.modal-cerrar:hover{
+    background:rgba(83,109,254,.15);
+    transform:scale(1.05);
+}
+
+.modal-icon{
+    width:58px;
+    height:58px;
+
+    margin:0 auto 14px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:18px;
+
+    background:rgba(83,109,254,.10);
+
+    color:var(--blueberry);
+}
+
+.modal-icon .material-icons{
+    font-size:30px;
+}
+
+.modal-dinero h2{
+    font-size:21px;
+    margin-bottom:12px;
+}
+
+.modal-monto{
+    font-size:30px;
+    font-weight:800;
+
+    letter-spacing:-.8px;
+
+    margin-bottom:8px;
+}
+
+.modal-detalle{
+    font-size:15px;
+    font-weight:700;
+
+    color:var(--blueberry);
+
+    margin-bottom:12px;
+}
+
+.modal-dinero p{
+    color:#6D7587;
+
+    font-size:14px;
+    line-height:1.5;
+
+    max-width:320px;
+
+    margin:0 auto;
+}
 /* =========================
    RESPONSIVE
 ========================= */
-
-@media (min-width:900px){
-
-    .stats{
-        overflow-x:visible;
-        display:grid;
-        grid-template-columns:repeat(5,1fr);
-    }
-
-    .stat-card{
-        min-width:0;
-        width:100%;
-    }
-
-}
 
 @media (max-width:600px){
 
@@ -675,21 +863,59 @@ color:white;
         font-size:24px;
     }
 
-    .stats-wrapper{
-        margin-top:-16px;
-        padding:0 14px;
-    }
+   .stats-wrapper{
+    margin-top:18px;
+    padding:0 14px;
+}
 
-    .stat-card{
-        flex-basis:170px;
-        min-height:138px;
-        padding:17px 12px;
-        border-radius:21px;
-    }
+.stats{
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:6px;
+
+    width:100%;
+    overflow:visible;
+
+    padding:0 0 18px;
+}
+
+.stat-card{
+    width:100%;
+    min-width:0;
+
+    height:118px;
+    min-height:118px;
+
+    padding:10px 4px;
+
+    border-radius:17px;
+}
+
 
     .stat-money{
-        font-size:22px;
-    }
+    font-size:13px;
+    letter-spacing:-0.4px;
+}
+.stat-icon{
+    width:30px;
+    height:30px;
+    border-radius:10px;
+    margin-bottom:6px;
+}
+
+.stat-icon .material-icons{
+    font-size:18px;
+}
+
+.stat-number{
+    font-size:17px;
+    margin-bottom:3px;
+}
+
+.stat-label{
+    font-size:10px;
+    line-height:1.15;
+}
 
     .container{
         padding:0 14px 25px;
@@ -705,7 +931,33 @@ color:white;
         border-radius:22px;
     }
 }
+/* =========================
+   TEXTOS SOBRE FONDO CLARO
+   ========================= */
 
+.stat-number{
+    color:#172033;
+}
+
+.stat-label{
+    color:#6D7587;
+}
+
+.section-title h2{
+    color:#172033;
+}
+
+.section-title p{
+    color:#6D7587;
+}
+
+.action-card h2{
+    color:#172033;
+}
+
+.action-card p{
+    color:#6D7587;
+}
 </style>
 </head>
 
@@ -798,126 +1050,121 @@ color:white;
 
     <div class="stats">
 
-        <div class="stat-card">
-
-            <div class="stat-icon">
-
-                <span class="material-icons">
-                    inventory_2
-                </span>
-
-            </div>
-
-            <div
-                id="tCreados"
-                class="stat-number"
-            >
-                0
-            </div>
-
-            <div class="stat-label">
-                Tratos creados
-            </div>
-
+    <div
+        class="stat-card stat-clickable"
+        onclick="irAMisVentas('creado')"
+    >
+        <div class="stat-icon">
+            <span class="material-icons">
+                inventory_2
+            </span>
         </div>
 
-
-        <div class="stat-card">
-
-            <div class="stat-icon">
-
-                <span class="material-icons">
-                    handshake
-                </span>
-
-            </div>
-
-            <div
-                id="tReservados"
-                class="stat-number"
-            >
-                0
-            </div>
-
-            <div class="stat-label">
-                Tratos reservados
-            </div>
-
+        <div
+            id="tCreados"
+            class="stat-number"
+        >
+            0
         </div>
 
+        <div class="stat-label">
+            Tratos creados
+        </div>
+    </div>
 
-        <div class="stat-card">
 
-            <div class="stat-icon">
-
-                <span class="material-icons">
-                    check_circle
-                </span>
-
-            </div>
-
-            <div
-                id="tCompletados"
-                class="stat-number"
-            >
-                0
-            </div>
-
-            <div class="stat-label">
-                Tratos completados
-            </div>
-
+    <div
+        class="stat-card stat-clickable"
+        onclick="irAMisVentas('reservado')"
+    >
+        <div class="stat-icon">
+            <span class="material-icons">
+                handshake
+            </span>
         </div>
 
-
-        <div class="stat-card">
-
-            <div class="stat-icon">
-
-                <span class="material-icons">
-                    account_balance_wallet
-                </span>
-
-            </div>
-
-            <div
-                id="tProtegido"
-                class="stat-number stat-money"
-            >
-                $0.00
-            </div>
-
-            <div class="stat-label">
-                Dinero protegido
-            </div>
-
+        <div
+            id="tReservados"
+            class="stat-number"
+        >
+            0
         </div>
 
+        <div class="stat-label">
+            Tratos reservados
+        </div>
+    </div>
 
-        <div class="stat-card">
 
-            <div class="stat-icon">
+    <div
+        class="stat-card stat-clickable"
+        onclick="irAMisVentas('completado')"
+    >
+        <div class="stat-icon">
+            <span class="material-icons">
+                check_circle
+            </span>
+        </div>
 
-                <span class="material-icons">
-                    payments
-                </span>
+        <div
+            id="tCompletados"
+            class="stat-number"
+        >
+            0
+        </div>
 
-            </div>
+        <div class="stat-label">
+            Tratos completados
+        </div>
+    </div>
 
-            <div
-                id="tRecibido"
-                class="stat-number stat-money"
-            >
-                $0.00
-            </div>
 
-            <div class="stat-label">
-                Dinero recibido
-            </div>
+    <div class="stat-card stat-clickable"
+     onclick="mostrarDetalleDinero('protegido')">
 
+        <div class="stat-icon">
+            <span class="material-icons">
+                account_balance_wallet
+            </span>
+        </div>
+
+        <div
+            id="tProtegido"
+            class="stat-number stat-money"
+        >
+            $0.00
+        </div>
+
+        <div class="stat-label">
+            Dinero protegido
         </div>
 
     </div>
+
+
+    <div class="stat-card stat-clickable"
+     onclick="mostrarDetalleDinero('recibido')">
+
+        <div class="stat-icon">
+            <span class="material-icons">
+                payments
+            </span>
+        </div>
+
+        <div
+            id="tRecibido"
+            class="stat-number stat-money"
+        >
+            $0.00
+        </div>
+
+        <div class="stat-label">
+            Dinero recibido
+        </div>
+
+    </div>
+
+</div>
 
 </div>
 
@@ -1069,7 +1316,46 @@ color:white;
 
 </div>
 
+<!-- =========================
+     PANEL DETALLE DE DINERO
+========================= -->
 
+<div id="panelDetalleDinero" class="modal-overlay">
+
+    <div class="modal-dinero">
+
+        <button
+            class="modal-cerrar"
+            onclick="cerrarDetalleDinero()"
+        >
+            ×
+        </button>
+
+        <div class="modal-icon">
+            <span class="material-icons" id="modalDineroIcono">
+                account_balance_wallet
+            </span>
+        </div>
+
+        <h2 id="modalDineroTitulo">
+            Dinero protegido
+        </h2>
+
+        <div id="modalDineroMonto" class="modal-monto">
+            $0.00
+        </div>
+
+        <div id="modalDineroDetalle" class="modal-detalle">
+            0 tratos
+        </div>
+
+        <p id="modalDineroDescripcion">
+            Dinero asociado a operaciones protegidas.
+        </p>
+
+    </div>
+
+</div>
 <!-- =========================
      PANEL NOTIFICACIONES
 ========================= -->
@@ -1153,6 +1439,7 @@ async function cargarUsuario(){
         }
 
         const usuario = await respuesta.json();
+        console.log("DATOS QUE RECIBE EL DASHBOARD:", usuario);
 
         document.getElementById(
             'nombreUsuario'
@@ -1161,7 +1448,7 @@ async function cargarUsuario(){
 
         const estadisticas =
             usuario.estadisticas || {};
-
+window.estadisticasDashboard = estadisticas;
 
         document.getElementById(
             "tCreados"
@@ -1185,7 +1472,7 @@ async function cargarUsuario(){
             "tProtegido"
         ).innerText =
             formatearDinero(
-                estadisticas.dineroProtegido
+                estadisticas.dineroprotegido
             );
 
 
@@ -1193,7 +1480,7 @@ async function cargarUsuario(){
             "tRecibido"
         ).innerText =
             formatearDinero(
-                estadisticas.dineroRecibido
+                estadisticas.dinerorecibido
             );
 
 
@@ -1431,6 +1718,74 @@ function escaparHTML(texto){
 cargarUsuario();
 
 cargarNotificaciones();
+function irAMisVentas(filtro){
+
+    window.location.href =
+        "mis-ventas.html?filtro=" + encodeURIComponent(filtro);
+
+}
+function mostrarDetalleDinero(tipo){
+
+    const panel = document.getElementById("panelDetalleDinero");
+
+    const titulo = document.getElementById("modalDineroTitulo");
+    const monto = document.getElementById("modalDineroMonto");
+    const detalle = document.getElementById("modalDineroDetalle");
+    const descripcion = document.getElementById("modalDineroDescripcion");
+    const icono = document.getElementById("modalDineroIcono");
+
+    const estadisticas =
+        window.estadisticasDashboard || {};
+
+    if(tipo === "protegido"){
+
+        titulo.innerText = "Dinero protegido";
+
+        monto.innerText =
+            formatearDinero(
+                estadisticas.dineroprotegido
+            );
+
+        detalle.innerText =
+            `${Number(estadisticas.reservados) || 0} tratos reservados`;
+
+        descripcion.innerText =
+            "Dinero asociado a operaciones que permanecen protegidas mientras el trato está reservado.";
+
+        icono.innerText = "account_balance_wallet";
+
+    }
+
+    if(tipo === "recibido"){
+
+        titulo.innerText = "Dinero recibido";
+
+        monto.innerText =
+            formatearDinero(
+                estadisticas.dinerorecibido
+            );
+
+        detalle.innerText =
+            `${Number(estadisticas.completados) || 0} tratos completados`;
+
+        descripcion.innerText =
+            "Total correspondiente a operaciones que ya fueron completadas y cuyo pago fue liberado.";
+
+        icono.innerText = "payments";
+
+    }
+
+    panel.style.display = "flex";
+}
+
+
+function cerrarDetalleDinero(){
+
+    document.getElementById(
+        "panelDetalleDinero"
+    ).style.display = "none";
+
+}
 
 
 /* =========================
@@ -1465,7 +1820,26 @@ document.addEventListener(
 
     }
 );
+document.addEventListener(
+    "click",
+    function(event){
 
+        const panel =
+            document.getElementById(
+                "panelDetalleDinero"
+            );
+
+        if(
+            panel.style.display === "flex" &&
+            event.target === panel
+        ){
+
+            cerrarDetalleDinero();
+
+        }
+
+    }
+);
 </script>
 
 </body>

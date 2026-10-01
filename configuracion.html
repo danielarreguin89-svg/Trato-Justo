@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <title>Configuración</title>
 
 <style>
@@ -16,52 +16,259 @@
 }
 
 body{
-    background:#F5F7FA;
+    background:#D6D9D8;
+    min-height:100vh;
+    color:#172033;
 }
+
+/* =========================
+   HEADER
+========================= */
 
 .header{
-    background:linear-gradient(135deg,#009EE3,#003087);
+    background:
+        linear-gradient(
+            135deg,
+            #15204B 0%,
+            #263A9B 45%,
+            #536DFE 100%
+        );
+
     color:white;
-    padding:25px;
+
+    padding:28px 20px 38px;
+
     text-align:center;
+
+    position:relative;
+
+    border-bottom-left-radius:30px;
+    border-bottom-right-radius:30px;
+
+    box-shadow:
+        0 15px 35px rgba(22,34,82,.22);
 }
+
+.logo{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:10px;
+
+    font-size:30px;
+    font-weight:700;
+
+    margin-top:12px;
+    margin-bottom:10px;
+
+    letter-spacing:-.5px;
+}
+
+.logo-mark{
+    width:42px;
+    height:42px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,.16);
+
+    border:1px solid rgba(255,255,255,.24);
+
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
+}
+
+.logo-mark .material-icons{
+    font-size:25px;
+}
+
+.subtitulo{
+    font-size:15px;
+    opacity:.88;
+    max-width:600px;
+    margin:auto;
+    line-height:1.5;
+}
+
+/* =========================
+   CONTENEDOR
+========================= */
 
 .container{
-    max-width:500px;
-    margin:30px auto;
-    padding:20px;
+    width:100%;
+    max-width:900px;
+
+    margin:0 auto;
+
+    padding:30px 20px 40px;
 }
 
+/* =========================
+   OPCIONES
+========================= */
+
 .opcion{
-    background:white;
-    padding:20px;
-    border-radius:15px;
+    position:relative;
+    overflow:hidden;
+
+    background:rgba(255,255,255,.12);
+
+    border:1px solid rgba(255,255,255,.22);
+
+    border-radius:22px;
+
+    padding:21px;
+
     margin-bottom:15px;
+
     cursor:pointer;
-    box-shadow:0 4px 15px rgba(0,0,0,.08);
-    font-size:18px;
-    font-weight:bold;
+
+    box-shadow:
+        0 20px 45px rgba(0,0,0,.18),
+        inset 0 1px 1px rgba(255,255,255,.30);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    font-size:17px;
+    font-weight:700;
+
+    color:#172033;
+
+    transition:
+        transform .25s,
+        box-shadow .25s;
 }
 
 .opcion:hover{
-    transform:translateY(-2px);
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 17px 35px rgba(27,39,85,.12),
+        inset 0 1px 0 rgba(255,255,255,.85);
 }
+
+/* =========================
+   STRIPE
+========================= */
+
+#btnStripe{
+    cursor:pointer;
+}
+
+#btnStripe br{
+    line-height:1.5;
+}
+
+#btnStripe::first-line{
+    color:#172033;
+}
+
+.estado-conectada,
+.estado-no-conectada{
+    display:inline-block;
+
+    margin-top:5px;
+
+    padding:7px 12px;
+
+    border-radius:10px;
+
+    font-size:13px;
+    font-weight:700;
+}
+
 .estado-conectada{
-    color:#22C55E;
-    font-weight:bold;
+    color:#17652B;
+    background:rgba(40,167,69,.16);
+    border:1px solid rgba(40,167,69,.14);
 }
 
 .estado-no-conectada{
-    color:#EF4444;
-    font-weight:bold;
+    color:#8A3E3E;
+    background:rgba(220,70,70,.12);
+    border:1px solid rgba(220,70,70,.10);
 }
+
+/* =========================
+   BOTONES INTERNOS
+========================= */
+
+.opcion .material-icons{
+    vertical-align:middle;
+}
+
+/* =========================
+   MOVIL
+========================= */
+
+@media (max-width:600px){
+
+    .header{
+        padding:22px 16px 32px;
+    }
+
+    .logo{
+        font-size:25px;
+    }
+
+    .logo-mark{
+        width:39px;
+        height:39px;
+    }
+
+    .logo-mark .material-icons{
+        font-size:23px;
+    }
+
+    .subtitulo{
+        font-size:13px;
+    }
+
+    .container{
+        padding:20px 12px 30px;
+    }
+
+    .opcion{
+        padding:18px;
+
+        border-radius:20px;
+
+        font-size:16px;
+    }
+
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="header">
-    <h1>⚙️ Configuración</h1>
+
+    <div class="logo">
+
+        <div class="logo-mark">
+
+            <span class="material-icons">
+                settings
+            </span>
+
+        </div>
+
+        Trato Justo
+
+    </div>
+
+    <div class="subtitulo">
+        Configura tu cuenta y tus pagos
+    </div>
+
 </div>
 
 <div class="container">
@@ -69,14 +276,22 @@ body{
     <div
         class="opcion"
         onclick="location.href='perfil.html'">
-        👤 Datos Personales
+        <span class="material-icons">
+    person
+</span>
+
+Datos Personales
     </div>
 
 <div
     class="opcion"
     id="btnStripe">
 
-    💳 Cuenta para recibir pagos
+    <span class="material-icons">
+    account_balance
+</span>
+
+Cuenta para recibir pagos
 
     <br><br>
 
@@ -93,16 +308,24 @@ body{
 
 </div>
 <div
-            class="opcion"
-            onclick="location.href='dashboard.html'">
+    class="opcion"
+    onclick="location.href='dashboard.html'">
 
-            Volver al Inicio
+    <span class="material-icons">
+        arrow_back
+    </span>
+
+    Volver al Inicio
 
 </div>
     <div
         class="opcion"
         onclick="cerrarSesion()">
-        🚪 Cerrar sesión
+        <span class="material-icons">
+    logout
+</span>
+
+Cerrar sesión
     </div>
 
 </div>

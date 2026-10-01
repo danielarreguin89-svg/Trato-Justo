@@ -4,7 +4,7 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <title>Pago exitoso</title>
 
 <style>
@@ -17,148 +17,159 @@ font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
+    min-height:100vh;
 
-background:linear-gradient(135deg,#eef6ff,#d9ffe9);
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
-display:flex;
-justify-content:center;
-align-items:center;
+    padding:20px;
 
-height:100vh;
-
-overflow:hidden;
-
-padding:20px;
-
+    background:
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(83,109,254,.10),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 85% 80%,
+            rgba(38,58,155,.08),
+            transparent 30%
+        ),
+        #D6D9D8;
 }
 
 .card{
+    position:relative;
+    overflow:hidden;
 
-background:rgba(255,255,255,.92);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.68),
+            rgba(255,255,255,.42)
+        );
 
-backdrop-filter:blur(18px);
+    backdrop-filter:blur(24px) saturate(115%);
+    -webkit-backdrop-filter:blur(24px) saturate(115%);
 
-padding:55px;
+    padding:40px 32px;
 
-border-radius:30px;
+    border-radius:28px;
 
-box-shadow:
-0 25px 70px rgba(0,0,0,.15);
+    border:1px solid rgba(255,255,255,.88);
 
-border:1px solid rgba(255,255,255,.7);
+    box-shadow:
+        0 22px 50px rgba(22,34,82,.12),
+        inset 0 1px 1px rgba(255,255,255,.98);
 
-width:430px;
+    width:430px;
+    max-width:95%;
 
-max-width:95%;
+    text-align:center;
 
-text-align:center;
-
-animation:subir .8s ease;
-
+    animation:subir .8s ease;
 }
 
 .circulo{
+    width:96px;
+    height:96px;
 
-width:120px;
-height:120px;
+    margin:auto;
 
-margin:auto;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
-display:flex;
-justify-content:center;
-align-items:center;
+    border-radius:50%;
 
-border-radius:50%;
+    background:
+        linear-gradient(
+            135deg,
+            #536DFE,
+            #263A9B
+        );
 
-background:linear-gradient(135deg,#21d07a,#12b85d);
+    color:white;
 
-box-shadow:
-0 0 0 12px rgba(33,208,122,.15),
-0 15px 40px rgba(18,184,93,.35);
+    box-shadow:
+        0 0 0 10px rgba(83,109,254,.10),
+        0 15px 35px rgba(38,58,155,.22);
 
-animation:pop .7s ease;
-
+    animation:pop .7s ease;
 }
-.circulo svg{
 
-width:64px;
-height:64px;
-
-}
-
-.circulo path{
-
-fill:none;
-
-stroke:white;
-
-stroke-width:3.2;
-
-stroke-linecap:round;
-
-stroke-linejoin:round;
-
-stroke-dasharray:40;
-
-stroke-dashoffset:40;
-
-animation:dibujar .9s ease forwards;
-
-animation-delay:.55s;
-
+.circulo .material-icons{
+    font-size:52px;
+    font-weight:500;
 }
 
 h1{
+    margin-top:24px;
 
-margin-top:25px;
+    font-size:32px;
+    line-height:1.2;
 
-font-size:34px;
+    color:#15204B;
 
-color:#222;
+    font-weight:700;
 
-opacity:0;
+    opacity:0;
 
-animation:aparecer .6s forwards;
-animation-delay:.55s;
-
+    animation:aparecer .6s forwards;
+    animation-delay:.55s;
 }
 
 p{
+    margin-top:16px;
 
-margin-top:18px;
+    color:#667085;
 
-color:#666;
+    font-size:15px;
+    line-height:1.6;
 
-font-size:17px;
+    opacity:0;
 
-line-height:28px;
-
-opacity:0;
-
-animation:aparecer .6s forwards;
-animation-delay:.95s;
-
+    animation:aparecer .6s forwards;
+    animation-delay:.95s;
 }
 
 .info{
+    display:flex;
+    align-items:center;
+    gap:8px;
 
-margin-top:18px;
+    margin-top:18px;
 
-background:#ecfff5;
+    background:rgba(255,255,255,.38);
 
-border-radius:12px;
+    border:1px solid rgba(255,255,255,.70);
 
-padding:15px;
+    border-radius:15px;
 
-color:#179c56;
+    padding:14px;
 
-font-size:15px;
+    color:#667085;
 
-opacity:0;
+    font-size:13px;
+    line-height:1.4;
 
-animation:aparecer .6s forwards;
-animation-delay:1.2s;
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.85);
 
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+
+    opacity:0;
+
+    animation:aparecer .6s forwards;
+    animation-delay:1.2s;
+}
+
+.info .material-icons{
+    flex-shrink:0;
+    font-size:19px;
+    color:#263A9B;
 }
 
 .botones{
@@ -179,35 +190,44 @@ animation-delay:1.5s;
 }
 
 button{
+    height:52px;
 
-height:52px;
+    border:none;
+    border-radius:14px;
 
-border:none;
+    cursor:pointer;
 
-border-radius:14px;
+    font-size:16px;
+    font-weight:700;
 
-cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
 
-font-size:16px;
+    transition:.2s ease;
+}
 
-font-weight:bold;
-
-transition:.25s;
-
+button .material-icons{
+    font-size:20px;
 }
 
 .compras{
+    background:
+        linear-gradient(
+            135deg,
+            #536DFE,
+            #263A9B
+        );
 
-background:linear-gradient(135deg,#20d978,#14b85b);
+    color:white;
 
-color:white;
+    position:relative;
+    overflow:hidden;
 
-position:relative;
-
-overflow:hidden;
-
-box-shadow:0 15px 35px rgba(20,184,91,.30);
-
+    box-shadow:
+        0 10px 22px rgba(38,58,155,.20),
+        inset 0 1px 1px rgba(255,255,255,.18);
 }
 .compras::before{
 
@@ -231,11 +251,11 @@ transition:.8s;
 
 }
 .compras:hover{
+    transform:translateY(-1px);
 
-transform:translateY(-4px);
-
-box-shadow:0 20px 40px rgba(20,184,91,.45);
-
+    box-shadow:
+        0 14px 26px rgba(38,58,155,.24),
+        inset 0 1px 1px rgba(255,255,255,.22);
 }
 
 .compras:hover::before{
@@ -245,17 +265,19 @@ left:150%;
 }
 
 .inicio{
+    background:rgba(255,255,255,.42);
 
-background:white;
+    color:#263A9B;
 
-border:2px solid #d8d8d8;
+    border:1px solid rgba(38,58,155,.18);
 
+    box-shadow:
+        0 8px 18px rgba(22,34,82,.06),
+        inset 0 1px 1px rgba(255,255,255,.80);
 }
 
 .inicio:hover{
-
-background:#f5f5f5;
-
+    background:rgba(255,255,255,.58);
 }
 
 @keyframes pop{
@@ -318,7 +340,79 @@ stroke-dashoffset:0;
 }
 
 }
+.marca-pago{
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
+    gap:9px;
+
+    margin-bottom:28px;
+
+    font-size:20px;
+    font-weight:700;
+    color:#15204B;
+}
+
+.marca-pago .logo-mark{
+    width:38px;
+    height:38px;
+
+    border-radius:12px;
+}
+
+.marca-pago .logo-mark .material-icons{
+    font-size:21px;
+}
+@media (max-width:600px){
+    body{
+        padding:16px;
+    }
+
+    .card{
+        padding:32px 22px;
+        border-radius:24px;
+        width:100%;
+        max-width:400px;
+    }
+
+    .circulo{
+        width:82px;
+        height:82px;
+    }
+
+    .circulo .material-icons{
+        font-size:44px;
+    }
+
+    h1{
+        font-size:28px;
+    }
+
+    p{
+        font-size:14px;
+        line-height:1.55;
+    }
+
+    .info{
+        font-size:12px;
+        text-align:left;
+    }
+    .marca-pago{
+    font-size:18px;
+    margin-bottom:24px;
+}
+
+.marca-pago .logo-mark{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+}
+
+.marca-pago .logo-mark .material-icons{
+    font-size:19px;
+}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 </head>
@@ -326,20 +420,14 @@ stroke-dashoffset:0;
 <body>
 
 <div class="card">
-
+<div class="marca-pago">
+    <div class="logo-mark">
+        <span class="material-icons">verified_user</span>
+    </div>
+    <span>Trato Justo</span>
+</div>
 <div class="circulo">
-
-<svg
-width="64"
-height="64"
-viewBox="0 0 24 24"
-fill="none">
-
-<path
-d="M20 6L9 17L4 12"/>
-
-</svg>
-
+    <span class="material-icons">check</span>
 </div>
 
 <h1>
@@ -357,9 +445,8 @@ Ahora coordina la entrega con el vendedor y, cuando recibas el producto, podrás
 </p>
 
 <div class="info">
-
-🔒 Tu dinero permanecerá seguro hasta que confirmes la entrega.
-
+    <span class="material-icons">lock</span>
+    <span>Tu dinero permanecerá seguro hasta que confirmes la entrega.</span>
 </div>
 
 <div class="botones">
@@ -368,6 +455,7 @@ Ahora coordina la entrega con el vendedor y, cuando recibas el producto, podrás
 class="compras"
 onclick="location.href='mis-compras.html'">
 
+<span class="material-icons">shopping_bag</span>
 Ir a Mis Compras
 
 </button>
@@ -376,6 +464,7 @@ Ir a Mis Compras
 class="inicio"
 onclick="location.href='dashboard.html'">
 
+<span class="material-icons">home</span>
 Volver al Inicio
 
 </button>

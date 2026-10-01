@@ -6,6 +6,8 @@
 
 <title>Trato Justo</title>
 
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 <style>
 
 *{
@@ -16,7 +18,7 @@
 }
 
 body{
-    background:#F5F7FA;
+    background:#D6D9D8 !important;
     min-height:100vh;
 }
 
@@ -44,59 +46,148 @@ body{
 }
 
 .card{
-    background:white;
-    border-radius:20px;
-    padding:25px;
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
+    position:relative;
+    overflow:hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.68),
+            rgba(255,255,255,.42)
+        );
+
+    border:1px solid rgba(255,255,255,.88);
+
+    border-radius:24px;
+
+    padding:26px;
+
     margin-bottom:20px;
+
+    box-shadow:
+        0 18px 40px rgba(22,34,82,.09),
+        inset 0 1px 1px rgba(255,255,255,.98),
+        inset 0 -1px 1px rgba(255,255,255,.35);
+
+    backdrop-filter:blur(24px) saturate(115%);
+    -webkit-backdrop-filter:blur(24px) saturate(115%);
+
+    color:#172022;
 }
 
 .producto{
-    color:#003087;
-    margin-bottom:15px;
+    color:#15204B !important;
+    margin-bottom:14px;
+    font-size:28px;
+    font-weight:700;
+    letter-spacing:-.5px;
 }
 
 .monto{
     font-size:34px;
-    font-weight:bold;
-    color:#00A650;
-    margin-top:10px;
+    font-weight:800;
+    color:#263A9B !important;
+    margin-top:8px;
+    letter-spacing:-1px;
 }
 
 .info{
-    margin-bottom:12px;
-    color:#444;
+    margin-bottom:14px;
+    color:#667085;
+
+    font-size:14px;
+    line-height:1.5;
+}
+
+.info b{
+    color:#172033;
+    font-weight:700;
+}
+.rating{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    width:100%;
+
+    gap:5px;
+
+    color:#667085;
+
+    font-size:14px;
+
+    margin-top:-4px;
+    margin-bottom:8px;
+}
+
+.rating .material-icons{
+    font-size:18px;
+    color:#F4B942;
+}
+
+.rating strong{
+    color:#15204B;
+    font-weight:700;
 }
 
 .codigo{
-    display:inline-block;
-    background:#EAF7FF;
-    color:#003087;
-    padding:8px 14px;
+    display:inline-flex;
+    align-items:center;
+
+    background:rgba(38,58,155,.07);
+
+    color:#263A9B;
+
+    padding:7px 12px;
+
     border-radius:10px;
-    font-weight:bold;
+
+    border:1px solid rgba(38,58,155,.12);
+
+    font-size:13px;
+    font-weight:700;
+
+    letter-spacing:.4px;
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.95);
 }
 
 .estado{
-    display:inline-block;
-    padding:8px 14px;
+    display:inline-flex;
+    align-items:center;
+
+    padding:7px 12px;
+
     border-radius:10px;
-    font-weight:bold;
+
+    font-size:13px;
+    font-weight:700;
+
+    letter-spacing:.2px;
+
+    border:1px solid transparent;
 }
 
+/* CREADO */
 .estado-creado{
-    background:#FFF3CD;
-    color:#856404;
+    background:rgba(244,185,66,.12);
+    color:#80652E;
+    border-color:rgba(244,185,66,.22);
 }
 
+/* RESERVADO */
 .estado-reservado{
-    background:#D4EDDA;
-    color:#155724;
+    background:rgba(34,197,94,.10);
+    color:#176B50;
+    border-color:rgba(34,197,94,.18);
 }
 
+/* COMPLETADO */
 .estado-completado{
-    background:#CCE5FF;
-    color:#004085;
+    background:rgba(38,58,155,.10);
+    color:#263A9B;
+    border-color:rgba(38,58,155,.18);
 }
 
 .btn{
@@ -116,44 +207,187 @@ body{
 }
 
 .btn-primary{
-    background:#009EE3;
+    background:
+        linear-gradient(
+            135deg,
+            #536DFE,
+            #263A9B
+        );
+
     color:white;
+
+    border:1px solid rgba(38,58,155,.35);
+
+    box-shadow:
+        0 10px 24px rgba(38,58,155,.20),
+        inset 0 1px 1px rgba(255,255,255,.20);
 }
 
 .btn-success{
-    background:#00A650;
+    background:
+        linear-gradient(
+            135deg,
+            #263A9B,
+            #15204B
+        );
+
     color:white;
+
+    border:1px solid rgba(38,58,155,.35);
+
+    box-shadow:
+        0 10px 24px rgba(38,58,155,.20),
+        inset 0 1px 1px rgba(255,255,255,.20);
+}
+.btn-secondary{
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.90),
+            rgba(255,255,255,.62)
+        );
+
+    color:#263A9B;
+
+    border:1px solid rgba(38,58,155,.12);
+
+    box-shadow:
+        0 8px 20px rgba(22,34,82,.08),
+        inset 0 1px 1px rgba(255,255,255,.95);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+}
+
+.btn-secondary .material-icons{
+    font-size:20px;
 }
 
 .seguridad{
-    background:#FFF8E1;
-    border-left:5px solid #FFC107;
-    padding:15px;
-    border-radius:10px;
-    margin-top:15px;
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(245,185,66,.12),
+            rgba(255,255,255,.52)
+        );
+
+    border:1px solid rgba(244,185,66,.25);
+
+    border-radius:16px;
+
+    padding:16px;
+
+    margin-top:18px;
+
+    color:#5F4B20;
+
+    font-size:14px;
+    line-height:1.5;
+
+    box-shadow:
+        0 8px 20px rgba(22,34,82,.05),
+        inset 0 1px 1px rgba(255,255,255,.95);
+
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+}
+.seguridad-icon{
+    font-size:22px;
+    color:#B7791F;
+    margin-top:1px;
+    flex-shrink:0;
 }
 
 .codigo-box{
-    background:#F5F7FA;
-    border:2px dashed #009EE3;
-    border-radius:15px;
-    padding:20px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(38,58,155,.10),
+            rgba(255,255,255,.55)
+        );
+
+    border:1px solid rgba(38,58,155,.18);
+
+    border-radius:20px;
+
+    padding:22px;
+
     text-align:center;
+
     margin:20px 0;
+
+    box-shadow:
+        0 12px 28px rgba(22,34,82,.08),
+        inset 0 1px 1px rgba(255,255,255,.95);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+}
+
+.codigo-box p{
+    color:#667085;
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:9px;
 }
 
 .codigo-box h2{
-    color:#003087;
-    font-size:36px;
+    color:#15204B;
+    font-size:34px;
+    font-weight:800;
+    letter-spacing:3px;
 }
 
 .input{
     width:100%;
-    padding:15px;
-    border:1px solid #CCC;
-    border-radius:10px;
-    margin-top:10px;
+
+    padding:15px 16px;
+
+    background:rgba(255,255,255,.58);
+
+    border:1px solid rgba(255,255,255,.90);
+
+    border-radius:14px;
+
+    color:#15204B;
+
+    font-size:16px;
+    font-weight:600;
+
+    outline:none;
+
+    margin-top:12px;
     margin-bottom:10px;
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.95),
+        0 6px 16px rgba(22,34,82,.05);
+
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.input::placeholder{
+    color:#7B8494;
+    font-weight:400;
+}
+
+.input:focus{
+    border-color:rgba(38,58,155,.45);
+
+    box-shadow:
+        0 0 0 3px rgba(38,58,155,.10),
+        inset 0 1px 1px rgba(255,255,255,.95);
 }
 
 .loading{
@@ -161,14 +395,273 @@ body{
     padding:50px;
 }
 .estrella{
-    font-size:42px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    width:46px;
+    height:46px;
+
+    font-size:32px;
+    line-height:1;
+
+    color:#CBD5E1;
+
     cursor:pointer;
-    margin:0 4px;
-    transition:.2s;
+
+    margin:0 3px;
+
+    transition:
+        transform .2s ease,
+        color .2s ease;
 }
 
 .estrella:hover{
-    transform:scale(1.2);
+    transform:scale(1.12);
+    color:#F4B942;
+}
+.estrella.seleccionada{
+    color:#F4B942;
+}
+/* =========================================================
+   TRATO JUSTO — ENCABEZADO PRINCIPAL
+   ========================================================= */
+
+.header{
+    background:
+        linear-gradient(
+            135deg,
+            #15204B 0%,
+            #263A9B 45%,
+            #536DFE 100%
+        ) !important;
+
+    color:white !important;
+    padding:28px 20px 38px !important;
+    text-align:center;
+    position:relative;
+
+    border:none !important;
+    border-bottom-left-radius:30px !important;
+    border-bottom-right-radius:30px !important;
+
+    box-shadow:0 15px 35px rgba(22,34,82,.22) !important;
+}
+
+.logo{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+
+    font-size:28px !important;
+    font-weight:700;
+    letter-spacing:-.5px;
+
+    color:white !important;
+}
+
+.logo-mark{
+    width:44px;
+    height:44px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,.16);
+
+    border:1px solid rgba(255,255,255,.28);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.35),
+        0 8px 20px rgba(0,0,0,.12);
+
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+}
+
+.logo-mark .material-icons{
+    font-size:25px;
+    color:white;
+}
+
+.subtitulo{
+    margin-top:10px !important;
+    color:rgba(255,255,255,.88) !important;
+    opacity:1 !important;
+}
+.section-title{
+    display:flex;
+    align-items:center;
+    gap:9px;
+
+    color:#15204B;
+
+    font-size:22px;
+    font-weight:700;
+    letter-spacing:-.3px;
+}
+
+.section-title .material-icons{
+    font-size:24px;
+    color:#263A9B;
+}
+.card .card{
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.32),
+            rgba(255,255,255,.18)
+        ) !important;
+
+    border:1px solid rgba(255,255,255,.55) !important;
+
+    border-radius:20px !important;
+    margin-top:26px;
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.75),
+        0 8px 24px rgba(22,34,82,.04) !important;
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+}
+.campo-codigo{
+    margin-top:18px;
+}
+
+.campo-codigo label{
+    display:block;
+    margin-bottom:7px;
+
+    color:#15204B;
+
+    font-size:14px;
+    font-weight:700;
+}
+
+.ayuda-codigo{
+    display:block;
+    margin-top:6px;
+
+    color:#7B8494;
+
+    font-size:12px;
+    line-height:1.4;
+}
+.btn-success{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+}
+
+.btn-success .material-icons{
+    font-size:20px;
+}
+.separador-trato{
+    height:1px;
+
+    margin:22px 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(38,58,155,.18),
+            transparent
+        );
+}
+.estado-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+}
+
+.estado-row b{
+    flex-shrink:0;
+}
+.resumen-financiero{
+    margin-top:18px;
+    padding:14px 16px;
+
+    background:rgba(255,255,255,.42);
+
+    border:1px solid rgba(255,255,255,.70);
+
+    border-radius:16px;
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.90);
+
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+}
+
+.resumen-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:20px;
+
+    padding:7px 0;
+
+    color:#667085;
+    font-size:14px;
+}
+
+.resumen-item + .resumen-item{
+    border-top:1px solid rgba(38,58,155,.08);
+}
+
+.resumen-item strong{
+    color:#15204B;
+    font-weight:700;
+    white-space:nowrap;
+}
+.rating-selection{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    margin:12px 0 18px;
+
+    padding:10px 14px;
+
+    background:rgba(255,255,255,.35);
+
+    border:1px solid rgba(255,255,255,.60);
+
+    border-radius:18px;
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.90);
+
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+}
+.calificacion-completada{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+
+    margin:12px 0 18px;
+
+    color:#176B50;
+
+    font-size:16px;
+    font-weight:700;
+}
+
+.calificacion-completada .material-icons{
+    font-size:22px;
+    color:#22A06B;
 }
 </style>
 </head>
@@ -178,7 +671,10 @@ body{
 <div class="header">
 
     <div class="logo">
-        🛡️ Trato Justo
+        <div class="logo-mark">
+            <span class="material-icons">verified_user</span>
+        </div>
+        Trato Justo
     </div>
 
     <div class="subtitulo">
@@ -216,7 +712,12 @@ function seleccionarEstrella(cantidad) {
     estrellas.forEach((estrella, index) => {
 
         estrella.textContent =
-            index < cantidad ? '⭐' : '☆';
+    index < cantidad ? '★' : '☆';
+
+estrella.classList.toggle(
+    'seleccionada',
+    index < cantidad
+);
 
     });
 
@@ -357,10 +858,11 @@ document.getElementById(
             ${trato.vendedor_nombre || 'No disponible'}
         </div>
 
-        <div class="info">
-            ⭐ ${trato.vendedor_rating || 0}
-            (${trato.vendedor_total_calificaciones || 0} calificaciones)
-        </div>
+        <div class="info rating">
+    <span class="material-icons">star</span>
+    <strong>${trato.comprador_rating || 0}</strong>
+    <span>(${trato.comprador_total_calificaciones || 0} calificaciones)</span>
+</div>
 
       ${trato.esVendedor && trato.comprador_nombre ? `
 
@@ -369,9 +871,10 @@ document.getElementById(
     ${trato.comprador_nombre}
 </div>
 
-<div class="info">
-    ⭐ ${trato.comprador_rating || 0}
-    (${trato.comprador_total_calificaciones || 0} calificaciones)
+<div class="info rating">
+    <span class="material-icons">star</span>
+    <strong>${trato.vendedor_rating || 0}</strong>
+    <span>(${trato.vendedor_total_calificaciones || 0} calificaciones)</span>
 </div>
 
 ` : ''}
@@ -381,11 +884,20 @@ document.getElementById(
             ${trato.descripcion}
         </div>
 
-        <div class="info">
-    <b>Estado:</b>
+        <div class="info estado-row">
+
+    <b>Estado</b>
+
     <span class="estado ${claseEstado}">
-        ${trato.estado}
+        ${
+            trato.estado === 'creado'
+                ? 'Creado'
+                : trato.estado === 'reservado'
+                ? 'Reservado'
+                : 'Completado'
+        }
     </span>
+
 </div>
 
         <div class="info">
@@ -395,31 +907,42 @@ document.getElementById(
             </span>
         </div>
 
-        <hr style="margin:20px 0">
+        <div class="separador-trato"></div>
 
         ${trato.esVendedor ? `
 
-        <div class="info">
-            <b>Comisión Trato Justo:</b>
+<div class="resumen-financiero">
+
+    <div class="resumen-item">
+        <span>Comisión Trato Justo</span>
+        <strong>
             $${Number(
                 trato.comision || 0
             ).toLocaleString('es-MX')}
-        </div>
+        </strong>
+    </div>
 
-        <div class="info">
-            <b>Monto neto vendedor:</b>
+    <div class="resumen-item">
+        <span>Monto neto vendedor</span>
+        <strong>
             $${Number(
                 trato.monto_vendedor || 0
             ).toLocaleString('es-MX')}
-        </div>
+        </strong>
+    </div>
 
-        ` : ''}
+</div>
+
+` : ''}
 
         ${trato.estado === 'creado' ? `
 
 <div class="card">
 
-    <h2>📦 Trato disponible</h2>
+    <h2 class="section-title">
+    <span class="material-icons">inventory_2</span>
+    Trato disponible
+</h2>
 
     <br>
 
@@ -445,6 +968,7 @@ document.getElementById(
     class="btn btn-primary"
     onclick="reservarTrato()">
 
+    <span class="material-icons">lock</span>
     Reservar trato
 
 </button>
@@ -458,7 +982,10 @@ ${trato.estado === 'reservado' ? `
 
 <div class="card">
 
-    <h2>🤝 Trato reservado</h2>
+    <h2 class="section-title">
+    <span class="material-icons">handshake</span>
+    Trato reservado
+</h2>
 
     <br>
 
@@ -468,31 +995,59 @@ ${trato.estado === 'reservado' ? `
             Espera a que el comprador reciba el producto y te proporcione el código de liberación.
         </p>
 
-        <input
-            id="codigoLiberacion"
-            class="input"
-            type="text"
-            placeholder="Ingresa el código de liberación">
+        <div class="campo-codigo">
+
+    <label for="codigoLiberacion">
+        Código de liberación
+    </label>
+
+    <input
+        id="codigoLiberacion"
+        class="input"
+        type="text"
+        placeholder="Ingresa el código">
+
+    <span class="ayuda-codigo">
+        Escribe el código que te proporcionó el comprador.
+    </span>
+
+</div>
 
         <button
-            class="btn btn-success"
-            onclick="liberarPago()">
+    class="btn btn-success"
+    onclick="liberarPago()">
 
-            Liberar pago
+    <span class="material-icons">lock_open</span>
+    Liberar pago
 
-        </button>
+</button>
+        <button
+    class="btn btn-secondary"
+    onclick="window.location.href='/dashboard.html'">
+
+    <span class="material-icons">arrow_back</span>
+    Volver al Inicio
+
+</button>
 
     ` : `
 
         <div class="seguridad">
 
-            <b>⚠️ IMPORTANTE</b>
+    <span class="material-icons seguridad-icon">
+        warning
+    </span>
 
-            <br><br>
+    <div>
+        <b>Importante</b>
 
-            No compartas este código hasta que tengas el producto en tus manos y estés conforme con la compra.
+        <p>
+            No compartas este código hasta que tengas el producto
+            en tus manos y estés conforme con la compra.
+        </p>
+    </div>
 
-        </div>
+</div>
 
         <div class="codigo-box">
 
@@ -501,6 +1056,14 @@ ${trato.estado === 'reservado' ? `
             <h2>${trato.codigo_liberacion}</h2>
 
         </div>
+        <button
+    class="btn btn-secondary"
+    onclick="window.location.href='/dashboard.html'">
+
+    <span class="material-icons">arrow_back</span>
+    Volver al Inicio
+
+</button>
 
     `}
 
@@ -511,7 +1074,10 @@ ${trato.estado === 'completado' ? `
 
 <div class="card">
 
-    <h2>🎉 Trato completado</h2>
+    <h2 class="section-title">
+    <span class="material-icons">check_circle</span>
+    Trato completado
+</h2>
 
     <br>
 
@@ -523,33 +1089,47 @@ ${trato.estado === 'completado' ? `
 
     ${trato.yaCalifico ? `
 
-        <h3>✅ Ya calificaste este trato</h3>
+        <div class="calificacion-completada">
+
+    <span class="material-icons">
+        check_circle
+    </span>
+
+    <span>
+        Ya calificaste este trato
+    </span>
+
+</div>
 
         <br>
 
         <button
-            class="btn"
-            onclick="window.location.href='/dashboard.html'">
+    class="btn btn-secondary"
+    onclick="window.location.href='/dashboard.html'">
 
-            🏠 Volver al inicio
+    <span class="material-icons">arrow_back</span>
+    Volver al Inicio
 
-        </button>
+</button>
 
     ` : `
 
-        <h3>⭐ Califica tu experiencia</h3>
+        <h3 class="section-title">
+    <span class="material-icons">star_rate</span>
+    Califica tu experiencia
+</h3>
 
         <br>
 
-        <div style="text-align:center;">
+        <div class="rating-selection">
 
-            <span class="estrella" onclick="seleccionarEstrella(1)">☆</span>
-            <span class="estrella" onclick="seleccionarEstrella(2)">☆</span>
-            <span class="estrella" onclick="seleccionarEstrella(3)">☆</span>
-            <span class="estrella" onclick="seleccionarEstrella(4)">☆</span>
-            <span class="estrella" onclick="seleccionarEstrella(5)">☆</span>
+    <span class="estrella" onclick="seleccionarEstrella(1)">☆</span>
+    <span class="estrella" onclick="seleccionarEstrella(2)">☆</span>
+    <span class="estrella" onclick="seleccionarEstrella(3)">☆</span>
+    <span class="estrella" onclick="seleccionarEstrella(4)">☆</span>
+    <span class="estrella" onclick="seleccionarEstrella(5)">☆</span>
 
-        </div>
+</div>
 
         <br>
 
@@ -560,6 +1140,14 @@ ${trato.estado === 'completado' ? `
             Enviar calificación
 
         </button>
+        <button
+    class="btn btn-secondary"
+    onclick="window.location.href='/dashboard.html'">
+
+    <span class="material-icons">arrow_back</span>
+    Volver al Inicio
+
+</button>
 
     `}
 

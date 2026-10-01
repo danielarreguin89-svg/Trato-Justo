@@ -18,20 +18,61 @@
 }
 
 body{
-    background:#F5F7FA;
+    background:
+    radial-gradient(
+        circle at 8% 0%,
+        rgba(255,255,255,.95),
+        transparent 34%
+    ),
+    radial-gradient(
+        circle at 92% 12%,
+        rgba(22,74,74,.09),
+        transparent 32%
+    ),
+    radial-gradient(
+        circle at 50% 100%,
+        rgba(183,155,104,.06),
+        transparent 34%
+    ),
+    #F4F3EF;
+
     min-height:100vh;
+    color:#0F172A;
 }
 
 .header{
-    background:linear-gradient(135deg,#009EE3,#003087);
-    color:white;
+    position:relative;
+    overflow:hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.88),
+            rgba(255,255,255,.58)
+        );
+
+    border:1px solid rgba(255,255,255,.75);
+
+    color:#0F172A;
     text-align:center;
-    padding:35px 20px;
+
+    padding:32px 20px;
+
+    border-radius:0 0 28px 28px;
+
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+
+    box-shadow:
+        0 12px 35px rgba(15,23,42,.08),
+        inset 0 1px 1px rgba(255,255,255,.95);
 }
 
 .logo{
-    font-size:30px;
-    font-weight:bold;
+    font-size:28px;
+    font-weight:700;
+    letter-spacing:-.5px;
+    color:#164A4A;
 }
 
 .subtitulo{
@@ -61,9 +102,38 @@ body{
 }
 
 .btn-secondary{
-    background:#003087;
-    color:white;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.92),
+            rgba(255,255,255,.68)
+        );
+
+    color:#164A4A;
+
+    border:1px solid rgba(15,23,42,.08);
+
     margin-bottom:20px;
+
+    box-shadow:
+        0 8px 22px rgba(15,23,42,.07),
+        inset 0 1px 1px rgba(255,255,255,.95);
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+}
+
+.btn-secondary:hover{
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,1),
+            rgba(255,255,255,.78)
+        );
+
+    box-shadow:
+        0 12px 26px rgba(15,23,42,.10),
+        inset 0 1px 1px rgba(255,255,255,1);
 }
 .btn-whatsapp{
     background:#25D366;
@@ -71,30 +141,113 @@ body{
     margin-top:10px;
 }
 .card{
-    background:white;
-    border-radius:18px;
-    padding:20px;
-    margin-bottom:20px;
-    box-shadow:0 5px 20px rgba(0,0,0,.08);
+    position:relative;
+    overflow:hidden;
+
+    background:
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(255,255,255,.95),
+            transparent 38%
+        ),
+        radial-gradient(
+            circle at 90% 100%,
+            rgba(214,224,232,.32),
+            transparent 42%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.80),
+            rgba(255,255,255,.56)
+        );
+
+    border:1px solid rgba(255,255,255,.92);
+
+    border-radius:24px;
+
+    padding:24px;
+
+    margin-bottom:18px;
+
+    backdrop-filter:blur(28px) saturate(120%);
+    -webkit-backdrop-filter:blur(28px) saturate(120%);
+
+    box-shadow:
+        0 20px 45px rgba(15,23,42,.09),
+        inset 0 1px 1px rgba(255,255,255,.98),
+        inset 0 -1px 1px rgba(255,255,255,.35);
+
+    color:#0F172A;
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
 }
 
+.card:hover{
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 24px 48px rgba(15,23,42,.12),
+        inset 0 1px 1px rgba(255,255,255,1);
+}
+.card::before{
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    background:
+        radial-gradient(
+            circle at 18% 8%,
+            rgba(255,255,255,.75),
+            transparent 28%
+        );
+
+    pointer-events:none;
+    z-index:0;
+}
+
+.card > *{
+    position:relative;
+    z-index:1;
+}
 .card h3{
     color:#003087;
     margin-bottom:15px;
 }
 
 .info{
-    margin-bottom:8px;
-    color:#444;
+    margin-bottom:10px;
+    color:#667274;
+    font-size:15px;
+    line-height:1.5;
+}
+
+.info b{
+    color:#172022;
+    font-weight:700;
 }
 
 .codigo{
     display:inline-block;
-    background:#EAF7FF;
-    color:#003087;
-    padding:6px 12px;
-    border-radius:8px;
-    font-weight:bold;
+
+    background:rgba(16,42,86,.07);
+
+    color:#164A4A;
+
+    padding:7px 13px;
+
+    border-radius:10px;
+
+    border:1px solid rgba(16,42,86,.10);
+
+    font-weight:700;
+
+    letter-spacing:.3px;
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.85);
 }
 
 .estado{
@@ -106,34 +259,74 @@ body{
 }
 
 .estado-creado{
-    background:#FFF3CD;
-    color:#856404;
+    background:rgba(180,120,0,.10);
+
+    color:#8A6100;
+
+    border:1px solid rgba(180,120,0,.16);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.80);
 }
 
 .estado-reservado{
-    background:#D4EDDA;
-    color:#155724;
+    background:rgba(22,163,74,.10);
+
+    color:#166534;
+
+    border:1px solid rgba(22,163,74,.16);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.80);
 }
 
 .estado-completado{
-    background:#CCE5FF;
-    color:#004085;
+    background:rgba(37,99,235,.10);
+
+    color:#1D4ED8;
+
+    border:1px solid rgba(37,99,235,.16);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.80);
 }
 
 .link-btn{
     display:block;
     text-align:center;
+
     margin-top:15px;
-    background:#009EE3;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1C5655
+            #164A4A
+        );
+
     color:white;
+
     text-decoration:none;
-    padding:12px;
-    border-radius:12px;
-    font-weight:bold;
+
+    padding:13px;
+
+    border-radius:14px;
+
+    font-weight:700;
+
+    box-shadow:
+        0 8px 18px rgba(16,42,86,.18),
+        inset 0 1px 1px rgba(255,255,255,.18);
+
+    transition:.25s;
 }
 
 .link-btn:hover{
-    opacity:.9;
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 12px 24px rgba(16,42,86,.22),
+        inset 0 1px 1px rgba(255,255,255,.22);
 }
 
 .vacio{
@@ -143,7 +336,631 @@ body{
     text-align:center;
     box-shadow:0 5px 20px rgba(0,0,0,.08);
 }
+.filtros{
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    margin-bottom:22px;
+    padding:4px;
+    scrollbar-width:none;
+}
 
+.filtros::-webkit-scrollbar{
+    display:none;
+}
+
+.filtro-btn{
+    flex:0 0 auto;
+
+    border:1px solid rgba(15,23,42,.08);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.88),
+            rgba(255,255,255,.58)
+        );
+
+    color:#334155;
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    box-shadow:
+        0 6px 18px rgba(15,23,42,.06),
+        inset 0 1px 1px rgba(255,255,255,.95);
+
+    border-radius:14px;
+
+    padding:11px 18px;
+
+    font-size:14px;
+    font-weight:700;
+
+    cursor:pointer;
+    transition:.25s;
+}
+
+.filtro-btn:hover{
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.98),
+            rgba(255,255,255,.72)
+        );
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 10px 22px rgba(15,23,42,.09),
+        inset 0 1px 1px rgba(255,255,255,1);
+}
+
+.filtro-btn:active{
+    transform:scale(.96);
+}
+
+.filtro-btn.activo{
+    background:
+        linear-gradient(
+            135deg,
+            #1C5655
+            #164A4A
+        );
+
+    border-color:rgba(16,42,86,.9);
+
+    box-shadow:
+        0 8px 20px rgba(16,42,86,.20),
+        inset 0 1px 1px rgba(255,255,255,.20);
+
+    color:white;
+}
+/* =========================================================
+   TRATO JUSTO — NUEVO SISTEMA VISUAL
+   Verde petróleo + marfil + Liquid Glass
+   ========================================================= */
+
+:root{
+    --tj-petroleo:#164A4A;
+    --tj-petroleo-dark:#0F3435;
+    --tj-grafito:#172022;
+    --tj-gris:#667274;
+    --tj-marfil:#F4F3EF;
+    --tj-champagne:#B79B68;
+}
+
+
+/* =========================
+   FONDO
+   ========================= */
+
+    body{
+    background:#D6D9D8 !important;
+    color:var(--tj-grafito);
+}       
+
+
+/* =========================
+   HEADER
+   ========================= */
+
+.header{
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.84),
+            rgba(255,255,255,.52)
+        ) !important;
+
+    border:1px solid rgba(255,255,255,.88) !important;
+
+    color:var(--tj-grafito) !important;
+
+    border-radius:0 0 30px 30px !important;
+
+    box-shadow:
+        0 16px 40px rgba(15,52,53,.07),
+        inset 0 1px 1px rgba(255,255,255,.98) !important;
+}
+
+.logo{
+    color:var(--tj-petroleo-dark) !important;
+    letter-spacing:-.7px;
+}
+
+.subtitulo{
+    color:var(--tj-gris) !important;
+    opacity:1 !important;
+}
+
+
+/* =========================
+   BOTÓN VOLVER
+   ========================= */
+
+.btn-secondary{
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.90),
+            rgba(255,255,255,.62)
+        ) !important;
+
+    color:#263A9B !important;
+
+    border:1px solid rgba(38,58,155,.10) !important;
+
+    box-shadow:
+        0 8px 24px rgba(22,34,82,.07),
+        inset 0 1px 1px rgba(255,255,255,.98) !important;
+
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+}
+
+
+/* =========================
+   FILTROS
+   ========================= */
+
+.filtro-btn{
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.82),
+            rgba(255,255,255,.55)
+        ) !important;
+
+    color:#344446 !important;
+
+    border:1px solid rgba(22,74,74,.08) !important;
+
+    box-shadow:
+        0 7px 18px rgba(15,52,53,.05),
+        inset 0 1px 1px rgba(255,255,255,.98) !important;
+
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+}
+
+.filtro-btn:hover{
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.96),
+            rgba(255,255,255,.68)
+        ) !important;
+
+    color:#263A9B !important;
+}
+
+.filtro-btn.activo{
+    background:
+        linear-gradient(
+            135deg,
+            #263A9B,
+            #15204B
+        ) !important;
+
+    color:white !important;
+
+    border-color:rgba(38,58,155,.65) !important;
+
+    box-shadow:
+        0 10px 24px rgba(38,58,155,.20),
+        inset 0 1px 1px rgba(255,255,255,.20) !important;
+}
+
+
+/* =========================
+   TARJETA GLASS
+   ========================= */
+
+.card{
+    position:relative !important;
+    overflow:hidden !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.68),
+            rgba(255,255,255,.42)
+        ) !important;
+
+    border:1px solid rgba(255,255,255,.88) !important;
+
+    border-radius:24px !important;
+
+    box-shadow:
+        0 18px 40px rgba(22,34,82,.09),
+        inset 0 1px 1px rgba(255,255,255,.98),
+        inset 0 -1px 1px rgba(255,255,255,.35) !important;
+
+    backdrop-filter:blur(24px) saturate(115%);
+    -webkit-backdrop-filter:blur(24px) saturate(115%);
+
+    color:#172022 !important;
+}
+
+.card:hover{
+    transform:translateY(-4px);
+
+    box-shadow:
+        0 28px 62px rgba(15,52,53,.13),
+        inset 0 1px 1px rgba(255,255,255,1) !important;
+}
+
+
+/* Luz del cristal */
+
+.card::before{
+    content:"";
+    position:absolute;
+
+    width:420px;
+    height:220px;
+
+    top:-130px;
+    left:-90px;
+
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(255,255,255,.90),
+            rgba(255,255,255,0) 70%
+        );
+
+    transform:rotate(-12deg);
+
+    pointer-events:none;
+
+    z-index:0;
+}
+
+
+/* Segunda reflexión */
+
+.card::after{
+    content:"";
+    position:absolute;
+
+    width:280px;
+    height:280px;
+
+    right:-150px;
+    bottom:-190px;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(22,74,74,.07),
+            transparent 68%
+        );
+
+    pointer-events:none;
+
+    z-index:0;
+}
+
+.card > *{
+    position:relative;
+    z-index:1;
+}
+
+
+/* =========================
+   INFORMACIÓN
+   ========================= */
+
+.info{
+    color:var(--tj-gris) !important;
+}
+
+.info b{
+    color:var(--tj-grafito) !important;
+}
+
+
+/* =========================
+   CÓDIGO
+   ========================= */
+
+.codigo{
+    background:
+        rgba(38,58,155,.07) !important;
+
+    color:#263A9B !important;
+
+    border:1px solid rgba(38,58,155,.12) !important;
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.95) !important;
+}
+
+
+/* =========================
+   ESTADOS
+   ========================= */
+
+.estado{
+    border-radius:10px !important;
+}
+
+
+/* Creado */
+
+.estado-creado{
+    background:rgba(183,155,104,.12) !important;
+    color:#80652E !important;
+    border:1px solid rgba(183,155,104,.20) !important;
+}
+
+
+/* Reservado */
+
+.estado-reservado{
+    background:rgba(22,130,92,.10) !important;
+    color:#176B50 !important;
+    border:1px solid rgba(22,130,92,.18) !important;
+}
+
+
+/* Completado */
+
+.estado-completado{
+    background:rgba(38,58,155,.09) !important;
+
+    color:#263A9B !important;
+
+    border:1px solid rgba(38,58,155,.16) !important;
+}
+
+
+/* =========================
+   MONTO
+   ========================= */
+
+.card > div[style*="font-size:32px"]{
+    color:#15204B !important;
+}
+
+
+/* =========================
+   BOTÓN PRINCIPAL
+   ========================= */
+
+.link-btn{
+    background:
+        linear-gradient(
+            135deg,
+            #263A9B,
+            #15204B
+        ) !important;
+
+    color:white !important;
+
+    border:1px solid rgba(38,58,155,.35);
+
+    border-radius:14px !important;
+
+    box-shadow:
+        0 9px 22px rgba(38,58,155,.20),
+        inset 0 1px 1px rgba(255,255,255,.18);
+
+    transition:.25s ease;
+}
+
+.link-btn:hover{
+    opacity:1;
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 13px 28px rgba(38,58,155,.25),
+        inset 0 1px 1px rgba(255,255,255,.22);
+}
+
+
+/* =========================
+   BOTONES SECUNDARIOS
+   ========================= */
+
+.card .btn{
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.72),
+            rgba(255,255,255,.46)
+        ) !important;
+
+    color:#263A9B !important;
+
+    border:1px solid rgba(255,255,255,.88) !important;
+
+    border-radius:14px !important;
+
+    box-shadow:
+        0 7px 18px rgba(15,52,53,.055),
+        inset 0 1px 1px rgba(255,255,255,.95) !important;
+
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+
+    transition:.25s ease;
+}
+
+.card .btn:hover{
+    transform:translateY(-2px);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.90),
+            rgba(255,255,255,.58)
+        ) !important;
+
+    color:#263A9B !important;
+}
+
+
+/* Iconos de botones */
+
+.card .material-icons{
+    color:#263A9B !important;
+}
+
+
+/* =========================
+   SIN TRATOS
+   ========================= */
+
+.vacio{
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.82),
+            rgba(255,255,255,.58)
+        ) !important;
+
+    color:var(--tj-grafito) !important;
+
+    border:1px solid rgba(255,255,255,.88);
+
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+
+    box-shadow:
+        0 18px 40px rgba(15,52,53,.07),
+        inset 0 1px 1px rgba(255,255,255,.95) !important;
+}
+
+
+/* =========================
+   MÓVIL
+   ========================= */
+
+@media (max-width:600px){
+
+    .header{
+        padding:26px 16px !important;
+    }
+
+    .logo{
+        font-size:25px !important;
+    }
+
+    .subtitulo{
+        font-size:14px;
+    }
+
+    .container{
+        padding:16px !important;
+        margin:20px auto !important;
+    }
+
+    .card{
+        padding:20px !important;
+        border-radius:22px !important;
+    }
+
+    .card > div[style*="font-size:32px"]{
+        font-size:28px !important;
+    }
+
+    .filtros{
+        gap:8px;
+    }
+
+    .filtro-btn{
+        padding:10px 15px;
+    }
+}
+/* =========================================================
+   TRATO JUSTO — ENCABEZADO PRINCIPAL
+   ========================================================= */
+
+.header{
+    background:
+        linear-gradient(
+            135deg,
+            #15204B 0%,
+            #263A9B 45%,
+            #536DFE 100%
+        ) !important;
+
+    color:white !important;
+    padding:28px 20px 38px !important;
+    text-align:center;
+    position:relative;
+
+    border:none !important;
+    border-bottom-left-radius:30px !important;
+    border-bottom-right-radius:30px !important;
+
+    box-shadow:0 15px 35px rgba(22,34,82,.22) !important;
+
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+}
+
+.logo{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:10px;
+
+    font-size:28px !important;
+    font-weight:700;
+    letter-spacing:-.5px;
+
+    color:white !important;
+}
+
+.logo-mark{
+    width:44px;
+    height:44px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:rgba(255,255,255,.16);
+
+    border:1px solid rgba(255,255,255,.28);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.35),
+        0 8px 20px rgba(0,0,0,.12);
+
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+}
+
+.logo-mark .material-icons{
+    font-size:25px;
+    color:white;
+}
+
+.subtitulo{
+    margin-top:10px !important;
+    color:rgba(255,255,255,.88) !important;
+    opacity:1 !important;
+}
+.btn-secundario-trato{
+    margin-top:16px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    width:100%;
+}
+
+.btn-secundario-trato .material-icons{
+    font-size:20px;
+}
 </style>
 </head>
 
@@ -152,7 +969,10 @@ body{
 <div class="header">
 
     <div class="logo">
-        🛡️ Trato Justo
+        <div class="logo-mark">
+            <span class="material-icons">verified_user</span>
+        </div>
+        Trato Justo
     </div>
 
     <div class="subtitulo">
@@ -164,12 +984,45 @@ body{
 <div class="container">
 
     <button
-        class="btn btn-secondary"
-        onclick="location.href='dashboard.html'">
-        ← Volver al Inicio
+    class="btn btn-secondary"
+    onclick="location.href='dashboard.html'">
+    <span class="material-icons">arrow_back</span>
+    Volver al Inicio
+</button>
+
+<div class="filtros">
+
+    <button
+        class="filtro-btn"
+        data-filtro=""
+        onclick="cambiarFiltro('')">
+        Todos
     </button>
 
-    <div id="ventas">
+    <button
+        class="filtro-btn"
+        data-filtro="creado"
+        onclick="cambiarFiltro('creado')">
+        Creados
+    </button>
+
+    <button
+        class="filtro-btn"
+        data-filtro="reservado"
+        onclick="cambiarFiltro('reservado')">
+        Reservados
+    </button>
+
+    <button
+        class="filtro-btn"
+        data-filtro="completado"
+        onclick="cambiarFiltro('completado')">
+        Completados
+    </button>
+
+</div>
+
+<div id="ventas">
         Cargando ventas...
     </div>
 
@@ -184,6 +1037,7 @@ if (!token) {
     window.location.href = '/login.html';
 
 }
+let ventasTodas = [];
 function copiarLink(codigo) {
 
     const link =
@@ -196,7 +1050,27 @@ function copiarLink(codigo) {
     alert('Enlace copiado correctamente');
 
 }
+function cambiarFiltro(nuevoFiltro){
 
+    document.querySelectorAll(".filtro-btn").forEach(boton => {
+
+        boton.classList.remove("activo");
+
+        if(boton.dataset.filtro === nuevoFiltro){
+
+            boton.classList.add("activo");
+
+        }
+
+    });
+
+    const ventasFiltradas = nuevoFiltro
+        ? ventasTodas.filter(trato => trato.estado === nuevoFiltro)
+        : ventasTodas;
+
+    mostrarVentas(ventasFiltradas);
+
+}
 function compartirWhatsApp(codigo) {
 
     const link =
@@ -213,185 +1087,223 @@ function compartirWhatsApp(codigo) {
     );
 
 }
+const parametros = new URLSearchParams(window.location.search);
+const filtro = parametros.get('filtro');
+
+document.querySelectorAll(".filtro-btn").forEach(boton => {
+
+    if (boton.dataset.filtro === (filtro || "")) {
+
+        boton.classList.add("activo");
+
+    }
+
+});
+function mostrarVentas(ventas){
+
+    const contenedor =
+        document.getElementById('ventas');
+
+    if(ventas.length === 0){
+
+        contenedor.innerHTML = `
+            <div class="vacio">
+                <h3>No hay tratos en esta categoría</h3>
+                <br>
+                <p>
+                    Prueba seleccionando otro filtro.
+                </p>
+            </div>
+        `;
+
+        return;
+
+    }
+
+    let html = '';
+
+    ventas.forEach(trato => {
+
+        let claseEstado = 'estado-creado';
+
+        if(trato.estado === 'reservado'){
+
+            claseEstado = 'estado-reservado';
+
+        }
+
+        if(trato.estado === 'completado'){
+
+            claseEstado = 'estado-completado';
+
+        }
+
+        html += `
+
+            <div class="card">
+
+                <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+    padding-bottom:18px;
+    margin-bottom:18px;
+    border-bottom:1px solid rgba(15,23,42,.08);
+">
+
+                    <div>
+
+                       <div style="
+    font-size:22px;
+    font-weight:700;
+    color:#15204B;
+    letter-spacing:-.3px;
+">
+    ${trato.producto}
+</div>
+
+                    </div>
+
+                    <div
+                        class="estado ${claseEstado}"
+                    >
+
+                        ${
+                            trato.estado=="creado"
+                            ? "Creado"
+                            : trato.estado=="reservado"
+                            ? "Reservado"
+                            : "Completado"
+                        }
+
+                    </div>
+
+                </div>
+
+                <div class="info">
+
+                    <b>Código:</b>
+
+                    <span class="codigo">
+                        ${trato.codigo}
+                    </span>
+
+                </div>
+
+                <div style="
+    margin:24px 0;
+    text-align:center;
+">
+
+    <div style="
+        font-size:12px;
+        font-weight:700;
+        color:#667274;
+        text-transform:uppercase;
+        letter-spacing:1.2px;
+        margin-bottom:6px;
+    ">
+        Monto protegido
+    </div>
+
+    <div style="
+        font-size:32px;
+        font-weight:800;
+        color:#15204B;
+        letter-spacing:-1px;
+        line-height:1.1;
+    ">
+        $${Number(trato.monto_protegido).toLocaleString('es-MX')} MXN
+    </div>
+
+</div>
+
+                <div class="info">
+
+                    <b>Fecha:</b>
+
+                    ${new Date(trato.fecha).toLocaleString("es-MX")}
+
+                </div>
+
+                <a
+                    class="link-btn"
+                    href="/trato/${trato.codigo}"
+                    target="_blank"
+                >
+                    Ver trato
+                </a>
+
+                <button
+    class="btn btn-secundario-trato"
+    onclick="copiarLink('${trato.codigo}')"
+>
+
+                    <span class="material-icons">
+                        content_copy
+                    </span>
+
+                    Copiar enlace
+
+                </button>
+
+                <button
+    class="btn btn-secundario-trato"
+    onclick="compartirWhatsApp('${trato.codigo}')"
+>
+    <span class="material-icons">
+        share
+    </span>
+    Compartir
+</button>
+
+            </div>
+
+        `;
+
+    });
+
+    contenedor.innerHTML = html;
+
+}
 cargarVentas();
 
-async function cargarVentas() {
+async function cargarVentas(){
 
-    try {
+    try{
 
         const respuesta = await fetch(
             '/mis-ventas',
             {
-                headers: {
-    'Authorization': 'Bearer ' + token
-}
+                headers:{
+                    'Authorization':'Bearer ' + token
+                }
             }
         );
 
-        const ventas = await respuesta.json();
+        const datos = await respuesta.json();
 
-        const contenedor =
-            document.getElementById('ventas');
+        if(!respuesta.ok){
 
-        if (!respuesta.ok) {
-
-            contenedor.innerHTML =
-                JSON.stringify(ventas);
+            document.getElementById('ventas').innerHTML =
+                JSON.stringify(datos);
 
             return;
 
         }
 
-        if (ventas.length === 0) {
+        ventasTodas = Array.isArray(datos)
+    ? datos
+    : [];
 
-            contenedor.innerHTML = `
-                <div class="vacio">
-                    <h3>No tienes ventas registradas</h3>
-                    <br>
-                    <p>
-                        Cuando crees un trato aparecerá aquí.
-                    </p>
-                </div>
-            `;
-
-            return;
-
-        }
-
-        let html = '';
-
-        ventas.forEach(trato => {
-
-            let claseEstado = 'estado-creado';
-
-            if (trato.estado === 'reservado') {
-
-                claseEstado = 'estado-reservado';
-
-            }
-
-            if (trato.estado === 'completado') {
-
-                claseEstado = 'estado-completado';
-
-            }
-
-            html += `
-
-                <div class="card">
-
-                    <div style="
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:15px;
-">
-
-<div>
-
-<div style="
-font-size:22px;
-font-weight:bold;
-color:#003087;">
-
-${trato.producto}
-
-</div>
-
-</div>
-
-<div
-class="estado ${claseEstado}">
-
-${
-trato.estado=="creado"
-? "Creado"
-: trato.estado=="reservado"
-? "Reservado"
-: "Completado"
+if(filtro){
+    cambiarFiltro(filtro);
+}else{
+    cambiarFiltro('');
 }
 
-</div>
-
-</div>
-
-                    <div class="info">
-                        <b>Código:</b>
-                        <span class="codigo">
-                            ${trato.codigo}
-                        </span>
-                    </div>
-
-                    <div style="
-font-size:30px;
-font-weight:bold;
-color:#009EE3;
-margin:20px 0;
-text-align:center;
-">
-
-$${Number(trato.monto_protegido).toLocaleString('es-MX')} MXN
-
-</div>
-                    <div class="info">
-    <b>Fecha:</b>
-    ${new Date(trato.fecha).toLocaleString("es-MX")}
-</div>
-
-                  <a
-    class="link-btn"
-    href="/trato/${trato.codigo}"
-    target="_blank">
-    Ver trato
-</a>
-<button
-class="btn"
-style="
-background:#003087;
-color:white;
-margin-top:10px;
-display:flex;
-justify-content:center;
-align-items:center;
-gap:8px;
-"
-onclick="copiarLink('${trato.codigo}')">
-
-<span class="material-icons">
-content_copy
-</span>
-
-Copiar enlace
-
-</button>
-
-<button
-class="btn btn-whatsapp"
-style="
-display:flex;
-justify-content:center;
-align-items:center;
-gap:8px;
-"
-onclick="compartirWhatsApp('${trato.codigo}')">
-
-<span class="material-icons">
-share
-</span>
-
-Compartir
-
-</button>
-
-                </div>
-
-            `;
-
-        });
-
-        contenedor.innerHTML = html;
-
-    } catch (error) {
+    }catch(error){
 
         document.getElementById('ventas').innerHTML =
             error.toString();
