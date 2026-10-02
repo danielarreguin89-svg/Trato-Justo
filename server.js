@@ -558,28 +558,7 @@ function generarCodigoLiberacion() {
 app.get('/', (req, res) => {
   res.redirect('/login.html');
 });
-// CORREO
-app.get('/probar-correo', async (req, res) => {
 
-  try {
-
-    const resultado = await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: 'danielarreguin89@gmail.com',
-      subject: 'Prueba Trato Justo',
-      html: '<h1>Correo de prueba</h1>'
-    });
-
-    res.json(resultado);
-
-  } catch (error) {
-
-    console.log(error);
-    res.status(500).json(error);
-
-  }
-
-});
 //ENVIAR CODIGO 
 app.post('/enviar-codigo', async (req, res) => {
 
@@ -638,45 +617,7 @@ app.post('/enviar-codigo', async (req, res) => {
   );
 
 });
-//PROBAR CODIGO 
-app.get('/probar-codigo', async (req, res) => {
 
-  const email = 'danielarreguin89@gmail.com';
-
-  const codigo = generarCodigoVerificacion();
-
-  db.run(
-    `
-    INSERT INTO codigos_verificacion
-    (email, codigo)
-    VALUES (?, ?)
-    `,
-    [email, codigo]
-  );
-
-  try {
-
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
-      to: email,
-      subject: 'Código de prueba',
-      html: `<h1>${codigo}</h1>`
-    });
-
-    res.json({
-      mensaje: 'Código enviado',
-      codigo
-    });
-
-  } catch (error) {
-
-    console.log(error);
-
-    res.status(500).json(error);
-
-  }
-
-});
 // REGISTRO
 app.post('/registro', async (req, res) => {
 
