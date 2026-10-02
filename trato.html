@@ -680,12 +680,29 @@ body{
     padding:13px;
 }
 @media (max-width:600px){
+    .card .card .seguridad{
+    width:100%;
+    display:flex;
+    align-items:flex-start;
+}
+
+.card .card .seguridad > div{
+    flex:1;
+    min-width:0;
+}
+
+.card .card .seguridad p{
+    margin:6px 0 0;
+    line-height:1.4;
+}
 
     .card .card > br{
         display:none;
     }
 
     .card .card{
+    width:100%;
+    max-width:none;
     padding:14px 12px;
     border-radius:18px;
 }
