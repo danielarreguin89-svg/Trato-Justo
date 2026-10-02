@@ -2462,29 +2462,6 @@ payment_intent_data: {
 
 });
 
-// LISTAR TRATOS
-app.get('/tratos', (req, res) => {
-
-  db.all(
-    'SELECT * FROM tratos ORDER BY id DESC',
-    [],
-    (err, rows) => {
-
-      if (err) {
-
-        return res.status(500).json({
-          error: 'Error al obtener tratos'
-        });
-
-      }
-
-      res.json(rows);
-
-    }
-  );
-
-});
-
 // PÁGINA DEL TRATO
 app.get('/trato/:codigo', (req, res) => {
   res.sendFile(__dirname + '/trato.html');
