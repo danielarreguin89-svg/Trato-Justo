@@ -2641,6 +2641,16 @@ app.post('/calificar/:codigo', verificarToken, (req, res) => {
 
   const { estrellas } = req.body;
 
+if (
+    !Number.isInteger(estrellas) ||
+    estrellas < 1 ||
+    estrellas > 5
+) {
+    return res.status(400).json({
+        error: "La calificación debe ser un número entre 1 y 5"
+    });
+}
+
   db.get(
     `
     SELECT *
