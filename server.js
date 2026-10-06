@@ -2492,15 +2492,26 @@ if (authHeader && authHeader.startsWith("Bearer ")) {
   db.get(
     `
     SELECT
-      tratos.*,
-      vendedor.nombre AS vendedor_nombre,
-      comprador.nombre AS comprador_nombre
-    FROM tratos
-    LEFT JOIN usuarios vendedor
-      ON vendedor.id = tratos.vendedor_id
-    LEFT JOIN usuarios comprador
-      ON comprador.id = tratos.comprador_id
-    WHERE codigo = ?
+  tratos.id,
+  tratos.codigo,
+  tratos.producto,
+  tratos.descripcion,
+  tratos.monto_protegido,
+  tratos.vendedor_id,
+  tratos.comprador_id,
+  tratos.estado,
+  tratos.fecha,
+  tratos.comision,
+  tratos.monto_vendedor,
+  tratos.codigo_liberacion,
+  vendedor.nombre AS vendedor_nombre,
+  comprador.nombre AS comprador_nombre
+FROM tratos
+LEFT JOIN usuarios vendedor
+  ON vendedor.id = tratos.vendedor_id
+LEFT JOIN usuarios comprador
+  ON comprador.id = tratos.comprador_id
+WHERE codigo = ?
     `,
     [req.params.codigo],
     (err, trato) => {
@@ -2561,8 +2572,42 @@ if (authHeader && authHeader.startsWith("Bearer ")) {
                 ratingComprador?.total || 0;
 
               if (!usuario) {
-                return res.json(trato);
-              }
+
+    delete trato.codigo_liberacion;
+    delete trato.comision;
+    delete trato.monto_vendedor;
+    delete trato.comprador_nombre;
+    delete trato.vendedor_id;
+    delete trato.comprador_id;
+
+    return res.json(trato);
+}
+
+if (!trato.esComprador && !trato.esVendedor) {
+
+    delete trato.codigo_liberacion;
+    delete trato.comision;
+    delete trato.monto_vendedor;
+    delete trato.comprador_nombre;
+    delete trato.vendedor_id;
+    delete trato.comprador_id;
+
+    return res.json(trato);
+
+}
+
+if (trato.esComprador) {
+
+    delete trato.comision;
+    delete trato.monto_vendedor;
+
+}
+
+if (trato.esVendedor) {
+
+    delete trato.codigo_liberacion;
+
+}
 
               db.get(
                 `
