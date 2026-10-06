@@ -1593,7 +1593,8 @@ app.post('/login', (req, res) => {
         id: usuario.id,
         email: usuario.email
     },
-    SECRET
+    SECRET,
+    { expiresIn: "8h" }
 );
 
       res.json({
