@@ -2388,6 +2388,11 @@ app.post('/stripe/create-checkout-session', verificarToken, async (req, res) => 
                         error: "Este trato ya no está disponible"
                     });
                 }
+                if (trato.vendedor_id === req.usuario.id) {
+    return res.status(403).json({
+        error: "No puedes pagar tu propio trato"
+    });
+}
                 
 console.log("SUCCESS URL:",
 "https://trato-justo.onrender.com/pago-exitoso.html?session_id={CHECKOUT_SESSION_ID}");
