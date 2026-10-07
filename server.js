@@ -110,6 +110,23 @@ const app = express();
 const PORT = 3000;
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
+const archivosPrivados = new Set([
+    "/server.js",
+    "/database.js",
+    "/package.json",
+    "/package-lock.json"
+]);
+
+app.use((req, res, next) => {
+
+    if (archivosPrivados.has(req.path)) {
+        return res.status(404).send("Not Found");
+    }
+
+    next();
+
+});
+
 app.use(express.static('.', { index: false }));
 app.post(
   '/webhook',
