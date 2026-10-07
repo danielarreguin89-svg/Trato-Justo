@@ -1584,10 +1584,10 @@ app.post('/login', (req, res) => {
     async (err, usuario) => {
 
       if (err || !usuario) {
-        return res.status(400).json({
-          error: 'Usuario no encontrado'
-        });
-      }
+    return res.status(400).json({
+        error: 'Credenciales incorrectas'
+    });
+}
 
       const coincide = await bcrypt.compare(
         password,
