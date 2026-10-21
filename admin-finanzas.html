@@ -304,18 +304,6 @@ Buscar
 </div>
 <script>
 
-const token = localStorage.getItem("tokenAdmin");
-
-if(!token){
-
-    window.location.href="admin-login.html";
-
-}
-
-const admin = JSON.parse(atob(token.split(".")[1]));
-
-document.getElementById("adminNombre").innerText = admin.email;
-
 cargarFinanzas();
 
 async function cargarFinanzas(){
@@ -325,28 +313,16 @@ async function cargarFinanzas(){
         const texto = document.getElementById("buscar").value.trim();
 
         const respuesta = await fetch(
-
-            "/admin/finanzas?buscar=" + encodeURIComponent(texto),
-
-            {
-
-                headers:{
-                    Authorization:"Bearer " + token
-                }
-
-            }
-
-        );
+    "/admin/finanzas?buscar=" + encodeURIComponent(texto)
+);
 
         if(respuesta.status===401){
 
-            localStorage.removeItem("tokenAdmin");
+    window.location.href="admin-login.html";
 
-            window.location.href="admin-login.html";
+    return;
 
-            return;
-
-        }
+}
 
         if(!respuesta.ok){
 
@@ -358,7 +334,10 @@ async function cargarFinanzas(){
 
         const datos = await respuesta.json();
 
-        document.getElementById("dineroProtegido").innerText =
+document.getElementById("adminNombre").innerText =
+    datos.administrador;
+
+document.getElementById("dineroProtegido").innerText =
 "$"+Number(datos.resumen.dinero_protegido).toLocaleString("en-US",{minimumFractionDigits:2});
 
         document.getElementById("comisiones").innerText =
@@ -418,15 +397,17 @@ ${m.estado}
 
 }
 
-function cerrarSesion(){
+async function cerrarSesion(){
 
-    localStorage.removeItem("tokenAdmin");
+    await fetch("/admin/logout", {
+        method: "POST"
+    });
 
     window.location.href="admin-login.html";
 
 }
 
 </script>
-
+<script src="csrf.js"></script>
 </body>
 </html>

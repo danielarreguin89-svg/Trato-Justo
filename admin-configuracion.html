@@ -256,20 +256,6 @@ placeholder="Nombre">
 id="nuevoCorreo"
 placeholder="Correo">
 
-<label>Rol</label>
-
-<select
-id="nuevoRol">
-
-<option value="superadmin">
-Superadministrador
-</option>
-
-<option value="admin">
-Administrador
-</option>
-
-</select>
 
 <div style="margin-top:20px; display:flex; gap:10px;">
 
@@ -360,41 +346,21 @@ Guardar cambios
 </div>
 <script>
 
-const token = localStorage.getItem("tokenAdmin");
-
-if(!token){
-
-    window.location.href="admin-login.html";
-
-}
-
-const admin = JSON.parse(atob(token.split(".")[1]));
-
-document.getElementById("adminNombre").innerText = admin.email;
-
 cargarConfiguracion();
 
 async function cargarConfiguracion(){
 
     try{
 
-        const respuesta = await fetch("/admin/configuracion",{
-
-            headers:{
-                Authorization:"Bearer "+token
-            }
-
-        });
+        const respuesta = await fetch("/admin/configuracion");
 
         if(respuesta.status===401){
 
-            localStorage.removeItem("tokenAdmin");
+    window.location.href="admin-login.html";
 
-            window.location.href="admin-login.html";
+    return;
 
-            return;
-
-        }
+}
 
         if(!respuesta.ok){
 
@@ -444,14 +410,6 @@ function editarAdministrador(){
     document.getElementById("nuevoCorreo").value =
         document.getElementById("correoAdmin").innerText;
 
-    const rolActual =
-        document.getElementById("rolAdmin").innerText.toLowerCase();
-
-    document.getElementById("nuevoRol").value =
-        rolActual.includes("super")
-        ? "superadmin"
-        : "admin";
-
 }
 
 async function guardarAdministrador(){
@@ -460,37 +418,25 @@ async function guardarAdministrador(){
 
     const correo = document.getElementById("nuevoCorreo").value.trim();
 
-    const rol = document.getElementById("nuevoRol").value.trim();
-
-    if(nombre==="" || correo==="" || rol===""){
-
-        alert("Completa todos los campos.");
-
-        return;
-
-    }
+    if(nombre==="" || correo===""){
+    alert("Completa todos los campos.");
+    return;
+}
 
     const respuesta = await fetch("/admin/actualizar",{
 
         method:"PATCH",
 
-        headers:{
+headers:{
 
-            "Content-Type":"application/json",
+    "Content-Type":"application/json"
 
-            Authorization:"Bearer "+token
+},
 
-        },
-
-        body:JSON.stringify({
-
-            nombre,
-
-            email:correo,
-
-            rol
-
-        })
+       body:JSON.stringify({
+    nombre,
+    email:correo
+})
 
     });
 
@@ -519,7 +465,7 @@ function cancelarEdicion(){
 
     document.getElementById("nuevoCorreo").value="";
 
-    document.getElementById("nuevoRol").selectedIndex=0;
+    
 
 }
 async function cambiarPassword(){
@@ -551,11 +497,9 @@ if(nueva !== confirmar){
 
         headers:{
 
-            "Content-Type":"application/json",
+    "Content-Type":"application/json"
 
-            Authorization:"Bearer "+token
-
-        },
+},
 
         body:JSON.stringify({
 
@@ -583,15 +527,17 @@ if(nueva !== confirmar){
 
 }
 
-function cerrarSesion(){
+async function cerrarSesion(){
 
-    localStorage.removeItem("tokenAdmin");
+    await fetch("/admin/logout", {
+        method: "POST"
+    });
 
     window.location.href="admin-login.html";
 
 }
 
 </script>
-
+<script src="csrf.js"></script>
 </body>
 </html>

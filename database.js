@@ -168,10 +168,11 @@ async function crearEstructura() {
 
             stripe_onboarding_complete INTEGER DEFAULT 0,
 
-            estado TEXT DEFAULT 'activo'
-
+                        estado TEXT DEFAULT 'activo'
         );
 
+        ALTER TABLE usuarios
+        ADD COLUMN IF NOT EXISTS session_version INTEGER NOT NULL DEFAULT 0;
 
         CREATE TABLE IF NOT EXISTS codigos_verificacion (
 
@@ -734,9 +735,7 @@ function prepararBase() {
 
             await crearEstructura();
 
-
-            await migrarSQLite();
-
+await migrarSQLite();
 
             console.log(
                 '✅ Supabase está listo como base principal.'

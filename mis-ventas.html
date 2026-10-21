@@ -1077,13 +1077,6 @@ body{
 
 <script>
 
-const token = localStorage.getItem('token');
-
-if (!token) {
-
-    window.location.href = '/login.html';
-
-}
 let ventasTodas = [];
 function copiarLink(codigo) {
 
@@ -1207,7 +1200,7 @@ function mostrarVentas(ventas){
     color:#15204B;
     letter-spacing:-.3px;
 ">
-    ${trato.producto}
+    ${escaparHTML(trato.producto)}
 </div>
 
                     </div>
@@ -1315,19 +1308,23 @@ function mostrarVentas(ventas){
 
 }
 cargarVentas();
+function escaparHTML(texto) {
 
+    return String(texto)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
 async function cargarVentas(){
 
     try{
 
         const respuesta = await fetch(
-            '/mis-ventas',
-            {
-                headers:{
-                    'Authorization':'Bearer ' + token
-                }
-            }
-        );
+    '/perfil'
+);
 
         const datos = await respuesta.json();
 
@@ -1360,6 +1357,6 @@ if(filtro){
 }
 
 </script>
-
+<script src="csrf.js"></script>
 </body>
 </html>

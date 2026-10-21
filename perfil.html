@@ -231,14 +231,7 @@ input:disabled{
 </div>
 
 <script>
-    const token = localStorage.getItem('token');
-
-if (!token) {
-
-    window.location.href = "/login.html";
-
-}
-
+    
 let datosOriginales = {};
 
 const nombre = document.getElementById("nombre");
@@ -254,13 +247,7 @@ const mensaje = document.getElementById("mensaje");
 
 async function cargarPerfil(){
 
-    const respuesta = await fetch("/perfil",{
-
-        headers:{
-            Authorization: "Bearer " + token
-        }
-
-    });
+    const respuesta = await fetch("/perfil");
 
     const datos = await respuesta.json();
 
@@ -349,9 +336,8 @@ btnGuardar.addEventListener("click", async ()=>{
         method:"PUT",
 
         headers:{
-            "Content-Type":"application/json",
-            Authorization: "Bearer " + token
-        },
+    "Content-Type":"application/json"
+},
 
         body:JSON.stringify({
 
@@ -408,6 +394,6 @@ btnGuardar.addEventListener("click", async ()=>{
 });
 
 </script>
-
+<script src="csrf.js"></script>
 </body>
 </html>

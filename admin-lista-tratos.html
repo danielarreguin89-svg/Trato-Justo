@@ -266,15 +266,6 @@ Buscar
 </div>
 <script>
 
-const token = localStorage.getItem("tokenAdmin");
-
-if(!token){
-    window.location.href="admin-login.html";
-}
-
-const datos = JSON.parse(atob(token.split(".")[1]));
-document.getElementById("adminNombre").innerText = datos.email;
-
 cargarTratos();
 
 async function cargarTratos(){
@@ -282,12 +273,7 @@ async function cargarTratos(){
     try{
 
        const respuesta = await fetch(
-    "/admin/tratos?buscar=" + encodeURIComponent(document.getElementById("buscar").value),
-    {
-        headers:{
-            Authorization:"Bearer " + token
-        }
-    }
+    "/admin/tratos?buscar=" + encodeURIComponent(document.getElementById("buscar").value)
 );
 
         if(!respuesta.ok){
@@ -299,7 +285,10 @@ async function cargarTratos(){
 
         const datos = await respuesta.json();
 
-        const tabla = document.getElementById("tablaTratos");
+document.getElementById("adminNombre").innerText =
+    datos.administrador;
+
+const tabla = document.getElementById("tablaTratos");
 
         tabla.innerHTML="";
 
@@ -357,13 +346,7 @@ async function verTrato(codigo){
 
     try{
 
-        const respuesta = await fetch("/admin/trato/"+codigo,{
-
-            headers:{
-                Authorization:"Bearer " + token
-            }
-
-        });
+        const respuesta = await fetch("/admin/trato/"+codigo);
 
         const trato = await respuesta.json();
 
@@ -434,15 +417,17 @@ trato.fecha;
 
 }
 
-function cerrarSesion(){
+async function cerrarSesion(){
 
-    localStorage.removeItem("tokenAdmin");
+    await fetch("/admin/logout", {
+        method: "POST"
+    });
 
     window.location.href="admin-login.html";
 
 }
 
 </script>
-
+<script src="csrf.js"></script>
 </body>
 </html>

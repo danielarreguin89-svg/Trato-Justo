@@ -287,31 +287,13 @@ id="tratosCompletados">
 
 <script>
 
-const token=localStorage.getItem("tokenAdmin");
-console.log(token); 
-
-if(!token){
-
-    window.location.href="admin-login.html";
-
-}
-
-const datos=JSON.parse(atob(token.split(".")[1]));
-
-document.getElementById("adminNombre").innerText=datos.email;
 cargarDashboard();
 
 async function cargarDashboard(){
 
     try{
 
-        const respuesta = await fetch("/admin/dashboard",{
-
-            headers:{
-                Authorization:"Bearer " + token
-            }
-
-        });
+        const respuesta = await fetch("/admin/dashboard");
 
         if(!verificarSesion(respuesta)) return;
 
@@ -360,15 +342,17 @@ datosDashboard.estadisticas.tratos_completados;
 
 }
 
-function cerrarSesion(){
+async function cerrarSesion(){
 
-    localStorage.removeItem("tokenAdmin");
+    await fetch("/admin/logout", {
+        method: "POST"
+    });
 
     window.location.href="admin-login.html";
 
 }
 
 </script>
-
+<script src="csrf.js"></script>
 </body>
 </html>

@@ -332,14 +332,18 @@ Cerrar sesión
 
 <script>
 
-function cerrarSesion(){
+async function cerrarSesion(){
 
-    localStorage.removeItem("token");
+    await fetch("/logout", {
+        method: "POST"
+    });
+
     window.location.href = "login.html";
 
 }
 
-const token = localStorage.getItem("token");
+// Ya no necesitamos leer el token.
+// La cookie se enviará automáticamente.
 
 const btnStripe = document.getElementById("btnStripe");
 
@@ -348,13 +352,7 @@ async function cargarEstadoStripe(){
 
     try{
 
-        const respuesta = await fetch("/stripe/status",{
-
-            headers:{
-                Authorization: "Bearer " + token
-            }
-
-        });
+        const respuesta = await fetch("/stripe/status");
 
         const datos = await respuesta.json();
 
@@ -404,13 +402,9 @@ btnStripe.addEventListener("click", async () => {
 
         const respuesta = await fetch("/stripe/onboarding",{
 
-            method:"POST",
+    method:"POST"
 
-            headers:{
-                Authorization: "Bearer " + token
-            }
-
-        });
+});
 
         const datos = await respuesta.json();
 
@@ -439,6 +433,6 @@ btnStripe.addEventListener("click", async () => {
 });
 cargarEstadoStripe();
 </script>
-
+<script src="csrf.js"></script>
 </body>
 </html>

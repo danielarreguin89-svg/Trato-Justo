@@ -448,28 +448,24 @@ body{
 
 <script>
 
-const token = localStorage.getItem('token');
+cargarCompras();
+function escaparHTML(texto) {
 
-if (!token) {
-
-    window.location.href = '/login.html';
+    return String(texto)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
 }
-
-cargarCompras();
-
 async function cargarCompras() {
 
     try {
 
         const respuesta = await fetch(
-            '/mis-compras',
-            {
-                headers: {
-    Authorization: "Bearer " + token
-}
-            }
-        );
+    '/mis-compras'
+);
 
         const compras = await respuesta.json();
 
@@ -523,7 +519,7 @@ async function cargarCompras() {
 
                 <div class="card">
 
-                    <h3>${trato.producto}</h3>
+                    <h3>${escaparHTML(trato.producto)}</h3>
 
                     <div class="info">
                         <b>Código:</b>
@@ -542,10 +538,19 @@ async function cargarCompras() {
                     <div class="info">
                         <b>Estado:</b>
                     </div>
+<div class="estado ${claseEstado}">
 
-                    <div class="estado ${claseEstado}">
-                        ${trato.estado}
-                    </div>
+    ${
+        trato.estado === 'creado'
+            ? 'Creado'
+            : trato.estado === 'reservado'
+            ? 'Reservado'
+            : trato.estado === 'completado'
+            ? 'Completado'
+            : 'Desconocido'
+    }
+
+</div>
 
                     <a
                         class="link-btn"
@@ -572,6 +577,6 @@ async function cargarCompras() {
 }
 
 </script>
-
+<script src="csrf.js"></script>
 </body>
 </html>

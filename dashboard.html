@@ -1395,15 +1395,6 @@ margin-right:auto;
 
 <script>
 
-const token = localStorage.getItem('token');
-
-if (!token) {
-
-    window.location.href = '/login.html';
-
-}
-
-
 /* =========================
    FORMATO DE DINERO
 ========================= */
@@ -1456,24 +1447,15 @@ async function cargarUsuario(){
 
     try{
 
-        const respuesta = await fetch(
-            '/perfil',
-            {
-                headers:{
-                    Authorization:"Bearer " + token
-                }
-            }
-        );
+        const respuesta = await fetch('/perfil');
 
-        if(!respuesta.ok){
+       if(!respuesta.ok){
 
-            localStorage.removeItem('token');
+    window.location.href = '/login.html';
 
-            window.location.href = '/login.html';
+    return;
 
-            return;
-
-        }
+}
 
         const usuario = await respuesta.json();
         console.log("DATOS QUE RECIBE EL DASHBOARD:", usuario);
@@ -1541,16 +1523,7 @@ async function cargarNotificaciones(){
 
     try{
 
-        const respuesta =
-            await fetch(
-                "/notificaciones",
-                {
-                    headers:{
-                        Authorization:
-                            "Bearer " + token
-                    }
-                }
-            );
+        const respuesta = await fetch("/notificaciones");
 
         if(!respuesta.ok){
 
@@ -1709,15 +1682,11 @@ function verNotificaciones(){
 
 
     fetch(
-        "/notificaciones/leidas",
-        {
-            method:"PATCH",
-            headers:{
-                Authorization:
-                    "Bearer " + token
-            }
-        }
-    );
+    "/notificaciones/leidas",
+    {
+        method:"PATCH"
+    }
+);
 
 
     document.getElementById(
@@ -1878,6 +1847,6 @@ document.addEventListener(
     }
 );
 </script>
-
+<script src="csrf.js"></script>
 </body>
 </html>

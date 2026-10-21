@@ -149,12 +149,8 @@ async function login(){
     const datos=await respuesta.json();
 
     if(respuesta.ok){
-
-        localStorage.setItem("tokenAdmin",datos.token);
-
-        window.location.href="admin-dashboard.html";
-
-    }
+    window.location.href="admin-dashboard.html";
+}
 
     else{
 
@@ -165,6 +161,6 @@ async function login(){
 }
 
 </script>
-
+<script src="csrf.js"></script>
 </body>
 </html>

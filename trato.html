@@ -764,8 +764,6 @@ body{
 const codigo =
     window.location.pathname.split('/').pop();
 
-const token =
-    localStorage.getItem('token');
     const stripe = Stripe("pk_test_51Tvt9e17UsHd7j3WlfulSADQ9Fu5NqvY2Drs64zeuTijOVS29VuPwqjkwzZOyH3kVKt3lWoVeE1NFiEOw1m6RD9800J0K1PAH8");
 let estrellasSeleccionadas = 0;
 
@@ -813,10 +811,9 @@ async function reservarTrato() {
             "/stripe/create-checkout-session",
             {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                     "Authorization": "Bearer " + token
-                },
+                headers:{
+    'Content-Type':'application/json'
+},
                 body: JSON.stringify({
                     codigo
                 })
@@ -858,9 +855,8 @@ async function calificar(estrellas) {
             {
                 method:'POST',
                 headers:{
-                    'Content-Type':'application/json',
-                    'Authorization': 'Bearer ' + token
-                },
+    'Content-Type':'application/json'
+},
                 body:JSON.stringify({
                     estrellas
                 })
@@ -878,16 +874,21 @@ async function calificar(estrellas) {
     location.reload();
 
 }
+function escaparHTML(texto) {
+
+    return String(texto)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
 async function cargarTrato() {
 
     const respuesta =
         await fetch(
-            `/api/trato/${codigo}`,
-            {
-                headers:{
-                    'Authorization': 'Bearer ' + token
-                }
-            }
+            `/api/trato/${codigo}`, 
         );
 
     const trato =
@@ -909,7 +910,7 @@ document.getElementById(
     <div class="card">
 
         <h2 class="producto">
-            ${trato.producto}
+            ${escaparHTML(trato.producto)}
         </h2>
 
         <div class="monto">
@@ -922,7 +923,7 @@ document.getElementById(
 
         <div class="info">
             <b>Vendedor:</b>
-            ${trato.vendedor_nombre || 'No disponible'}
+            ${escaparHTML(trato.vendedor_nombre || 'No disponible')}
         </div>
 
         <div class="info rating">
@@ -935,7 +936,7 @@ document.getElementById(
 
 <div class="info">
     <b>Comprador:</b>
-    ${trato.comprador_nombre}
+    ${escaparHTML(trato.comprador_nombre)}
 </div>
 
 <div class="info rating">
@@ -948,7 +949,7 @@ document.getElementById(
 
         <div class="info">
             <b>Descripción:</b>
-            ${trato.descripcion}
+            ${escaparHTML(trato.descripcion)}
         </div>
 
         <div class="info estado-row">
@@ -1250,12 +1251,8 @@ async function liberarPago() {
                 method: "POST",
 
                 headers: {
-
-                    "Content-Type": "application/json",
-
-                     "Authorization": "Bearer " + token
-
-                },
+    "Content-Type": "application/json"
+},
 
                 body: JSON.stringify({
 
@@ -1289,6 +1286,6 @@ async function liberarPago() {
 cargarTrato();
 
 </script>
-
+<script src="csrf.js"></script>
 </body>
 </html>

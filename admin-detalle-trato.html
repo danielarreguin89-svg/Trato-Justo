@@ -254,15 +254,6 @@ onclick="history.back()">
 </div>
 <script>
 
-const token = localStorage.getItem("tokenAdmin");
-
-if(!token){
-    window.location.href="admin-login.html";
-}
-
-const admin = JSON.parse(atob(token.split(".")[1]));
-document.getElementById("adminNombre").innerText = admin.email;
-
 const parametros = new URLSearchParams(window.location.search);
 
 const codigo = parametros.get("codigo");
@@ -281,13 +272,7 @@ async function cargarDetalle(){
 
     try{
 
-        const respuesta = await fetch("/admin/trato/"+codigo,{
-
-            headers:{
-                Authorization:"Bearer "+token
-            }
-
-        });
+        const respuesta = await fetch("/admin/trato/"+codigo);
 
         if(!respuesta.ok){
 
@@ -298,6 +283,7 @@ async function cargarDetalle(){
         }
 
         const trato = await respuesta.json();
+        document.getElementById("adminNombre").innerText = trato.administrador;
 
         document.getElementById("codigo").innerText = trato.codigo;
 
@@ -360,15 +346,17 @@ async function cargarDetalle(){
 
 }
 
-function cerrarSesion(){
+async function cerrarSesion(){
 
-    localStorage.removeItem("tokenAdmin");
+    await fetch("/admin/logout",{
+        method:"POST"
+    });
 
     window.location.href="admin-login.html";
 
 }
 
 </script>
-
+<script src="csrf.js"></script>
 </body>
 </html>

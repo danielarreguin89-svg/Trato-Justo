@@ -6,23 +6,23 @@ function verificarSesion(respuesta){
 
     if(respuesta.status === 401){
 
-        localStorage.removeItem("tokenAdmin");
+    alert("Tu sesión ha expirado.");
 
-        alert("Tu sesión ha expirado.");
+    window.location.href = "admin-login.html";
 
-        window.location.href = "admin-login.html";
+    return false;
 
-        return false;
-
-    }
+}
 
     return true;
 
 }
 
-function cerrarSesion(){
+async function cerrarSesion(){
 
-    localStorage.removeItem("tokenAdmin");
+    await fetch("/admin/logout",{
+        method:"POST"
+    });
 
     window.location.href = "admin-login.html";
 

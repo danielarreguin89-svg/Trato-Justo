@@ -6,6 +6,126 @@ const jwt = require('jsonwebtoken');
 const crypto = require("crypto");
 const db = require('./database');
 const { Resend } = require('resend');
+const { rateLimit } = require("express-rate-limit");
+const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
+const { doubleCsrf } = require("csrf-csrf");
+const nombreCookieCsrf =
+    process.env.NODE_ENV === "production"
+        ? "__Host-tj-csrf"
+        : "tj-csrf";
+
+const opcionesCookieCsrf = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 8 * 60 * 60 * 1000
+};
+
+const {
+    generateCsrfToken,
+    doubleCsrfProtection,
+    invalidCsrfTokenError
+} = doubleCsrf({
+    getSecret: () => process.env.CSRF_SECRET,
+
+    getSessionIdentifier: (req) => {
+    const tokenUsuario = req.cookies?.token || "";
+    const tokenAdmin = req.cookies?.admin_token || "";
+
+    if (!tokenUsuario && !tokenAdmin) {
+        return "sesion-anonima";
+    }
+
+    return `${tokenUsuario}:${tokenAdmin}`;
+},
+
+    cookieName: nombreCookieCsrf,
+    cookieOptions: opcionesCookieCsrf,
+
+    getCsrfTokenFromRequest: (req) =>
+        req.headers["x-csrf-token"]
+});
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: {
+        error: "Demasiados intentos de inicio de sesión. Intenta nuevamente más tarde."
+    }
+});
+const recoveryLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 5,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: {
+        error: "Demasiadas solicitudes de recuperación. Intenta nuevamente más tarde."
+    }
+});
+const verificationLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: {
+        error: "Demasiados intentos de verificación. Intenta nuevamente más tarde."
+    }
+});
+const emailCodeLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 5,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: {
+        error: "Demasiadas solicitudes de código. Intenta nuevamente más tarde."
+    }
+});
+
+const releaseCodeLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: {
+        error: "Demasiados intentos de liberación. Intenta nuevamente más tarde."
+    }
+});
+const adminLoginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 5,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: {
+        error: "Demasiados intentos de acceso. Intenta nuevamente más tarde."
+    }
+});
+const registerLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 5,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: {
+        error: "Demasiados intentos de registro. Intenta nuevamente más tarde."
+    }
+});
+const publicTratoLimiter = rateLimit({
+
+    windowMs: 15 * 60 * 1000,
+
+    limit: 60,
+
+    standardHeaders: "draft-8",
+
+    legacyHeaders: false,
+
+    message: {
+        error: "Demasiadas consultas. Intenta nuevamente más tarde."
+    }
+
+});
 const Stripe = require('stripe');
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -13,7 +133,9 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const resend = new Resend(process.env.RESEND_API_KEY);
 function generarCodigoVerificacion() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+
+    return crypto.randomInt(100000, 1000000).toString();
+
 }
 function reservarTratoSistema(codigo, compradorId) {
 
@@ -55,6 +177,7 @@ function reservarTratoSistema(codigo, compradorId) {
             monto_vendedor = ?,
             codigo_liberacion = ?
           WHERE codigo = ?
+AND estado = 'creado'
           `,
           [
             compradorId,
@@ -65,13 +188,17 @@ function reservarTratoSistema(codigo, compradorId) {
           ],
           function(error) {
 
-            if (error) {
-              return reject(error);
-            }
+    if (error) {
+        return reject(error);
+    }
 
-            resolve();
+    if (this.changes === 0) {
+        return reject(new Error('Este trato ya fue reservado'));
+    }
 
-          }
+    resolve();
+
+}
 
         );
 
@@ -107,6 +234,19 @@ function crearNotificacion(usuarioId, titulo, mensaje){
 
 }
 const app = express();
+app.use(cookieParser());
+const opcionesCookie = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 8 * 60 * 60 * 1000,
+    path: "/"
+};
+app.disable("x-powered-by");
+app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false
+}));
 const PORT = 3000;
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -158,18 +298,7 @@ app.post(
 if (evento.type === 'checkout.session.completed') {
 
     const session = evento.data.object;
-    console.log("PAYMENT INTENT:", session.payment_intent);
-console.log("SESSION ID:", session.id);
-    console.log(
-    "PAYMENT INTENT:",
-    session.payment_intent
-);
-
-console.log(
-    "SESSION ID:",
-    session.id
-);
-
+    
     console.log('🎉 Pago completado');
 
     try {
@@ -180,7 +309,7 @@ console.log(
         );
 
         await new Promise((resolve, reject) => {
-console.log("PAYMENT INTENT:", session.payment_intent);
+
              db.run(
                 `
                 UPDATE tratos
@@ -260,35 +389,79 @@ res.json({
 
   }
 );
-app.use(express.json());
+app.use(express.json({ limit: '100kb' }));
+// GENERAR TOKEN CSRF
+app.get("/csrf-token", (req, res) => {
+
+    const csrfToken = generateCsrfToken(req, res);
+
+    res.json({
+        csrfToken
+    });
+
+});
+app.use(doubleCsrfProtection);
 const SECRET = process.env.JWT_SECRET;
 function verificarToken(req, res, next) {
 
     const authHeader = req.headers.authorization;
 
-    if (!authHeader) {
-        return res.status(401).json({
-            error: "Debes iniciar sesión"
-        });
-    }
-
-    const token = authHeader.split(" ")[1];
+const token = req.cookies.token;
+if (!token) {
+    return res.status(401).json({
+        error: "Debes iniciar sesión"
+    });
+}
 
     try {
 
-        const usuario = jwt.verify(token, SECRET);
+    const usuario = jwt.verify(token, SECRET);
+
+    db.get(
+    "SELECT estado, session_version FROM usuarios WHERE id = ?",
+    [usuario.id],
+    (err, fila) => {
+
+        if (err) {
+            return res.status(500).json({
+                error: "Error interno del servidor"
+            });
+        }
+
+        if (!fila) {
+            return res.status(401).json({
+                error: "Token inválido"
+            });
+        }
+
+        const versionToken = Number(usuario.sessionVersion ?? 0);
+        const versionActual = Number(fila.session_version ?? 0);
+
+        if (versionToken !== versionActual) {
+            return res.status(401).json({
+                error: "Tu sesión ya no es válida. Inicia sesión nuevamente."
+            });
+        }
+
+        if (fila.estado !== "activo") {
+            return res.status(403).json({
+                error: "Tu cuenta está suspendida"
+            });
+        }
 
         req.usuario = usuario;
 
         next();
-
-    } catch (error) {
-
-        return res.status(401).json({
-            error: "Token inválido"
-        });
-
     }
+);
+
+} catch (error) {
+
+    return res.status(401).json({
+        error: "Token inválido"
+    });
+
+}
 
 }
 app.get('/perfil', verificarToken, (req, res) => {
@@ -483,13 +656,73 @@ app.put('/perfil', verificarToken, (req, res) => {
         fecha_nacimiento
     } = req.body;
 
-    if (!nombre || nombre.trim() === "") {
+    if (
+    typeof nombre !== "string" ||
+    nombre.trim().length < 2 ||
+    nombre.trim().length > 100
+) {
 
-        return res.status(400).json({
-            error: "El nombre es obligatorio"
-        });
+    return res.status(400).json({
+        error: "El nombre no es válido"
+    });
 
-    }
+}
+if (
+    typeof telefono !== "string" ||
+    !/^\+52\d{10}$/.test(telefono)
+) {
+
+    return res.status(400).json({
+        error: "El teléfono no es válido"
+    });
+
+}
+if (
+    typeof fecha_nacimiento !== "string" ||
+    !/^\d{4}-\d{2}-\d{2}$/.test(fecha_nacimiento)
+) {
+
+    return res.status(400).json({
+        error: "La fecha de nacimiento no es válida"
+    });
+
+}
+
+const fechaNacimiento = new Date(fecha_nacimiento);
+
+if (isNaN(fechaNacimiento.getTime())) {
+
+    return res.status(400).json({
+        error: "La fecha de nacimiento no es válida"
+    });
+
+}
+
+const hoy = new Date();
+
+let edad =
+    hoy.getFullYear() -
+    fechaNacimiento.getFullYear();
+
+const diferenciaMes =
+    hoy.getMonth() -
+    fechaNacimiento.getMonth();
+
+if (
+    diferenciaMes < 0 ||
+    (diferenciaMes === 0 &&
+     hoy.getDate() < fechaNacimiento.getDate())
+) {
+    edad--;
+}
+
+if (edad < 18) {
+
+    return res.status(400).json({
+        error: "Debes ser mayor de edad para utilizar Trato Justo"
+    });
+
+}
 
     db.run(
 
@@ -533,42 +766,53 @@ async function generarCodigo() {
 
     const anio = new Date().getFullYear();
 
-    return new Promise((resolve, reject) => {
+    const caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
-        db.get(
-            `
-            SELECT codigo
-            FROM tratos
-            WHERE codigo LIKE ?
-            ORDER BY id DESC
-            LIMIT 1
-            `,
-            [`TJ-${anio}-%`],
-            (err, row) => {
+    for (let intento = 0; intento < 10; intento++) {
 
-                if (err) {
-                    return reject(err);
+        let parte = "";
+
+        for (let i = 0; i < 6; i++) {
+            parte += caracteres[crypto.randomInt(0, caracteres.length)];
+        }
+
+        const codigo = `TJ-${anio}-${parte}`;
+
+        const existe = await new Promise((resolve, reject) => {
+
+            db.get(
+                `
+                SELECT id
+                FROM tratos
+                WHERE codigo = ?
+                LIMIT 1
+                `,
+                [codigo],
+                (err, row) => {
+
+                    if (err) {
+                        return reject(err);
+                    }
+
+                    resolve(!!row);
+
                 }
+            );
 
-                let consecutivo = 1;
+        });
 
-                if (row) {
-                    consecutivo = parseInt(row.codigo.split("-")[2]) + 1;
-                }
+        if (!existe) {
+            return codigo;
+        }
 
-                const codigo = `TJ-${anio}-${String(consecutivo).padStart(6, "0")}`;
+    }
 
-                resolve(codigo);
-
-            }
-        );
-
-    });
+    throw new Error("No fue posible generar un código de trato único");
 
 }
 
 function generarCodigoLiberacion() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+    return crypto.randomInt(100000, 1000000).toString();
 }
 
 // INICIO
@@ -577,15 +821,22 @@ app.get('/', (req, res) => {
 });
 
 //ENVIAR CODIGO 
-app.post('/enviar-codigo', async (req, res) => {
+app.post('/enviar-codigo', emailCodeLimiter, async (req, res) => {
 
-  const { email } = req.body;
+ const { email } = req.body;
 
-  if (!email) {
+if (
+    typeof email !== "string" ||
+    !email.trim() ||
+    email.length > 254 ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+) {
+
     return res.status(400).json({
-      error: 'Correo requerido'
+        error: "Ingresa un correo electrónico válido"
     });
-  }
+
+}
 
   const codigo = generarCodigoVerificacion();
 
@@ -622,7 +873,7 @@ app.post('/enviar-codigo', async (req, res) => {
 
       } catch (error) {
 
-        console.log(error);
+        console.error("Error al enviar correo:", error.message);
 
         res.status(500).json({
           error: 'Error al enviar correo'
@@ -636,7 +887,7 @@ app.post('/enviar-codigo', async (req, res) => {
 });
 
 // REGISTRO
-app.post('/registro', async (req, res) => {
+app.post('/registro', registerLimiter, async (req, res) => {
 
   const {
     nombre,
@@ -646,12 +897,86 @@ app.post('/registro', async (req, res) => {
     password
   } = req.body;
 
-  if (!nombre || !email || !telefono || !fecha_nacimiento || !password) {
+ if (
+    typeof nombre !== "string" ||
+    typeof email !== "string" ||
+    typeof telefono !== "string" ||
+    typeof fecha_nacimiento !== "string" ||
+    typeof password !== "string" ||
+    !nombre.trim() ||
+    !email.trim() ||
+    !telefono.trim() ||
+    !fecha_nacimiento.trim() ||
+    !password
+) {
     return res.status(400).json({
-      error: 'Completa todos los campos'
+        error: "Completa correctamente todos los campos"
     });
-  }
+}
+if (
+    nombre.length > 100 ||
+    email.length > 254 ||
+    telefono.length > 20 ||
+    fecha_nacimiento.length > 10 ||
+    password.length > 128
+) {
+    return res.status(400).json({
+        error: "Uno o más campos exceden el tamaño permitido"
+    });
+}
+const telefonoValido = /^\+52\d{10}$/.test(telefono);
 
+if (!telefonoValido) {
+    return res.status(400).json({
+        error: "El teléfono debe tener 10 dígitos y código de país +52"
+    });
+}
+
+const fechaValida = /^\d{4}-\d{2}-\d{2}$/.test(fecha_nacimiento);
+const fechaNacimiento = new Date(fecha_nacimiento);
+
+if (!fechaValida || isNaN(fechaNacimiento.getTime())) {
+    return res.status(400).json({
+        error: "La fecha de nacimiento no es válida"
+    });
+}
+
+const hoy = new Date();
+
+let edad =
+    hoy.getFullYear() -
+    fechaNacimiento.getFullYear();
+
+const diferenciaMes =
+    hoy.getMonth() -
+    fechaNacimiento.getMonth();
+
+if (
+    diferenciaMes < 0 ||
+    (diferenciaMes === 0 &&
+        hoy.getDate() < fechaNacimiento.getDate())
+) {
+    edad--;
+}
+
+if (edad < 18) {
+    return res.status(400).json({
+        error: "Debes ser mayor de edad para utilizar Trato Justo"
+    });
+}
+const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+if (!emailValido) {
+    return res.status(400).json({
+        error: "Ingresa un correo electrónico válido"
+    });
+}
+
+if (password.length < 8) {
+    return res.status(400).json({
+        error: "La contraseña debe tener al menos 8 caracteres"
+    });
+}
   const passwordHash = await bcrypt.hash(password, 10);
   
 db.get(
@@ -724,14 +1049,14 @@ function continuarRegistro() {
             <h1>${codigo}</h1>
           `
         });
-console.log('CORREO ENVIADO A:', email);
+console.log('Código de verificación enviado correctamente');
         res.json({
           mensaje: 'Código enviado'
         });
 
       } catch (error) {
 
-        console.log(error);
+        console.error("Error al enviar correo:", error.message);
 
         res.status(500).json({
           error: 'Error al enviar correo'
@@ -745,9 +1070,21 @@ console.log('CORREO ENVIADO A:', email);
 }
 });
 //VERIFICAR CODIGO
-app.post('/verificar-codigo', (req, res) => {
+app.post('/verificar-codigo', verificationLimiter, (req, res) => {
 
   const { email, codigo } = req.body;
+  if (
+    typeof email !== "string" ||
+    typeof codigo !== "string" ||
+    !email.trim() ||
+    !/^\d{6}$/.test(codigo)
+) {
+
+    return res.status(400).json({
+        error: "El código de verificación no es válido"
+    });
+
+}
 
   db.get(
     `
@@ -765,7 +1102,13 @@ app.post('/verificar-codigo', (req, res) => {
           error: 'Código no encontrado'
         });
       }
+const creadoEn = new Date(codigoGuardado.creado_en).getTime();
 
+if (isNaN(creadoEn) || Date.now() - creadoEn > 10 * 60 * 1000) {
+    return res.status(400).json({
+        error: 'El código ha expirado. Solicita uno nuevo.'
+    });
+}
       if (codigoGuardado.codigo !== codigo) {
         return res.status(400).json({
           error: 'Código incorrecto'
@@ -840,15 +1183,19 @@ app.post('/verificar-codigo', (req, res) => {
 });
 function verificarAdmin(req, res, next) {
 
-    const authHeader = req.headers.authorization;
+const token = req.cookies.admin_token;
 
-    if (!authHeader) {
-        return res.status(401).json({
-            error: "Token no proporcionado"
-        });
-    }
+if (!token) {
+    return res.status(401).json({
+        error: "Token no proporcionado"
+    });
+}
 
-    const token = authHeader.replace("Bearer ", "");
+if (!token) {
+    return res.status(401).json({
+        error: "Token inválido"
+    });
+}
 
     try {
 
@@ -894,15 +1241,24 @@ function verificarAdmin(req, res, next) {
 
 }
 // LOGIN DE ADMINISTRADOR
-app.post("/admin/login", async (req, res) => {
+app.post("/admin/login", adminLoginLimiter, async (req, res) => {
 
     const { email, password } = req.body;
 
-    if (!email || !password) {
-        return res.status(400).json({
-            error: "Correo y contraseña son obligatorios"
-        });
-    }
+   if (
+    typeof email !== "string" ||
+    typeof password !== "string" ||
+    !email.trim() ||
+    !password ||
+    email.length > 254 ||
+    password.length > 128 ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+) {
+
+    return res.status(400).json({
+        error: "Credenciales incorrectas"
+    });
+}
 
     db.get(
         "SELECT * FROM administradores WHERE email = ? AND activo = 1",
@@ -931,19 +1287,20 @@ app.post("/admin/login", async (req, res) => {
             }
 
             const token = jwt.sign(
-                {
-                    id: admin.id,
-                    email: admin.email,
-                    rol: admin.rol,
-                    tipo: "admin"
-                },
-                JWT_SECRET,
-                { expiresIn: "8h" }
-            );
+    {
+        id: admin.id,
+        email: admin.email,
+        rol: admin.rol,
+        tipo: "admin"
+    },
+    JWT_SECRET,
+    { expiresIn: "8h" }
+);
 
-            res.json({
+res.cookie("admin_token", token, opcionesCookie);
+
+res.json({
                 mensaje: "Inicio de sesión exitoso",
-                token,
                 administrador: {
                     id: admin.id,
                     nombre: admin.nombre,
@@ -990,8 +1347,17 @@ app.get("/admin/dashboard", verificarAdmin, (req, res) => {
 // LISTAR USUARIOS (ADMIN)
 app.get("/admin/usuarios", verificarAdmin, (req, res) => {
 
-    const buscar = req.query.buscar || "";
-    console.log("Buscar:", buscar);
+    const buscar =
+    typeof req.query.buscar === "string"
+        ? req.query.buscar.trim()
+        : "";
+
+if (buscar.length > 100) {
+    return res.status(400).json({
+        error: "La búsqueda es demasiado larga."
+    });
+}
+    console.log("Búsqueda de administrador ejecutada");
 
     const sql = `
         SELECT
@@ -1024,9 +1390,10 @@ FROM usuarios
             }
 
             res.json({
-                total: usuarios.length,
-                usuarios
-            });
+    administrador: req.admin.nombre,
+    total: usuarios.length,
+    usuarios
+});
 
         }
     );
@@ -1124,15 +1491,17 @@ req.usuario.id
 
     }
 
-    console.log("ESTADISTICAS DASHBOARD:", estadisticas);
+    console.log("Estadísticas del usuario consultadas");
 
-    res.json({
+    const { password, ...usuarioSeguro } = usuario;
 
-        ...usuario,
+res.json({
 
-        estadisticas
+    ...usuarioSeguro,
 
-    });
+    estadisticas
+
+});
 
 }
 
@@ -1187,7 +1556,16 @@ app.patch("/admin/usuario/:id/estado", verificarAdmin, (req, res) => {
 // LISTAR TRATOS (ADMIN)
 app.get("/admin/tratos", verificarAdmin, (req, res) => {
 
-    const buscar = (req.query.buscar || "").trim();
+    const buscar =
+    typeof req.query.buscar === "string"
+        ? req.query.buscar.trim()
+        : "";
+
+if (buscar.length > 100) {
+    return res.status(400).json({
+        error: "La búsqueda es demasiado larga."
+    });
+}
 
     let sql = `
         SELECT
@@ -1259,9 +1637,10 @@ app.get("/admin/tratos", verificarAdmin, (req, res) => {
         }
 
         res.json({
-            total: tratos.length,
-            tratos
-        });
+    administrador: req.admin.nombre,
+    total: tratos.length,
+    tratos
+});
 
     });
 
@@ -1269,7 +1648,16 @@ app.get("/admin/tratos", verificarAdmin, (req, res) => {
 // FINANZAS (ADMIN)
 app.get("/admin/finanzas", verificarAdmin, (req, res) => {
 
-    const buscar = (req.query.buscar || "").trim();
+    const buscar =
+    typeof req.query.buscar === "string"
+        ? req.query.buscar.trim()
+        : "";
+
+if (buscar.length > 100) {
+    return res.status(400).json({
+        error: "La búsqueda es demasiado larga."
+    });
+}
 
     db.get(
         `
@@ -1348,11 +1736,11 @@ app.get("/admin/finanzas", verificarAdmin, (req, res) => {
 
                 res.json({
 
-                    resumen,
+    administrador: req.admin.nombre,
+    resumen,
+    movimientos
 
-                    movimientos
-
-                });
+});
 
             });
 
@@ -1400,15 +1788,20 @@ app.patch("/admin/cambiar-password", verificarAdmin, (req, res) => {
 
     } = req.body;
 
-    if(!passwordActual || !passwordNueva){
+    if(
+    typeof passwordActual !== "string" ||
+    typeof passwordNueva !== "string" ||
+    !passwordActual ||
+    !passwordNueva ||
+    passwordNueva.length < 8 ||
+    passwordNueva.length > 128
+){
 
-        return res.status(400).json({
+    return res.status(400).json({
+        error:"La nueva contraseña debe tener entre 8 y 128 caracteres."
+    });
 
-            error:"Completa todos los campos."
-
-        });
-
-    }
+}
 
     if(!bcrypt.compareSync(passwordActual, req.admin.password)){
 
@@ -1465,32 +1858,38 @@ app.patch("/admin/cambiar-password", verificarAdmin, (req, res) => {
 // ACTUALIZAR DATOS DEL ADMINISTRADOR
 app.patch("/admin/actualizar", verificarAdmin, (req, res) => {
 
-    const { nombre, email, rol } = req.body;
+    const { nombre, email } = req.body;
 
-    if (!nombre || !email || !rol) {
+   if (
+    typeof nombre !== "string" ||
+    typeof email !== "string" ||
+    !nombre.trim() ||
+    !email.trim() ||
+    nombre.trim().length > 100 ||
+    email.trim().length > 254 ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+) {
 
-        return res.status(400).json({
-            error: "Completa todos los campos."
-        });
+    return res.status(400).json({
+        error: "Los datos del administrador no son válidos."
+    });
 
-    }
+}
 
     db.run(
 
         `
         UPDATE administradores
         SET nombre = ?,
-            email = ?,
-            rol = ?
-        WHERE id = ?
+    email = ?
+WHERE id = ?
         `,
 
         [
-            nombre,
-            email,
-            rol,
-            req.admin.id
-        ],
+    nombre,
+    email,
+    req.admin.id
+],
 
         function(err){
 
@@ -1566,7 +1965,10 @@ tratos.fecha,
                 });
             }
 
-            res.json(trato);
+            res.json({
+    administrador: req.admin.nombre,
+    ...trato
+});
 
         }
 
@@ -1574,21 +1976,49 @@ tratos.fecha,
 
 });
 // LOGIN
-app.post('/login', (req, res) => {
+app.post('/login', loginLimiter, (req, res) => {
 
   const { email, password } = req.body;
+  if (
+    typeof email !== "string" ||
+    typeof password !== "string" ||
+    !email.trim() ||
+    !password ||
+    email.length > 254 ||
+    password.length > 128
+) {
+
+    return res.status(400).json({
+        error: "Credenciales incorrectas"
+    });
+
+}
 
   db.get(
     'SELECT * FROM usuarios WHERE email = ?',
     [email],
     async (err, usuario) => {
 
-      if (err || !usuario) {
-    return res.status(400).json({
-        error: 'Credenciales incorrectas'
+    if (err) {
+    console.error(
+        "❌ Error consultando usuario en /login:",
+        err.message
+    );
+
+    return res.status(500).json({
+        error: "No fue posible iniciar sesión. Intenta más tarde."
     });
 }
 
+if (!usuario) {
+    console.log(
+        "⚠️ No se encontró el usuario durante el inicio de sesión."
+    );
+
+    return res.status(400).json({
+        error: "Credenciales incorrectas"
+    });
+}
       const coincide = await bcrypt.compare(
         password,
         usuario.password
@@ -1605,36 +2035,41 @@ app.post('/login', (req, res) => {
   });
 }
 
-      const token = jwt.sign(
+     const token = jwt.sign(
     {
         id: usuario.id,
-        email: usuario.email
+        email: usuario.email,
+        sessionVersion: Number(usuario.session_version ?? 0)
     },
     SECRET,
     { expiresIn: "8h" }
 );
-
-      res.json({
-        mensaje: 'Login correcto',
-        token
-      });
+res.cookie("token", token, opcionesCookie);
+     res.json({
+    mensaje: 'Login correcto'
+});
 
     }
   );
 
 });
 
-app.post("/recuperar-password", (req, res) => {
+app.post("/recuperar-password", recoveryLimiter, (req, res) => {
 
     const { email } = req.body;
 
-    if (!email) {
+if (
+    typeof email !== "string" ||
+    !email.trim() ||
+    email.length > 254 ||
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+) {
 
-        return res.status(400).json({
-            error: "Ingresa tu correo."
-        });
+    return res.status(400).json({
+        error: "Ingresa un correo electrónico válido"
+    });
 
-    }
+}
 
     db.get(
 
@@ -1665,6 +2100,11 @@ app.post("/recuperar-password", (req, res) => {
 
             const token = crypto.randomBytes(32).toString("hex");
 
+const tokenHash = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
             const expiracion = new Date(
                 Date.now() + (60 * 60 * 1000)
             ).toISOString();
@@ -1676,10 +2116,10 @@ app.post("/recuperar-password", (req, res) => {
                 VALUES (?, ?, ?)`,
 
                 [
-                    email,
-                    token,
-                    expiracion
-                ],
+    email,
+    tokenHash,
+    expiracion
+],
 
                 async function(err) {
 
@@ -1715,7 +2155,7 @@ app.post("/recuperar-password", (req, res) => {
                                 </p>
 
                                 <p>
-                                    <a href="https://trato-justo.onrender.com/restablecer-password.html?token=${token}">
+                                    <a href="${process.env.NODE_ENV === "production" ? "https://trato-justo.onrender.com" : "http://localhost:3000"}/restablecer-password.html?token=${token}">
                                         Restablecer contraseña
                                     </a>
                                 </p>
@@ -1729,13 +2169,19 @@ app.post("/recuperar-password", (req, res) => {
                                 </p>
                             `
 
-                        });
-console.log("RECUPERAR PASSWORD:", resultado);
-                        return res.json({
+    });
 
-                            mensaje: "Te enviamos un enlace para recuperar tu contraseña."
+if (resultado.error) {
+    console.error("Error de Resend al recuperar contraseña:", resultado.error);
 
-                        });
+    return res.status(502).json({
+        error: "No fue posible enviar el correo de recuperación."
+    });
+}
+
+return res.json({
+    mensaje: "Te enviamos un enlace para recuperar tu contraseña."
+});
 
                     } catch (error) {
 
@@ -1758,26 +2204,40 @@ console.log("RECUPERAR PASSWORD:", resultado);
     );
 
 });
-app.post("/restablecer-password", (req, res) => {
+app.post("/restablecer-password", recoveryLimiter, (req, res) => {
 
     const { token, password } = req.body;
 
     if(!token || !password){
 
-        return res.status(400).json({
-            error:"Información incompleta."
-        });
+    return res.status(400).json({
+        error:"Información incompleta."
+    });
 
-    }
+}
 
-    db.get(
+if(
+    typeof password !== "string" ||
+    password.length < 8 ||
+    password.length > 128
+){
 
-        `SELECT * FROM recuperacion_password
-         WHERE token = ?`,
+    return res.status(400).json({
+        error:"La contraseña debe tener entre 8 y 128 caracteres."
+    });
 
-        [token],
+}
 
-        async (err, registro)=>{
+const tokenHash = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+db.get(
+    `SELECT * FROM recuperacion_password
+     WHERE token = ?`,
+    [tokenHash],
+    async (err, registro) => {
 
             if(err){
 
@@ -1813,13 +2273,14 @@ app.post("/restablecer-password", (req, res) => {
                 db.run(
 
                     `UPDATE usuarios
-                     SET password=?
-                     WHERE email=?`,
+ SET password=?,
+     session_version = session_version + 1
+ WHERE email=?`,
 
-                    [
-                        passwordHash,
-                        registro.email
-                    ],
+[
+    passwordHash,
+    registro.email
+],
 
                     function(err){
                         
@@ -1834,19 +2295,22 @@ app.post("/restablecer-password", (req, res) => {
                         }
 
                         db.run(
+    `DELETE FROM recuperacion_password
+     WHERE email = ?`,
+    [registro.email],
+    function(err) {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({
+                error: "No fue posible cerrar los enlaces de recuperación."
+            });
+        }
 
-                            `DELETE FROM recuperacion_password
-                             WHERE token=?`,
-
-                            [token]
-
-                        );
-
-                        return res.json({
-
-                            mensaje:"Contraseña actualizada correctamente."
-
-                        });
+        return res.json({
+            mensaje: "Contraseña actualizada correctamente."
+        });
+    }
+);
 
                     }
 
@@ -1872,30 +2336,61 @@ app.post("/restablecer-password", (req, res) => {
 
 });
 // CREAR TRATO
+
 app.post('/crear-trato', verificarToken, async (req, res) => {
 
-  const usuario = req.usuario;
+    const usuario = req.usuario;
 
-  const {
-    producto,
-    descripcion,
-    monto_protegido
-  } = req.body;
+    const {
+        producto,
+        descripcion,
+        monto_protegido
+    } = req.body;
 
-  const monto = Number(monto_protegido);
 
-  if (isNaN(monto)) {
-    return res.status(400).json({
-      error: 'Monto inválido'
-    });
-  }
+    if (
+        typeof producto !== 'string' ||
+        producto.trim().length < 2 ||
+        producto.trim().length > 150
+    ) {
+        return res.status(400).json({
+            error: 'El nombre del producto no es válido'
+        });
+    }
 
-  if (monto < 300) {
-    return res.status(400).json({
-      error: 'El monto mínimo protegido es $300'
-    });
-  }
 
+    if (
+        typeof descripcion !== 'string' ||
+        descripcion.trim().length > 1000
+    ) {
+        return res.status(400).json({
+            error: 'La descripción no es válida'
+        });
+    }
+
+
+    const monto = Number(monto_protegido);
+
+
+    if (!Number.isFinite(monto)) {
+        return res.status(400).json({
+            error: 'Monto inválido'
+        });
+    }
+
+
+    if (monto < 300) {
+        return res.status(400).json({
+            error: 'El monto mínimo protegido es $300'
+        });
+    }
+
+
+    if (monto > 100000) {
+        return res.status(400).json({
+            error: 'El monto máximo protegido es $100,000'
+        });
+    }
   const codigo = await generarCodigo();
   const fecha = new Date().toLocaleString("sv-SE", {
     timeZone: "America/Mexico_City"
@@ -1975,10 +2470,15 @@ app.get('/mis-ventas', verificarToken, (req, res) => {
 
     db.all(
         `
-        SELECT *
-        FROM tratos
-        WHERE vendedor_id=?
-        ORDER BY id DESC
+        SELECT
+    codigo,
+    producto,
+    monto_protegido,
+    estado,
+    fecha
+FROM tratos
+WHERE vendedor_id=?
+ORDER BY id DESC
         `,
         [req.usuario.id],
         (err, rows)=>{
@@ -2004,10 +2504,15 @@ app.get('/mis-compras', verificarToken, (req, res) => {
     db.all(
 
         `
-        SELECT *
-        FROM tratos
-        WHERE comprador_id = ?
-        ORDER BY id DESC
+        SELECT
+    codigo,
+    producto,
+    monto_protegido,
+    estado,
+    fecha
+FROM tratos
+WHERE comprador_id=?
+ORDER BY id DESC
         `,
 
         [req.usuario.id],
@@ -2074,7 +2579,7 @@ if (trato.vendedor_id === usuario.id) {
 .catch((error) => {
 
   res.status(500).json({
-    error: error.message
+    error: "No fue posible reservar el trato."
   });
 
 });
@@ -2085,8 +2590,7 @@ if (trato.vendedor_id === usuario.id) {
 });
 
 // CONFIRMAR ENTREGA
-app.post('/confirmar-entrega/:codigo', verificarToken, (req, res) => {
-
+app.post('/confirmar-entrega/:codigo', verificarToken, releaseCodeLimiter, (req, res) => {
     const { codigo_liberacion } = req.body;
 
     db.get(
@@ -2207,13 +2711,13 @@ crearNotificacion(
 
             } catch(error){
 
-                console.log(error);
+                console.error("Error al liberar pago:", error.message);
 
                 return res.status(500).json({
 
-                    error:error.message
+    error:"No fue posible liberar el pago en este momento."
 
-                });
+});
 
             }
 
@@ -2309,11 +2813,11 @@ return_url: 'https://trato-justo.onrender.com/configuracion.html',
 
     } catch(error){
 
-        console.log(error);
+        console.error("Error en Stripe onboarding:", error.message);
 
         res.status(500).json({
 
-            error: error.message
+            error: "No fue posible configurar la cuenta de Stripe."
 
         });
 
@@ -2369,10 +2873,10 @@ app.get('/stripe/status', verificarToken, async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error("Error al consultar estado de Stripe:", error.message);
 
         res.status(500).json({
-            error: error.message
+            error: "No fue posible consultar el estado de la cuenta de Stripe."
         });
 
     }
@@ -2411,8 +2915,7 @@ app.post('/stripe/create-checkout-session', verificarToken, async (req, res) => 
     });
 }
                 
-console.log("SUCCESS URL:",
-"https://trato-justo.onrender.com/pago-exitoso.html?session_id={CHECKOUT_SESSION_ID}");
+console.log("Sesión de pago creada correctamente");
    const session = await stripe.checkout.sessions.create({
 
                     mode: "payment",
@@ -2473,11 +2976,11 @@ payment_intent_data: {
 
     } catch (error) {
 
-        console.log(error);
+        console.error("Error al crear checkout de Stripe:", error.message);
 
         res.status(500).json({
 
-            error: error.message
+            error: "No fue posible iniciar el proceso de pago."
 
         });
 
@@ -2490,15 +2993,13 @@ app.get('/trato/:codigo', (req, res) => {
   res.sendFile(__dirname + '/trato.html');
 });
 // API DEL TRATO
-app.get('/api/trato/:codigo', (req, res) => {
-
-  const authHeader = req.headers.authorization;
+app.get('/api/trato/:codigo', publicTratoLimiter, (req, res) => {
 
 let usuario = null;
 
-if (authHeader && authHeader.startsWith("Bearer ")) {
+const token = req.cookies.token;
 
-    const token = authHeader.split(" ")[1];
+if (token) {
 
     try {
 
@@ -2763,6 +3264,48 @@ if (
 
 });
 
+// CERRAR SESIÓN
+app.post("/logout", (req, res) => {
+
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/"
+    });
+
+    res.json({
+        mensaje: "Sesión cerrada correctamente"
+    });
+
+});
+
+// CERRAR SESIÓN ADMIN
+app.post("/admin/logout", (req, res) => {
+
+    res.clearCookie("admin_token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/"
+    });
+
+    res.json({
+        mensaje: "Sesión administrativa cerrada correctamente"
+    });
+
+});
+
+// Manejar errores de protección CSRF
+app.use((err, req, res, next) => {
+    if (err === invalidCsrfTokenError) {
+        return res.status(403).json({
+            error: "Solicitud rechazada por seguridad. Recarga la página e inténtalo de nuevo."
+        });
+    }
+
+    next(err);
+});
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
 });
