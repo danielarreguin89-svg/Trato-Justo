@@ -139,29 +139,12 @@ function mostrarVentas(ventas){
 
                 </div>
 
-                <div style="
-    margin:24px 0;
-    text-align:center;
-">
+                <div class="venta-monto-contenedor">
+    <div class="venta-monto-etiqueta">
+    Monto protegido
+</div>
 
-    <div style="
-        font-size:12px;
-        font-weight:700;
-        color:#667274;
-        text-transform:uppercase;
-        letter-spacing:1.2px;
-        margin-bottom:6px;
-    ">
-        Monto protegido
-    </div>
-
-    <div style="
-        font-size:32px;
-        font-weight:800;
-        color:#15204B;
-        letter-spacing:-1px;
-        line-height:1.1;
-    ">
+    <div class="venta-monto-cantidad">
         $${Number(trato.monto_protegido).toLocaleString('es-MX')} MXN
     </div>
 
