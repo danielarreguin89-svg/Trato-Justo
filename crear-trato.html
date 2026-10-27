@@ -613,7 +613,7 @@ textarea{
             type="number"
             id="monto"
             placeholder="Ej. 5000"
-            oninput="actualizarMonto()">
+            data-accion="actualizar-monto">
 
         <div
             id="vistaMonto"
@@ -624,12 +624,12 @@ textarea{
 
         <button
             class="btn btn-primary"
-            onclick="crearTrato()">
+            data-accion="crear-trato">
             Crear Trato
         </button>
         <button
     class="btn btn-secondary btn-volver"
-    onclick="location.href='dashboard.html'">
+    data-accion="volver-dashboard">
 
     <span class="material-icons">
         arrow_back
@@ -674,7 +674,7 @@ textarea{
 
         <button
     class="btn btn-whatsapp"
-    onclick="compartirWhatsApp()">
+    data-accion="compartir-whatsapp">
 
     <span class="material-icons">share</span>
     Compartir por WhatsApp
@@ -683,7 +683,7 @@ textarea{
 
 <button
     class="btn btn-primary"
-    onclick="copiarLink()">
+    data-accion="copiar-link">
 
     <span class="material-icons">content_copy</span>
     Copiar enlace
@@ -692,7 +692,7 @@ textarea{
 
         <button
     class="btn btn-secondary footer-btn"
-    onclick="location.href='dashboard.html'">
+    data-accion="volver-dashboard">
 
     <span class="material-icons">arrow_back</span>
     Volver al Inicio
@@ -703,105 +703,7 @@ textarea{
 
 </div>
 
-<script>
-
-let linkActual = '';
-
-async function crearTrato() {
-
-    const producto =
-        document.getElementById('producto').value;
-
-    const descripcion =
-        document.getElementById('descripcion').value;
-
-    const monto_protegido =
-        document.getElementById('monto').value;
-
-    const respuesta = await fetch(
-        '/crear-trato',
-        {
-            method:'POST',
-           headers:{
-    'Content-Type':'application/json'
-},
-            body:JSON.stringify({
-                producto,
-                descripcion,
-                monto_protegido
-            })
-        }
-    );
-
-    const datos = await respuesta.json();
-
-    if(respuesta.ok){
-
-        linkActual =
-            `${window.location.origin}/trato/${datos.codigo}`;
-
-        document.getElementById(
-            'codigoGenerado'
-        ).innerText = datos.codigo;
-
-        document.getElementById(
-            'linkGenerado'
-        ).innerText = linkActual;
-
-        document.getElementById(
-            'modalExito'
-        ).style.display = 'flex';
-
-    }else{
-
-        alert(datos.error);
-
-    }
-
-}
-
-function copiarLink(){
-
-    navigator.clipboard.writeText(linkActual);
-
-    alert('Enlace copiado');
-
-}
-function compartirWhatsApp(){
-
-    const mensaje =
-        `Hola, te comparto mi trato protegido de Trato Justo:%0A%0A${linkActual}`;
-
-    window.open(
-        `https://wa.me/?text=${mensaje}`,
-        '_blank'
-    );
-
-}
-function actualizarMonto() {
-
-    const monto =
-        document.getElementById('monto').value;
-
-    const vista =
-        document.getElementById('vistaMonto');
-
-    if (!monto) {
-
-        vista.innerHTML = '';
-
-        return;
-
-    }
-
-    vista.innerHTML =
-        '$' +
-        Number(monto).toLocaleString('es-MX') +
-        ' MXN';
-
-}
-
-</script>
 <script src="csrf.js"></script>
+<script src="crear-trato.js"></script>
 </body>
 </html>
