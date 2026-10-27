@@ -339,11 +339,12 @@ input:focus{
             id="password"
             placeholder="Ingresa tu contraseña">
 
-        <button
-            class="btn"
-            onclick="login()">
-            Iniciar sesión
-        </button>
+      <button
+    class="btn"
+    id="btnLogin"
+    type="button">
+    Iniciar sesión
+</button>
 
 <div class="recuperar">
     <a href="recuperar-password.html">¿Olvidaste tu contraseña?</a>
@@ -363,47 +364,7 @@ input:focus{
 
 </div>
 
-<script>
-
-async function login() {
-
-    console.log("Entró a login()");
-
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-    const respuesta = await fetch('/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            email,
-            password
-        })
-    });
-
-    const datos = await respuesta.json();
-
-    console.log(respuesta.status);
-console.log(datos);
-
-    if (respuesta.ok) {
-
-
-        alert('Bienvenido a Trato Justo');
-
-        window.location.href = '/dashboard.html';
-
-    } else {
-
-        alert(datos.error);
-
-    }
-
-}
-
-</script>
 <script src="csrf.js"></script>
+<script src="login.js"></script>
 </body>
 </html>

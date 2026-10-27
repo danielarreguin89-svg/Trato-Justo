@@ -244,7 +244,9 @@ const opcionesCookie = {
 };
 app.disable("x-powered-by");
 app.use(helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+        reportOnly: true
+    },
     crossOriginEmbedderPolicy: false
 }));
 const PORT = 3000;
