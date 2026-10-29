@@ -24,12 +24,12 @@ async function cargarCompras() {
 
         if (!respuesta.ok) {
 
-            contenedor.innerHTML =
-                JSON.stringify(compras);
+    contenedor.textContent =
+        JSON.stringify(compras);
 
-            return;
+    return;
 
-        }
+}
 
         if (compras.length === 0) {
 
@@ -119,10 +119,10 @@ async function cargarCompras() {
 
     } catch (error) {
 
-        document.getElementById('compras').innerHTML =
-            error.toString();
+    document.getElementById('compras').textContent =
+        error.toString();
 
-    }
+}
 
 }
 document.addEventListener('click', function(evento) {
