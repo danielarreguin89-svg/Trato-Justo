@@ -245,7 +245,11 @@ const opcionesCookie = {
 app.disable("x-powered-by");
 app.use(helmet({
     contentSecurityPolicy: {
-        reportOnly: true
+        reportOnly: false,
+        directives: {
+            "upgrade-insecure-requests":
+                process.env.NODE_ENV === "production" ? [] : null
+        }
     },
     crossOriginEmbedderPolicy: false
 }));

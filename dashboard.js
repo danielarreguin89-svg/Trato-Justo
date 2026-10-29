@@ -61,8 +61,7 @@ async function cargarUsuario(){
 }
 
         const usuario = await respuesta.json();
-        console.log("DATOS QUE RECIBE EL DASHBOARD:", usuario);
-
+    
         document.getElementById(
             'nombreUsuario'
         ).innerText = usuario.nombre || 'Usuario';
