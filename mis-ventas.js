@@ -226,12 +226,12 @@ async function cargarVentas(){
 
         if(!respuesta.ok){
 
-            document.getElementById('ventas').innerHTML =
-                JSON.stringify(datos);
+    document.getElementById('ventas').textContent =
+        JSON.stringify(datos);
 
-            return;
+    return;
 
-        }
+}
 
         ventasTodas = Array.isArray(datos)
     ? datos
@@ -243,12 +243,12 @@ if(filtro){
     cambiarFiltro('');
 }
 
-    }catch(error){
+    } catch(error){
 
-        document.getElementById('ventas').innerHTML =
-            error.toString();
+    document.getElementById('ventas').textContent =
+        error.toString();
 
-    }
+}
 
 }
 
