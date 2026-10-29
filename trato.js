@@ -165,8 +165,8 @@ document.getElementById(
 
         <div class="info rating">
     <span class="material-icons">star</span>
-    <strong>${trato.comprador_rating || 0}</strong>
-    <span>(${trato.comprador_total_calificaciones || 0} calificaciones)</span>
+    <strong>${Math.min(5, Math.max(0, Number(trato.comprador_rating) || 0))}</strong>
+    <span>(${Math.max(0, Math.floor(Number(trato.comprador_total_calificaciones) || 0))} calificaciones)</span>
 </div>
 
       ${trato.esVendedor && trato.comprador_nombre ? `
@@ -178,8 +178,8 @@ document.getElementById(
 
 <div class="info rating">
     <span class="material-icons">star</span>
-    <strong>${trato.vendedor_rating || 0}</strong>
-    <span>(${trato.vendedor_total_calificaciones || 0} calificaciones)</span>
+    <strong>${Math.min(5, Math.max(0, Number(trato.vendedor_rating) || 0))}</strong>
+    <span>(${Math.max(0, Math.floor(Number(trato.vendedor_total_calificaciones) || 0))} calificaciones)</span>
 </div>
 
 ` : ''}
@@ -208,7 +208,7 @@ document.getElementById(
         <div class="info">
             <b>Código:</b>
             <span class="codigo">
-                ${trato.codigo}
+                ${escaparHTML(trato.codigo)}
             </span>
         </div>
 
@@ -358,7 +358,7 @@ ${trato.estado === 'reservado' ? `
 
             <p>Tu código de liberación es:</p>
 
-            <h2>${trato.codigo_liberacion}</h2>
+            <h2>${escaparHTML(trato.codigo_liberacion)}</h2>
 
         </div>
         <button
