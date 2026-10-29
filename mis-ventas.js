@@ -133,9 +133,9 @@ function mostrarVentas(ventas){
 
                     <b>Código:</b>
 
-                    <span class="codigo">
-                        ${trato.codigo}
-                    </span>
+                   <span class="codigo">
+    ${escaparHTML(trato.codigo)}
+</span>
 
                 </div>
 
@@ -159,12 +159,12 @@ function mostrarVentas(ventas){
                 </div>
 
                 <a
-                    class="link-btn"
-                    href="/trato/${trato.codigo}"
-                    target="_blank"
-                >
-                    Ver trato
-                </a>
+    class="link-btn"
+    href="/trato/${encodeURIComponent(String(trato.codigo))}"
+    target="_blank"
+>
+    Ver trato
+</a>
 
                 <button
     class="btn btn-secundario-trato"
