@@ -1,7 +1,6 @@
 const codigo =
     window.location.pathname.split('/').pop();
 
-    const stripe = Stripe("pk_test_51Tvt9e17UsHd7j3WlfulSADQ9Fu5NqvY2Drs64zeuTijOVS29VuPwqjkwzZOyH3kVKt3lWoVeE1NFiEOw1m6RD9800J0K1PAH8");
 let estrellasSeleccionadas = 0;
 
 function seleccionarEstrella(cantidad) {
@@ -41,48 +40,41 @@ function enviarCalificacion() {
 
 }
 async function reservarTrato() {
-
     try {
-
         const respuesta = await fetch(
-            "/stripe/create-checkout-session",
+            `/reservar/${encodeURIComponent(codigo)}`,
             {
                 method: "POST",
-                headers:{
-    'Content-Type':'application/json'
-},
-                body: JSON.stringify({
-                    codigo
-                })
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({})
             }
         );
 
         const datos = await respuesta.json();
 
         if (!respuesta.ok) {
-            throw new Error(datos.error);
+            throw new Error(
+                datos.error ||
+                datos.mensaje ||
+                "No fue posible reservar el trato."
+            );
         }
 
-        const resultado = await stripe.redirectToCheckout({
+        alert(
+            datos.mensaje ||
+            "Trato reservado en modo de demostración. No se realizó ningún pago."
+        );
 
-            sessionId: datos.sessionId
-
-        });
-
-        if (resultado.error) {
-
-            alert(resultado.error.message);
-
-        }
+        window.location.reload();
 
     } catch (error) {
-
-        console.log(error);
-
-        alert(error.message);
-
+        alert(
+            error.message ||
+            "No fue posible reservar el trato."
+        );
     }
-
 }
 async function calificar(estrellas) {
 

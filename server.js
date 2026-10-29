@@ -2543,6 +2543,14 @@ ORDER BY id DESC
 
 // RESERVAR TRATO
 app.post('/reservar/:codigo', verificarToken, (req, res) => {
+    if (
+        process.env.NODE_ENV === "production" ||
+        process.env.DEMO_MODE !== "true"
+    ) {
+        return res.status(403).json({
+            error: "La reserva sin pago solo está disponible en modo demostración local."
+        });
+    }
 const usuario = req.usuario;
   db.get(
     `
@@ -2636,7 +2644,43 @@ app.post('/confirmar-entrega/:codigo', verificarToken, releaseCodeLimiter, (req,
                     error: "Código incorrecto"
                 });
             }
+            if (
+                process.env.DEMO_MODE === "true" &&
+                process.env.NODE_ENV !== "production"
+            ) {
+                db.run(
+                    `UPDATE tratos
+                     SET estado = 'completado'
+                     WHERE codigo = ? AND estado = 'reservado'`,
+                    [req.params.codigo],
+                    function (error) {
+                        if (error) {
+                            return res.status(500).json({
+                                error: "No fue posible completar la demostración."
+                            });
+                        }
 
+                        if (this.changes === 0) {
+                            return res.status(409).json({
+                                error: "El trato ya no está reservado."
+                            });
+                        }
+
+                        crearNotificacion(
+                            trato.vendedor_id,
+                            "Entrega confirmada (demostración)",
+                            `El trato ${trato.codigo} se marcó como completado en modo de demostración. No se realizó ningún pago real.`
+                        );
+
+                        return res.json({
+                            mensaje: "Entrega confirmada en modo de demostración. No se realizó ningún pago real.",
+                            modoDemostracion: true
+                        });
+                    }
+                );
+
+                return;
+            }
             if (!trato.stripe_account_id) {
                 return res.status(400).json({
                     error: "El vendedor no ha configurado Stripe Connect."
